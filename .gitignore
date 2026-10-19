@@ -1,0 +1,42 @@
+# --- Visual Studio ---
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.aps
+ipch/
+
+# Salida de compilación (se regenera al compilar)
+# OJO: NO ignorar *.obj, porque así se llaman también los modelos 3D
+bin/
+build/
+x64/
+Debug/
+Release/
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.tlog
+*.lastbuildstate
+*.recipe
+*.log
+
+# --- El repo NO debe tener comprimidos (lineamiento de teoría) ---
+*.zip
+*.rar
+*.7z
+
+# --- Archivos de trabajo de modelado (subir solo los .obj/.mtl/.fbx exportados) ---
+*.blend1
+*.blend
+*.max
+*.ma
+*.mb
+
+# --- Sistema ---
+Thumbs.db
+desktop.ini
+.DS_Store

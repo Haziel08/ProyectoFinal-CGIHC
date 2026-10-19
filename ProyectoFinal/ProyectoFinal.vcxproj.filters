@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{DC6A9372-E862-4A63-8C81-EBF14AE388AE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\motor">
+      <UniqueIdentifier>{E35F48AB-7EB6-4B36-B769-A848D6E09A16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\motor\luces">
+      <UniqueIdentifier>{412EC2B5-22A5-4699-B60D-33F7E272384C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas">
+      <UniqueIdentifier>{9EDB1BC1-91FA-4F65-919E-E48D16EC6584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\espacio">
+      <UniqueIdentifier>{F438D683-8A9D-4A1A-8C2C-7AC0DA6BD4F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\planeta_naranja">
+      <UniqueIdentifier>{469A438B-6596-4270-A56B-E131D4D83515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\planeta_morado">
+      <UniqueIdentifier>{53DFAB87-DA56-4DF2-96A5-A31A7B5F5622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\planeta_azul">
+      <UniqueIdentifier>{D51EBF8E-55DC-499F-BB0E-A4789D08FDA4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{6BF34332-7370-4330-9B08-87C1552703F1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\*.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\*.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\luces\*.cpp">
+      <Filter>src\motor\luces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\escenas\*.cpp">
+      <Filter>src\escenas</Filter>
+    </ClCompile>
+    <ClCompile Include="src\escenas\espacio\*.cpp">
+      <Filter>src\escenas\espacio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\escenas\planeta_naranja\*.cpp">
+      <Filter>src\escenas\planeta_naranja</Filter>
+    </ClCompile>
+    <ClCompile Include="src\escenas\planeta_morado\*.cpp">
+      <Filter>src\escenas\planeta_morado</Filter>
+    </ClCompile>
+    <ClCompile Include="src\escenas\planeta_azul\*.cpp">
+      <Filter>src\escenas\planeta_azul</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\*.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\*.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\luces\*.h">
+      <Filter>src\motor\luces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\escenas\*.h">
+      <Filter>src\escenas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\escenas\espacio\*.h">
+      <Filter>src\escenas\espacio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\escenas\planeta_naranja\*.h">
+      <Filter>src\escenas\planeta_naranja</Filter>
+    </ClInclude>
+    <ClInclude Include="src\escenas\planeta_morado\*.h">
+      <Filter>src\escenas\planeta_morado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\escenas\planeta_azul\*.h">
+      <Filter>src\escenas\planeta_azul</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\*.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\*.frag">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

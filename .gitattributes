@@ -1,0 +1,18 @@
+# Normalizar fin de línea: en el repo LF, en Windows se descarga como CRLF
+* text=auto
+
+*.sln     text eol=crlf
+*.vcxproj text eol=crlf
+*.filters text eol=crlf
+
+# Binarios: nunca tocarlos
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.tga  binary
+*.bmp  binary
+*.dll  binary
+*.lib  binary
+*.exe  binary
+*.fbx  binary
+*.glb  binary
