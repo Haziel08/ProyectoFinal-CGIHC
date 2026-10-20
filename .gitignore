@@ -9,8 +9,8 @@ ipch/
 
 # Salida de compilación (se regenera al compilar)
 # OJO: NO ignorar *.obj, porque así se llaman también los modelos 3D
-bin/
-build/
+/bin/
+/build/
 x64/
 Debug/
 Release/
