@@ -13,7 +13,7 @@ class Model
 public:
 	Model();
 
-	void LoadModel(const std::string& fileName);
+	void LoadModel(const std::string& fileName, bool aplicarTransformaciones = false);
 	void RenderModel();
 	void ClearModel();
 

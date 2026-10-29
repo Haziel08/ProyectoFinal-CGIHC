@@ -8,6 +8,8 @@ public:
 	Texture(const char* FileLoc);
 	bool LoadTexture();
 	bool LoadTextureA();
+	bool LoadMemory(const unsigned char* bytes, int length);
+	bool LoadColor(float red, float green, float blue);
 	void UseTexture();
 	void ClearTexture();
 	~Texture();

@@ -1,127 +1,172 @@
-/*
- * Proyecto Final — Odisea espacial y sistemas planetarios
- * Computación Gráfica e Interacción Humano-Computadora 2027-1
- *
- * main.cpp SOLO orquesta: crea la ventana, crea las escenas, elige cuál está
- * activa y la dibuja. Lo de cada zona se carga en su propia carpeta:
- *   src/escenas/espacio, planeta_naranja, planeta_morado, planeta_azul
- *
- * Teclas:
- *   1  Espacio          2  Planeta Naranja
- *   3  Planeta Morado   4  Planeta Azul
- *   W A S D + ratón      mover la cámara libre de la escena activa
- *   ESC                  salir
- */
+/* Proyecto Final: escenas planetarias y animacion de una nave de carreras. */
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <stdio.h>
+//>>>>>>>>>>>>>>>>>>>>>> Bibliotecas y cabeceras >>>>>>>>>>>>>>>>>>>>>
+#include <cstdio>
 #include <vector>
 #include <string>
-
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-
 #include "Window.h"
 #include "Shader_light.h"
 #include "Camera.h"
-
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 #include "Escena.h"
 #include "espacio/EscenaEspacio.h"
 #include "planeta_naranja/EscenaPlanetaNaranja.h"
 #include "planeta_morado/EscenaPlanetaMorado.h"
 #include "planeta_azul/EscenaPlanetaAzul.h"
 
+//>>>>>>>>>>>>>>>>>>>>>> Variables de iluminacion >>>>>>>>>>>>>>>>>>>>
+namespace
+{
+DirectionalLight luzGeneral;
+DirectionalLight luzPlanetaNaranja;
+PointLight lucesPuntuales[MAX_POINT_LIGHTS];
+SpotLight lucesSpot[MAX_SPOT_LIGHTS];
+unsigned int numLucesPuntuales = 0;
+unsigned int numLucesSpot = 0;
+
+//>>>>>>>>>>>>>>>>>>>>>> Creacion de luces >>>>>>>>>>>>>>>>>>>>>>>>>>>
+void CrearLuces()
+{
+    luzGeneral = DirectionalLight(1, 1, 1, 0.3f, 0.6f, 0, -1, -0.5f);
+    luzPlanetaNaranja = DirectionalLight(1.0f, 0.79f, 0.60f,
+        0.48f, 0.85f, -0.45f, 0.85f, -0.25f);
+}
+
+//>>>>>>>>>>>>>>>>>>>>>> Luz puntual de la nave >>>>>>>>>>>>>>>>>>>>>>
+PointLight CrearLuzNave(const glm::vec3& p, float escala)
+{
+    return PointLight(1, 0, 0, 0, 3, p.x, p.y, p.z,
+        1, 0.045f / escala, 0.0075f / (escala * escala));
+}
+
+//>>>>>>>>>>>>>>>>>>>>>> Luces de los motores >>>>>>>>>>>>>>>>>>>>>>>>
+PointLight CrearLuzMotor(const glm::vec3& p, float escala)
+{
+    return PointLight(0.1f, 0.3f, 1, 0, 4, p.x, p.y, p.z,
+        1, 0.09f / escala, 0.032f / (escala * escala));
+}
+
+//>>>>>>>>>>>>>>>>>>>>>> Faro inferior de la nave >>>>>>>>>>>>>>>>>>>>
+SpotLight CrearFaroNave(const glm::vec3& p, const glm::vec3& d, float escala)
+{
+    return SpotLight(0.5f, 0.8f, 0, 0, 3, p.x, p.y, p.z, d.x, d.y, d.z,
+        1, 0.045f / escala, 0.0075f / (escala * escala), 30);
+}
+
+//>>>>>>>>>>>>>>>>>>>>>> Actualizacion de luces >>>>>>>>>>>>>>>>>>>>>>
+void ActualizarLucesNave(const glm::mat4& modeloNave, const Window& ventana)
+{
+    const float escala = glm::length(glm::vec3(modeloNave[0]));
+    if (ventana.getLuzNaveEncendida())
+    {
+        glm::vec3 p(modeloNave * glm::vec4(0, 2.7f, 0, 1));
+        lucesPuntuales[numLucesPuntuales++] = CrearLuzNave(p, escala);
+        p = glm::vec3(modeloNave * glm::vec4(0, -0.5f, 0, 1));
+        glm::vec3 d = glm::normalize(glm::vec3(modeloNave * glm::vec4(0, -1, 0, 0)));
+        lucesSpot[numLucesSpot++] = CrearFaroNave(p, d, escala);
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        if (!(i == 0 ? ventana.getMotor1Encendido() : ventana.getMotor2Encendido()))
+            continue;
+        glm::vec3 p(modeloNave * glm::vec4(15.7f, 0, i == 0 ? 4.0f : -4.0f, 1));
+        lucesPuntuales[numLucesPuntuales++] = CrearLuzMotor(p, escala);
+    }
+}
+}
+
+//>>>>>>>>>>>>>>>>>>>>>> Programa principal >>>>>>>>>>>>>>>>>>>>>>>>>
 int main()
 {
-	Window ventana(1366, 768);
-	if (ventana.Initialise() != 0)
-		return 1;
+    //>>>>>>>>>>>>>>>>>>>>>> Ventana y shaders >>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Window ventana(1366, 768);
+    if (ventana.Initialise() != 0) return 1;
+    Shader shader;
+    shader.CreateFromFiles("shaders/shader_light.vert", "shaders/shader_light.frag");
 
-	Shader shader;
-	shader.CreateFromFiles("shaders/shader_light.vert", "shaders/shader_light.frag");
+    //>>>>>>>>>>>>>>>>>>>>>> Inicializacion de escenas >>>>>>>>>>>>>>>>>>>
+    EscenaPlanetaNaranja* planetaNaranja = new EscenaPlanetaNaranja();
+    std::vector<Escena*> escenas = {
+        new EscenaEspacio(), planetaNaranja,
+        new EscenaPlanetaMorado(), new EscenaPlanetaAzul()
+    };
+    for (Escena* escena : escenas) escena->Inicializar();
+    CrearLuces();
+    int escenaActual = ventana.getEscenaActiva();
+    ventana.setTitulo((std::string("Proyecto Final CGeIHC  |  ") + escenas[escenaActual]->Nombre()).c_str());
+    GLfloat ultimoTiempo = static_cast<GLfloat>(glfwGetTime());
 
-	// El orden de esta lista es el de las teclas 1, 2, 3, 4 para cambiar de escena
-	std::vector<Escena*> escenas = {
-		new EscenaEspacio(),
-		new EscenaPlanetaNaranja(),
-		new EscenaPlanetaMorado(),
-		new EscenaPlanetaAzul()
-	};
-	for (Escena* e : escenas)
-		e->Inicializar();
+    //>>>>>>>>>>>>>>>>>>>>>> Ciclo de eventos y dibujo >>>>>>>>>>>>>>>>>>>
+    while (!ventana.getShouldClose())
+    {
+        //>>>>>>>>>>>>>>>>>>>>>> Tiempo de animacion >>>>>>>>>>>>>>>>>>>>>>>>>
+        GLfloat ahora = static_cast<GLfloat>(glfwGetTime());
+        GLfloat dt = glm::clamp(ahora - ultimoTiempo, 0.0f, 0.1f);
+        ultimoTiempo = ahora;
 
-	const int teclasEscena[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4 };
-	int escenaActual = 0;
+        //>>>>>>>>>>>>>>>>>>>>>> Eventos de ventana y teclado >>>>>>>>>>>>>>>>
+        ventana.NuevoFrame();
+        glfwPollEvents();
+        int seleccion = ventana.getEscenaActiva();
+        if (seleccion != escenaActual)
+        {
+            escenaActual = seleccion;
+            ventana.setTitulo((std::string("Proyecto Final CGeIHC  |  ") + escenas[escenaActual]->Nombre()).c_str());
+        }
 
-	auto ActualizarTitulo = [&]() {
-		std::string t = std::string("Proyecto Final CGeIHC  |  ") + escenas[escenaActual]->Nombre();
-		ventana.setTitulo(t.c_str());
-	};
-	ActualizarTitulo();
+        //>>>>>>>>>>>>>>>>>>>>>> Animacion de la escena >>>>>>>>>>>>>>>>>>>>>>
+        Escena* escena = escenas[escenaActual];
+        escena->Actualizar(dt, ventana);
 
-	GLfloat ultimoTiempo = (GLfloat)glfwGetTime();
+        //>>>>>>>>>>>>>>>>>>>>>> Camara y proyeccion >>>>>>>>>>>>>>>>>>>>>>>>>
+        Camera& camara = escena->ObtenerCamara();
+        camara.keyControl(ventana.getsKeys(), dt);
+        camara.mouseControl(ventana.getXChange(), ventana.getYChange());
+        glm::mat4 vista = camara.calculateViewMatrix();
+        glm::vec3 ojo = camara.getCameraPosition();
+        glm::mat4 proyeccion = glm::perspective(glm::radians(60.0f),
+            ventana.getBufferWidth() / ventana.getBufferHeight(), 0.1f, 2000.0f);
 
-	while (!ventana.getShouldClose())
-	{
-		// Tiempo en segundos entre frames
-		GLfloat ahora = (GLfloat)glfwGetTime();
-		GLfloat dt = ahora - ultimoTiempo;
-		ultimoTiempo = ahora;
-		if (dt > 0.1f) dt = 0.1f;
+        //>>>>>>>>>>>>>>>>>>>>>> Luces de la escena activa >>>>>>>>>>>>>>>>>>>
+        numLucesPuntuales = numLucesSpot = 0;
+        if (escenaActual == 1)
+            ActualizarLucesNave(planetaNaranja->ObtenerMatrizNave(), ventana);
 
-		ventana.NuevoFrame();
-		glfwPollEvents();
+        //>>>>>>>>>>>>>>>>>>>>>> Skybox >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        escena->DibujarSkybox(vista, proyeccion);
 
-		// Cambio de escena
-		for (int i = 0; i < 4 && i < (int)escenas.size(); i++)
-		{
-			if (ventana.TeclaPresionada(teclasEscena[i]) && i != escenaActual)
-			{
-				escenaActual = i;
-				ActualizarTitulo();
-			}
-		}
+        //>>>>>>>>>>>>>>>>>>>>>> Uniforms de iluminacion >>>>>>>>>>>>>>>>>>>>
+        shader.UseShader();
+        glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(proyeccion));
+        glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(vista));
+        glUniform3f(shader.GetEyePositionLocation(), ojo.x, ojo.y, ojo.z);
+        shader.SetDirectionalLight(escenaActual == 1 ? &luzPlanetaNaranja : &luzGeneral);
+        shader.SetPointLights(lucesPuntuales, numLucesPuntuales);
+        shader.SetSpotLights(lucesSpot, numLucesSpot);
 
-		Escena* escena = escenas[escenaActual];
-		escena->Actualizar(dt, ventana);
+        //>>>>>>>>>>>>>>>>>>>>>> Modelos de la escena >>>>>>>>>>>>>>>>>>>>>>>>
+        ContextoRender ctx;
+        ctx.uModel = shader.GetModelLocation();
+        ctx.uColor = shader.getColorLocation();
+        ctx.uSpecularIntensity = shader.GetSpecularIntensityLocation();
+        ctx.uShininess = shader.GetShininessLocation();
+        escena->Dibujar(ctx);
 
-		// Cámara libre de la escena activa
-		Camera& camara = escena->ObtenerCamara();
-		camara.keyControl(ventana.getsKeys(), dt);
-		camara.mouseControl(ventana.getXChange(), ventana.getYChange());
+        glUseProgram(0);
+        ventana.swapBuffers();
+    }
 
-		glm::mat4 vista = camara.calculateViewMatrix();
-		glm::vec3 ojo = camara.getCameraPosition();
-		glm::mat4 proyeccion = glm::perspective(glm::radians(60.0f),
-			ventana.getBufferWidth() / ventana.getBufferHeight(), 0.1f, 2000.0f);
-
-		// Dibujo
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		escena->DibujarSkybox(vista, proyeccion);
-
-		shader.UseShader();
-		glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(proyeccion));
-		glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(vista));
-		glUniform3f(shader.GetEyePositionLocation(), ojo.x, ojo.y, ojo.z);
-		escena->AplicarLuces(shader);
-
-		ContextoRender ctx;
-		ctx.uModel = shader.GetModelLocation();
-		ctx.uColor = shader.getColorLocation();
-		ctx.uSpecularIntensity = shader.GetSpecularIntensityLocation();
-		ctx.uShininess = shader.GetShininessLocation();
-		escena->Dibujar(ctx);
-
-		glUseProgram(0);
-		ventana.swapBuffers();
-	}
-
-	for (Escena* e : escenas)
-		delete e;
-	return 0;
+    //>>>>>>>>>>>>>>>>>>>>>> Liberacion de escenas >>>>>>>>>>>>>>>>>>>>>>>
+    for (Escena* escena : escenas) delete escena;
+    return 0;
 }

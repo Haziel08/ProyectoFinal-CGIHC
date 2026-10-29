@@ -18,7 +18,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 	int width, height, bitDepth;
 	// Mismo comportamiento que en las prácticas (Texture activaba el volteo antes de cargar el skybox).
 	// Se fija aquí para que no dependa del orden de carga.
-	stbi_set_flip_vertically_on_load(true);
+	//	stbi_set_flip_vertically_on_load(true);
 	for (size_t i = 0; i < 6; i++)
 	{
 

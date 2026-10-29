@@ -1,18 +1,5 @@
 #pragma once
-/*
- * Window.h
- * Ventana GLFW + entrada de teclado y ratón.
- *
- * IMPORTANTE (para no chocar entre integrantes):
- *   Aquí YA NO se agregan variables por cada animación/objeto como en las
- *   prácticas (muevex, articulacion1..18, etc.). Cada escena lee el teclado
- *   por su cuenta dentro de su método Actualizar() usando:
- *
- *     ventana.TeclaSostenida(GLFW_KEY_W)   -> true mientras la tecla esté abajo
- *     ventana.TeclaPresionada(GLFW_KEY_E)  -> true SOLO en el frame en que se
- *                                             presionó (ideal para encender /
- *                                             apagar luces o iniciar animaciones)
- */
+// Ventana GLFW, estados de teclado y desplazamiento del raton.
 #include <stdio.h>
 #include <glew.h>
 #include <glfw3.h>
@@ -31,6 +18,13 @@ public:
 	void swapBuffers() { glfwSwapBuffers(mainWindow); }
 	void setTitulo(const char* titulo) { glfwSetWindowTitle(mainWindow, titulo); }
 
+    //>>>>>>>>>>>>>>>>>>>>>> Estados de la escena >>>>>>>>>>>>>>>>>>>>>>>
+    int getEscenaActiva() const { return escenaActiva; }
+    bool getLuzNaveEncendida() const { return luzNaveEncendida; }
+    bool getMotor1Encendido() const { return motor1Encendido; }
+    bool getMotor2Encendido() const { return motor2Encendido; }
+    bool getVistaGeneralSolicitada() const { return vistaGeneralSolicitada; }
+
 	// Teclado
 	bool* getsKeys() { return keys; }               // usado por Camera::keyControl
 	bool TeclaSostenida(int key) const;
@@ -44,6 +38,13 @@ public:
 	~Window();
 
 private:
+    //>>>>>>>>>>>>>>>>>>>>>> Variables de entrada >>>>>>>>>>>>>>>>>>>>>>>
+    int escenaActiva;
+    bool luzNaveEncendida;
+    bool motor1Encendido;
+    bool motor2Encendido;
+    bool vistaGeneralSolicitada;
+
 	GLFWwindow* mainWindow;
 	GLint width, height;
 	GLint bufferWidth, bufferHeight;

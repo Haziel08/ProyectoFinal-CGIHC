@@ -1,6 +1,7 @@
 #include "Model.h"
 #include <unordered_map>
 #include <fstream>
+#include <unordered_set>
 
 // Carpeta del archivo del modelo, p.ej. "assets/planeta1/modelos/"
 static std::string CarpetaDe(const std::string& ruta)
@@ -21,11 +22,11 @@ Model::Model()
 {
 }
 
-void Model::LoadModel(const std::string & fileName)
+void Model::LoadModel(const std::string & fileName, bool aplicarTransformaciones)
 {
-	Assimp::Importer importer;//					Pasa de Polygons y Quads a triangulos, modifica orden para el origen, generar normales si el  objeto no tiene, trata vértices iguales como 1 solo
-	//const aiScene *scene=importer.ReadFile(fileName,aiProcess_Triangulate |aiProcess_FlipUVs|aiProcess_GenSmoothNormals|aiProcess_JoinIdenticalVertices);
-	const aiScene *scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
+		| (aplicarTransformaciones ? aiProcess_PreTransformVertices : 0));
 	if (!scene)
 	{	
 		printf("Falló en cargar el modelo: %s (%s)\n", fileName.c_str(), importer.GetErrorString());
@@ -48,11 +49,12 @@ void Model::ClearModel()
 		}
 	}
 
+	std::unordered_set<Texture*> liberadas;
 	for (unsigned int i = 0; i < TextureList.size(); i++)
 	{
 		if (TextureList[i])
 		{
-			delete TextureList[i];
+			if (liberadas.insert(TextureList[i]).second) delete TextureList[i];
 			TextureList[i] = nullptr;
 		}
 	}
@@ -109,7 +111,7 @@ void Model::LoadMesh(aiMesh * mesh, const aiScene * scene)
 		{
 			vertices.insert(vertices.end(), { 0.0f,0.0f });
 		}
-		//Normals importante, las normales son negativas porque la luz interactúa con ellas de esa forma, cómo se vio con el dado/cubo
+		// Normales invertidas para la convencion del shader de iluminacion.
 		
 		vertices.insert(vertices.end(), { -mesh->mNormals[i].x,-mesh->mNormals[i].y ,-mesh->mNormals[i].z });
 	}
@@ -136,6 +138,22 @@ void Model::LoadMaterials(const aiScene * scene)
 	{
 		aiMaterial* material = scene->mMaterials[i];
 		TextureList[i] = nullptr;
+		// GLB: imágenes empacadas en el propio modelo, sin reconstruir sus piezas.
+		aiString embeddedPath;
+		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &embeddedPath) == AI_SUCCESS)
+		{
+			const aiTexture* embedded = scene->GetEmbeddedTexture(embeddedPath.C_Str());
+			if (embedded && embedded->mHeight == 0)
+			{
+				Texture* tex = new Texture();
+				if (tex->LoadMemory(reinterpret_cast<const unsigned char*>(embedded->pcData), static_cast<int>(embedded->mWidth)))
+				{
+					TextureList[i] = tex;
+					continue;
+				}
+				delete tex;
+			}
+		}
 		if (material->GetTextureCount(aiTextureType_DIFFUSE	))
 		{
 			aiString path;
@@ -182,33 +200,15 @@ void Model::LoadMaterials(const aiScene * scene)
 						delete newTex;
 					}
 				}
-
-			/*	TextureList[i] = new Texture(texPath.c_str());
-				if (existetga != std::string::npos || existepng != std::string::npos)
-				{
-					if (!TextureList[i]->LoadTextureA())
-					{
-						printf("Falló en cargar la Textura :%s\n", texPath);
-						delete TextureList[i];
-						TextureList[i] = nullptr;
-					}
-				}
-				else
-				{
-					if (!TextureList[i]->LoadTexture())
-					{
-						printf("Falló en cargar la Textura :%s\n", texPath);
-						delete TextureList[i];
-						TextureList[i] = nullptr;
-					}
-				}*/
 			}
 		}
 		//Si no se pudo cargar la textura o no tiene una textura asignada, asignar una textura por defecto
 		if (!TextureList[i])
 		{
-			TextureList[i] = new Texture("assets/comun/texturas/plain.png"); //textura que se aplicará a los modelos si no tienen textura o la textura no se puede cargar
-			TextureList[i]->LoadTextureA();
+			aiColor3D diffuse(1.0f, 1.0f, 1.0f);
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+			TextureList[i] = new Texture();
+			TextureList[i]->LoadColor(diffuse.r, diffuse.g, diffuse.b);
 		}
 
 	}

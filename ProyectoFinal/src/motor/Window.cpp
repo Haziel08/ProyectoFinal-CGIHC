@@ -1,9 +1,15 @@
 #include "Window.h"
 
+//>>>>>>>>>>>>>>>>>>>>>> Constructores >>>>>>>>>>>>>>>>>>>>>>
 Window::Window() : Window(1280, 720) {}
 
 Window::Window(GLint windowWidth, GLint windowHeight)
 {
+    escenaActiva = 0;
+    luzNaveEncendida = true;
+    motor1Encendido = true;
+    motor2Encendido = true;
+    vistaGeneralSolicitada = false;
 	mainWindow = nullptr;
 	width = windowWidth;
 	height = windowHeight;
@@ -22,6 +28,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	}
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Inicializacion de GLFW y OpenGL >>>>>>>>>>>>>>>>>>>>>>
 int Window::Initialise(const char* titulo)
 {
 	if (!glfwInit())
@@ -65,6 +72,7 @@ int Window::Initialise(const char* titulo)
 	return 0;
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Registro de eventos >>>>>>>>>>>>>>>>>>>>>>
 void Window::createCallbacks()
 {
 	glfwSetKeyCallback(mainWindow, ManejaTeclado);
@@ -84,6 +92,7 @@ bool Window::TeclaPresionada(int key) const
 
 void Window::NuevoFrame()
 {
+    vistaGeneralSolicitada = false;
 	for (size_t i = 0; i < 1024; i++)
 		keysPressed[i] = false;
 }
@@ -102,12 +111,29 @@ GLfloat Window::getYChange()
 	return theChange;
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Eventos de teclado >>>>>>>>>>>>>>>>>>>>>>
 void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode)
 {
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if (action == GLFW_PRESS)
+    {
+        //>>>>>>>>>>>>>>>>>>>>>> Seleccion de escena >>>>>>>>>>>>>>>>>>>>>>>>
+        if (key >= GLFW_KEY_1 && key <= GLFW_KEY_4)
+            theWindow->escenaActiva = key - GLFW_KEY_1;
+
+        //>>>>>>>>>>>>>>>>>>>>>> Controles de la nave >>>>>>>>>>>>>>>>>>>>>>>
+        if (theWindow->escenaActiva == 1)
+        {
+            if (key == GLFW_KEY_Z) theWindow->luzNaveEncendida = !theWindow->luzNaveEncendida;
+            if (key == GLFW_KEY_X) theWindow->motor1Encendido = !theWindow->motor1Encendido;
+            if (key == GLFW_KEY_C) theWindow->motor2Encendido = !theWindow->motor2Encendido;
+            if (key == GLFW_KEY_V) theWindow->vistaGeneralSolicitada = true;
+        }
+    }
 
 	if (key >= 0 && key < 1024)
 	{
@@ -123,6 +149,7 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Eventos del raton >>>>>>>>>>>>>>>>>>>>>>
 void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 {
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -141,6 +168,7 @@ void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 	theWindow->lastY = (GLfloat)yPos;
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Cambio de dimensiones >>>>>>>>>>>>>>>>>>>>>>
 void Window::ManejaResize(GLFWwindow* window, int w, int h)
 {
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -150,6 +178,7 @@ void Window::ManejaResize(GLFWwindow* window, int w, int h)
 	glViewport(0, 0, w, h);
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Liberacion de la ventana >>>>>>>>>>>>>>>>>>>>>>
 Window::~Window()
 {
 	if (mainWindow)

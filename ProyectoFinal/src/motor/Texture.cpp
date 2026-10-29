@@ -79,6 +79,36 @@ bool Texture::LoadTexture()
 	stbi_image_free(texData); //para liberar la información de la imagen
 	return true;
 }
+bool Texture::LoadMemory(const unsigned char* bytes, int length)
+{
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* pixels = stbi_load_from_memory(bytes, length, &width, &height, &bitDepth, STBI_rgb_alpha);
+	if (!pixels) return false;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(pixels);
+	return true;
+}
+
+bool Texture::LoadColor(float red, float green, float blue)
+{
+	unsigned char pixel[] = { static_cast<unsigned char>(red * 255.0f),
+		static_cast<unsigned char>(green * 255.0f), static_cast<unsigned char>(blue * 255.0f), 255 };
+	width = height = 1;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+	return true;
+}
+
 void Texture::ClearTexture()
 {
 
