@@ -18,6 +18,8 @@ void EscenaPlanetaAzul::Inicializar()
 	glm::vec2 tamanoLago = terreno.radioLago * 2.2f;   // un poco mas grande que el lago
 	agua.Crear(terreno.centroLago, tamanoLago, nivelAgua, "assets/planeta_azul/texturas/agua.jpg");
 
+	vegetacion.Crear(terreno);
+
 	luzSol = ciclo.LuzDireccional();
 
 	// Aquí se cargarán los modelos de la escena
@@ -42,6 +44,9 @@ void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 
 	// Aquí se dibujan los modelos (chozas, criaturas, cosas bajo el agua...)
 
-	// 2) El agua siempre al final (es transparente)
+	// 2) Plantas y rocas (usa su propio shader y luego regresa al de main)
+	vegetacion.Dibujar(ctx, &luzSol);
+
+	// 3) El agua siempre al final (es transparente)
 	agua.Dibujar(ctx, tiempo, ciclo.Luz());
 }

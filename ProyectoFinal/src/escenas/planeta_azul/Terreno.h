@@ -26,9 +26,9 @@ public:
 
 	float Altura(float x, float z) const;         // altura del suelo en (x, z)
 	bool EsLago(float x, float z) const;          // true si (x, z) cae en el lago o la playa
+	float DistanciaLago(float x, float z) const;  // 0 en el centro, 1 en la orilla, >1 tierra
 
 private:
-	float DistanciaLago(float x, float z) const;  // 0 en el centro, 1 en la orilla
 	glm::vec3 NormalEn(float x, float z) const;
 	void CrearPlaya();                            // tira de arena que sigue el ovalo del lago
 

@@ -7,6 +7,7 @@
  *   CicloDiaNoche  -> luz direccional (sol/luna) y cambio de skybox
  *   Terreno        -> pasto, colinas y el lago con fondo de arena
  *   Agua           -> superficie del lago (shader_animado)
+ *   Vegetacion     -> arboles, pasto, flores y rocas (deja zonas libres)
  *
  * Archivos:
  *   código   -> src/escenas/planeta_azul/
@@ -18,6 +19,7 @@
 #include "CicloDiaNoche.h"
 #include "Terreno.h"
 #include "Agua.h"
+#include "Vegetacion.h"
 
 class EscenaPlanetaAzul : public Escena
 {
@@ -39,9 +41,14 @@ private:
 	Skybox skyboxNoche;
 
 	Terreno terreno;
+	Vegetacion vegetacion;
 	Agua agua;
 	float nivelAgua = -1.0f;      // altura de la superficie del lago
 
 	// Aquí van los modelos (chozas, criaturas...). Usar terreno.Altura(x, z)
 	// para ponerlos sobre el suelo, o una y menor a nivelAgua para meterlos al lago.
+	// Zonas despejadas para ellos (ver Vegetacion.h):
+	//   aldea (chozas)     centro (-110, -40)  radio 50
+	//   criaturas / NPCs   centro ( 110, -30)  radio 45
+	//   entrada            centro (   0, -65)  radio 30
 };
