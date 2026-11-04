@@ -9,6 +9,7 @@
 #include "Shader_light.h"
 #include "Skybox.h"
 #include "CommonValues.h"
+#include "DirectionalLight.h"
 
 // Ubicaciones de los uniforms del shader de iluminación (las llena main.cpp)
 struct ContextoRender
@@ -17,6 +18,11 @@ struct ContextoRender
 	GLuint uColor = 0;
 	GLuint uSpecularIntensity = 0;
 	GLuint uShininess = 0;
+
+	// Camara del frame (para escenas que usan otro shader, p. ej. el agua)
+	glm::mat4 vista = glm::mat4(1.0f);
+	glm::mat4 proyeccion = glm::mat4(1.0f);
+	glm::vec3 posCamara = glm::vec3(0.0f);
 };
 
 class Escena
@@ -36,6 +42,9 @@ public:
 
 	// Dibujar los objetos de la escena (el shader ya está activo).
 	virtual void Dibujar(const ContextoRender& ctx) {}
+
+	// Luz direccional propia de la escena (nullptr = usar la de main.cpp)
+	virtual DirectionalLight* ObtenerLuzDireccional() { return nullptr; }
 
 	// ---- Comunes a todas las escenas ----
 	Camera& ObtenerCamara() { return camara; }

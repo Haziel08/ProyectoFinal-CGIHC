@@ -2,21 +2,46 @@
 
 void EscenaPlanetaAzul::Inicializar()
 {
-	CargarSkybox("assets/planeta_azul/skybox/");
+	// --- Skybox de dia y de noche ---
+	// Se cargan sin voltear (otras escenas pueden dejar activado el volteo de stb)
+	stbi_set_flip_vertically_on_load(false);
+	CargarSkybox("assets/planeta_azul/skybox/noche/");
+	skyboxNoche = skybox;
+	CargarSkybox("assets/planeta_azul/skybox/dia/");
+	skyboxDia = skybox;
 
-	// Cámara libre de esta escena: posición inicial, vector arriba, yaw, pitch,
-	// velocidad (unidades/segundo) y sensibilidad del ratón
-	camara = Camera(glm::vec3(0.0f, 5.0f, 20.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 20.0f, 0.3f);
+	// --- Camara: empieza en la orilla mirando hacia +Z (hacia el sol y el lago) ---
+	camara = Camera(glm::vec3(0.0f, 10.0f, -60.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, -8.0f, 20.0f, 0.3f);
 
-	// Aquí se cargarán modelos, texturas y luces de la escena
+	// --- Suelo y lago ---
+	terreno.Crear();
+	glm::vec2 tamanoLago = terreno.radioLago * 2.2f;   // un poco mas grande que el lago
+	agua.Crear(terreno.centroLago, tamanoLago, nivelAgua, "assets/planeta_azul/texturas/agua.jpg");
+
+	luzSol = ciclo.LuzDireccional();
+
+	// Aquí se cargarán los modelos de la escena
 }
 
 void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 {
+	tiempo += dt;
+
+	// Ciclo de dia y noche: actualiza la luz y escoge el skybox
+	ciclo.Actualizar(dt);
+	luzSol = ciclo.LuzDireccional();
+	skybox = ciclo.EsDeNoche() ? skyboxNoche : skyboxDia;
+
 	// Aquí van las animaciones y las teclas propias de la escena
 }
 
 void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 {
-	// Aquí se dibujan los objetos de la escena
+	// 1) Todo lo opaco primero
+	terreno.Dibujar(ctx);
+
+	// Aquí se dibujan los modelos (chozas, criaturas, cosas bajo el agua...)
+
+	// 2) El agua siempre al final (es transparente)
+	agua.Dibujar(ctx, tiempo, ciclo.Luz());
 }

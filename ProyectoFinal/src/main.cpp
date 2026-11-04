@@ -150,7 +150,10 @@ int main()
         glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(proyeccion));
         glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(vista));
         glUniform3f(shader.GetEyePositionLocation(), ojo.x, ojo.y, ojo.z);
-        shader.SetDirectionalLight(escenaActual == 1 ? &luzPlanetaNaranja : &luzGeneral);
+        DirectionalLight* luzEscena = escena->ObtenerLuzDireccional();
+        if (luzEscena == nullptr)
+            luzEscena = (escenaActual == 1) ? &luzPlanetaNaranja : &luzGeneral;
+        shader.SetDirectionalLight(luzEscena);
         shader.SetPointLights(lucesPuntuales, numLucesPuntuales);
         shader.SetSpotLights(lucesSpot, numLucesSpot);
 
@@ -160,6 +163,9 @@ int main()
         ctx.uColor = shader.getColorLocation();
         ctx.uSpecularIntensity = shader.GetSpecularIntensityLocation();
         ctx.uShininess = shader.GetShininessLocation();
+        ctx.vista = vista;
+        ctx.proyeccion = proyeccion;
+        ctx.posCamara = ojo;
         escena->Dibujar(ctx);
 
         glUseProgram(0);
