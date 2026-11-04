@@ -47,7 +47,7 @@ private:
 
 	// Aquí van los modelos (chozas, criaturas...). Usar terreno.Altura(x, z)
 	// para ponerlos sobre el suelo, o una y menor a nivelAgua para meterlos al lago.
-	// Zonas despejadas para ellos (ver Vegetacion.h):
+	// Zonas despejadas para ellos (ver Vegetacion::EnZonaLibre):
 	//   aldea (chozas)     centro (-110, -40)  radio 50
 	//   criaturas / NPCs   centro ( 110, -30)  radio 45
 	//   entrada            centro (   0, -65)  radio 30

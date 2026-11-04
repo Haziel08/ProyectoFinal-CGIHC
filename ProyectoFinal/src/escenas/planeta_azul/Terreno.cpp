@@ -8,40 +8,6 @@ Terreno::~Terreno()
 {
 	delete tierra;
 	delete fondo;
-	delete playa;
-}
-
-void Terreno::CrearPlaya()
-{
-	// Anillo alrededor del lago (de 0.97 a 1.12 veces el radio), pegado al suelo.
-	// Tapa el borde "en escalera" entre los cuadritos de pasto y de arena.
-	const int vueltas = 360, anillos = 6;
-	std::vector<GLfloat> v;
-	std::vector<unsigned int> idx;
-	for (int i = 0; i <= vueltas; i++)
-	{
-		float ang = 2.0f * 3.14159265f * i / vueltas;
-		for (int j = 0; j <= anillos; j++)
-		{
-			float d = 0.97f + 0.15f * j / anillos;
-			float x = centroLago.x + radioLago.x * d * cosf(ang);
-			float z = centroLago.y + radioLago.y * d * sinf(ang);
-			glm::vec3 n = NormalEn(x, z);
-			v.insert(v.end(), { x, Altura(x, z) + 0.02f, z,
-								x / metrosPorTextura, z / metrosPorTextura,
-								-n.x, -n.y, -n.z });
-		}
-	}
-	for (int i = 0; i < vueltas; i++)
-	{
-		for (int j = 0; j < anillos; j++)
-		{
-			unsigned int a = i * (anillos + 1) + j, b = a + anillos + 1;
-			idx.insert(idx.end(), { a, b, a + 1,  a + 1, b, b + 1 });
-		}
-	}
-	playa = new MeshModel();
-	playa->CreateMeshModel(v.data(), idx.data(), (unsigned int)v.size(), (unsigned int)idx.size());
 }
 
 float Terreno::DistanciaLago(float x, float z) const
@@ -83,41 +49,43 @@ glm::vec3 Terreno::NormalEn(float x, float z) const
 	return glm::normalize(glm::vec3(-hx, 1.0f, -hz));
 }
 
+void Terreno::AgregarCuadro(std::vector<GLfloat>& v, std::vector<unsigned int>& idx, float x0, float z0, float lado)
+{
+	// 4 esquinas del cuadrito: x, y (altura), z | u, v | normal invertida (convencion del shader)
+	float xs[4] = { x0, x0 + lado, x0 + lado, x0 };
+	float zs[4] = { z0, z0, z0 + lado, z0 + lado };
+	unsigned int b = (unsigned int)(v.size() / 8);   // numero del primer vertice nuevo
+	for (int k = 0; k < 4; k++)
+	{
+		glm::vec3 n = NormalEn(xs[k], zs[k]);
+		v.insert(v.end(), { xs[k], Altura(xs[k], zs[k]), zs[k],
+							xs[k] / metrosPorTextura, zs[k] / metrosPorTextura,
+							-n.x, -n.y, -n.z });
+	}
+	// 2 triangulos por cuadrito
+	idx.insert(idx.end(), { b, b + 1, b + 2,  b + 2, b + 3, b });
+}
+
 void Terreno::Crear()
 {
-	std::vector<GLfloat> vTierra, vFondo;
-	std::vector<unsigned int> iTierra, iFondo;
+	std::vector<GLfloat> vTierra, vFondo;          // vertices del pasto y de la arena
+	std::vector<unsigned int> iTierra, iFondo;     // indices del pasto y de la arena
 
 	float lado = tamano / celdas;
 	float inicio = -tamano / 2.0f;
-
-	// Agrega un vertice: posicion, UV (segun metros) y normal INVERTIDA (convencion del shader)
-	auto agregarVertice = [&](std::vector<GLfloat>& v, float x, float z)
-	{
-		glm::vec3 n = NormalEn(x, z);
-		v.insert(v.end(), { x, Altura(x, z), z,
-							x / metrosPorTextura, z / metrosPorTextura,
-							-n.x, -n.y, -n.z });
-	};
 
 	for (int i = 0; i < celdas; i++)
 	{
 		for (int j = 0; j < celdas; j++)
 		{
-			float x0 = inicio + i * lado, z0 = inicio + j * lado;
-			float x1 = x0 + lado, z1 = z0 + lado;
+			float x0 = inicio + i * lado;
+			float z0 = inicio + j * lado;
 
-			// Cada cuadrito va a la malla de pasto o a la de arena segun donde cae
-			bool lago = EsLago((x0 + x1) * 0.5f, (z0 + z1) * 0.5f);
-			std::vector<GLfloat>& v = lago ? vFondo : vTierra;
-			std::vector<unsigned int>& idx = lago ? iFondo : iTierra;
-
-			unsigned int b = (unsigned int)(v.size() / 8);
-			agregarVertice(v, x0, z0);
-			agregarVertice(v, x1, z0);
-			agregarVertice(v, x1, z1);
-			agregarVertice(v, x0, z1);
-			idx.insert(idx.end(), { b, b + 1, b + 2,  b + 2, b + 3, b });
+			// Si el centro del cuadrito cae en el lago va a la malla de arena, si no a la de pasto
+			if (EsLago(x0 + lado / 2, z0 + lado / 2))
+				AgregarCuadro(vFondo, iFondo, x0, z0, lado);
+			else
+				AgregarCuadro(vTierra, iTierra, x0, z0, lado);
 		}
 	}
 
@@ -125,7 +93,6 @@ void Terreno::Crear()
 	tierra->CreateMeshModel(vTierra.data(), iTierra.data(), (unsigned int)vTierra.size(), (unsigned int)iTierra.size());
 	fondo = new MeshModel();
 	fondo->CreateMeshModel(vFondo.data(), iFondo.data(), (unsigned int)vFondo.size(), (unsigned int)iFondo.size());
-	CrearPlaya();
 
 	texturaPasto = Texture("assets/planeta_azul/texturas/pasto.jpg");
 	texturaPasto.LoadTextureA();
@@ -147,9 +114,4 @@ void Terreno::Dibujar(const ContextoRender& ctx)
 	texturaArena.UseTexture();
 	fondo->RenderMeshModel();
 
-	// La playa va encima del suelo; el "offset" evita que parpadee con el pasto
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(-1.0f, -1.0f);
-	playa->RenderMeshModel();
-	glDisable(GL_POLYGON_OFFSET_FILL);
 }

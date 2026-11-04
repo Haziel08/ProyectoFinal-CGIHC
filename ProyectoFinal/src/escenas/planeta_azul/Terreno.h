@@ -3,6 +3,7 @@
 //   - Zona de tierra con pasto y colinas suaves.
 //   - Un lago ovalado y profundo; su fondo usa textura de arena (piso marino).
 // Altura(x, z) sirve para poner casas o criaturas justo sobre el suelo.
+#include <vector>
 #include <glm.hpp>
 #include "Escena.h"
 #include "Mesh_tn.h"
@@ -14,7 +15,7 @@ class Terreno
 public:
 	// --- Medidas (se pueden ajustar antes de Crear) ---
 	float tamano = 400.0f;                        // lado del terreno cuadrado
-	int celdas = 200;                             // cuadritos por lado (mas = mas detalle)
+	int celdas = 400;                             // cuadritos por lado (mas = mas detalle)
 	glm::vec2 centroLago = glm::vec2(0.0f, 70.0f);
 	glm::vec2 radioLago = glm::vec2(80.0f, 55.0f); // radio en X y en Z
 	float profundidad = 30.0f;                    // que tan hondo es el lago
@@ -30,11 +31,10 @@ public:
 
 private:
 	glm::vec3 NormalEn(float x, float z) const;
-	void CrearPlaya();                            // tira de arena que sigue el ovalo del lago
+	void AgregarCuadro(std::vector<GLfloat>& v, std::vector<unsigned int>& idx, float x0, float z0, float lado);
 
 	MeshModel* tierra = nullptr;
 	MeshModel* fondo = nullptr;
-	MeshModel* playa = nullptr;
 	Texture texturaPasto;
 	Texture texturaArena;
 	Material materialSuelo = Material(0.2f, 8);
