@@ -8,6 +8,8 @@
  *   Terreno        -> pasto, colinas y el lago con fondo de arena
  *   Agua           -> superficie del lago (shader_animado)
  *   Vegetacion     -> arboles, pasto, flores y rocas (deja zonas libres)
+ *   Aldea          -> chozas, antorchas y fogata (tecla F) con luces puntuales
+ *   Fuego          -> llamas animadas (shader_animado, el mismo del agua)
  *
  * Archivos:
  *   código   -> src/escenas/planeta_azul/
@@ -20,6 +22,7 @@
 #include "Terreno.h"
 #include "Agua.h"
 #include "Vegetacion.h"
+#include "Aldea.h"
 
 class EscenaPlanetaAzul : public Escena
 {
@@ -32,6 +35,10 @@ public:
 	// main.cpp usa esta luz cuando el planeta azul esta activo
 	DirectionalLight* ObtenerLuzDireccional() override { return &luzSol; }
 
+	// main.cpp usa las luces de la aldea (fogata y antorchas)
+	PointLight* ObtenerLucesPuntuales() override { return aldea.luces; }
+	unsigned int NumLucesPuntuales() override { return aldea.numLuces; }
+
 private:
 	float tiempo = 0.0f;          // reloj de la escena (para animaciones)
 
@@ -42,13 +49,14 @@ private:
 
 	Terreno terreno;
 	Vegetacion vegetacion;
+	Aldea aldea;
 	Agua agua;
 	float nivelAgua = -1.0f;      // altura de la superficie del lago
 
 	// Aquí van los modelos (chozas, criaturas...). Usar terreno.Altura(x, z)
 	// para ponerlos sobre el suelo, o una y menor a nivelAgua para meterlos al lago.
 	// Zonas despejadas para ellos (ver Vegetacion::EnZonaLibre):
-	//   aldea (chozas)     centro (-110, -40)  radio 50
+	//   aldea (ya tiene chozas, antorchas y fogata)  centro (-110, -40)  radio 50
 	//   criaturas / NPCs   centro ( 110, -30)  radio 45
 	//   entrada            centro (   0, -65)  radio 30
 };

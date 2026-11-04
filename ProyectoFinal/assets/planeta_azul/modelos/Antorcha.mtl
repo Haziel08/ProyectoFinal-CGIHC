@@ -1,0 +1,30 @@
+newmtl DarkWood
+Kd 0.113906793 0.0697949901 0.0354053229
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+
+newmtl LightGrey
+Kd 0.300595969 0.300595969 0.300595969
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+
+newmtl Yellow
+Kd 0.219060734 0.149523124 0.043520879
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+

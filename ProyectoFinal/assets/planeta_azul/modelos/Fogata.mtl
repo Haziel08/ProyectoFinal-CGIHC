@@ -1,0 +1,40 @@
+newmtl Stone_Dark
+Kd 0.123761617 0.146180183 0.181264356
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+
+newmtl Stone_Light
+Kd 0.177224159 0.211410627 0.230633974
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+
+newmtl Wood
+Kd 0.12234094 0.0547825471 0.0193261039
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+
+newmtl WoodSide
+Kd 0.321571201 0.254232734 0.118720047
+Ka 0 0 0
+Ks 1 1 1
+Ke 0 0 0
+Tf 0 0 0
+d 1
+Ns 9.6078434
+illum 2
+

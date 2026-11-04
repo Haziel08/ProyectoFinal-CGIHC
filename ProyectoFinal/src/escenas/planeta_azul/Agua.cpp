@@ -62,6 +62,7 @@ void Agua::Dibujar(const ContextoRender& ctx, float tiempo, const DatosLuz& luz)
 	// Color y luz
 	shader.SetVec3("colorBase", colorBase);
 	shader.SetFloat("transparencia", transparencia);
+	shader.SetFloat("desvanecer", 0.0f);             // el agua no tiene forma de llama
 	shader.SetInt("usarLuz", 1);
 	shader.SetVec3("luzDireccion", luz.direccion);
 	shader.SetVec3("luzColor", luz.color);

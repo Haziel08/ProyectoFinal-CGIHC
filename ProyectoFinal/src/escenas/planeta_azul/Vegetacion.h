@@ -14,7 +14,7 @@ class Vegetacion
 {
 public:
 	void Crear(const Terreno& terreno);
-	void Dibujar(const ContextoRender& ctx, DirectionalLight* luz);
+	void Dibujar(const ContextoRender& ctx, DirectionalLight* luz, PointLight* luces, unsigned int numLuces);
 
 	// Zonas sin vegetacion para casas y NPCs (true si (x, z) cae dentro de una)
 	bool EnZonaLibre(float x, float z) const;

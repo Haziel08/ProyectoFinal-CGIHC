@@ -89,7 +89,7 @@ void Vegetacion::DibujarEn(Model& modelo, float x, float z, float escala, float 
 	modelo.RenderModel();
 }
 
-void Vegetacion::Dibujar(const ContextoRender& ctx, DirectionalLight* luz)
+void Vegetacion::Dibujar(const ContextoRender& ctx, DirectionalLight* luz, PointLight* luces, unsigned int numLuces)
 {
 	// Guardar el shader de main para regresar a el al final
 	GLint shaderMain = 0;
@@ -101,7 +101,7 @@ void Vegetacion::Dibujar(const ContextoRender& ctx, DirectionalLight* luz)
 	glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(ctx.vista));
 	glUniform3f(shader.GetEyePositionLocation(), ctx.posCamara.x, ctx.posCamara.y, ctx.posCamara.z);
 	shader.SetDirectionalLight(luz);
-	shader.SetPointLights(nullptr, 0);
+	shader.SetPointLights(luces, numLuces);      // fogata y antorchas
 	shader.SetSpotLights(nullptr, 0);
 	materialPlantas.UseMaterial(shader.GetSpecularIntensityLocation(), shader.GetShininessLocation());
 	uModel = shader.GetModelLocation();

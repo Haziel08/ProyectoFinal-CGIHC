@@ -19,6 +19,7 @@ void EscenaPlanetaAzul::Inicializar()
 	agua.Crear(terreno.centroLago, tamanoLago, nivelAgua, "assets/planeta_azul/texturas/agua.jpg");
 
 	vegetacion.Crear(terreno);
+	aldea.Crear(terreno);
 
 	luzSol = ciclo.LuzDireccional();
 
@@ -34,6 +35,9 @@ void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 	luzSol = ciclo.LuzDireccional();
 	skybox = ciclo.EsDeNoche() ? skyboxNoche : skyboxDia;
 
+	// Aldea: tecla F para la fogata y antorchas que se prenden de noche
+	aldea.Actualizar(tiempo, ciclo.EsDeNoche(), ventana);
+
 	// Aquí van las animaciones y las teclas propias de la escena
 }
 
@@ -41,12 +45,16 @@ void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 {
 	// 1) Todo lo opaco primero
 	terreno.Dibujar(ctx);
+	aldea.Dibujar(ctx);
 
 	// Aquí se dibujan los modelos (chozas, criaturas, cosas bajo el agua...)
 
 	// 2) Plantas y rocas (usa su propio shader y luego regresa al de main)
-	vegetacion.Dibujar(ctx, &luzSol);
+	vegetacion.Dibujar(ctx, &luzSol, aldea.luces, aldea.numLuces);
 
 	// 3) El agua siempre al final (es transparente)
 	agua.Dibujar(ctx, tiempo, ciclo.Luz());
+
+	// 4) El fuego al final de todo (brilla encima de lo que tiene atras)
+	aldea.DibujarLlamas(ctx, tiempo);
 }

@@ -154,7 +154,10 @@ int main()
         if (luzEscena == nullptr)
             luzEscena = (escenaActual == 1) ? &luzPlanetaNaranja : &luzGeneral;
         shader.SetDirectionalLight(luzEscena);
-        shader.SetPointLights(lucesPuntuales, numLucesPuntuales);
+        if (escena->NumLucesPuntuales() > 0)
+            shader.SetPointLights(escena->ObtenerLucesPuntuales(), escena->NumLucesPuntuales());
+        else
+            shader.SetPointLights(lucesPuntuales, numLucesPuntuales);
         shader.SetSpotLights(lucesSpot, numLucesSpot);
 
         //>>>>>>>>>>>>>>>>>>>>>> Modelos de la escena >>>>>>>>>>>>>>>>>>>>>>>>

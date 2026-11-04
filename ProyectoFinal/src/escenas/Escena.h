@@ -10,6 +10,7 @@
 #include "Skybox.h"
 #include "CommonValues.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 
 // Ubicaciones de los uniforms del shader de iluminación (las llena main.cpp)
 struct ContextoRender
@@ -45,6 +46,10 @@ public:
 
 	// Luz direccional propia de la escena (nullptr = usar la de main.cpp)
 	virtual DirectionalLight* ObtenerLuzDireccional() { return nullptr; }
+
+	// Luces puntuales propias de la escena (0 = usar las de main.cpp)
+	virtual PointLight* ObtenerLucesPuntuales() { return nullptr; }
+	virtual unsigned int NumLucesPuntuales() { return 0; }
 
 	// ---- Comunes a todas las escenas ----
 	Camera& ObtenerCamara() { return camara; }
