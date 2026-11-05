@@ -1,3 +1,4 @@
+//>>>>>>>>>>>>>>>>>>>>>> PointLight >>>>>>>>>>>>>>>>>>>>>>
 #include "PointLight.h"
 
 
@@ -11,28 +12,28 @@ PointLight::PointLight() : Light()
 }
 
 PointLight::PointLight(GLfloat red, GLfloat green, GLfloat blue, 
-						GLfloat aIntensity, GLfloat dIntensity, 
-						GLfloat xPos, GLfloat yPos, GLfloat zPos, 
-						GLfloat con, GLfloat lin, GLfloat exp) : Light(red, green, blue, aIntensity, dIntensity)
+						GLfloat a_intensity, GLfloat d_intensity, 
+						GLfloat x_pos, GLfloat y_pos, GLfloat z_pos, 
+						GLfloat con, GLfloat lin, GLfloat exp) : Light(red, green, blue, a_intensity, d_intensity)
 {
-	position = glm::vec3(xPos, yPos, zPos);
+	position = glm::vec3(x_pos, y_pos, z_pos);
 	constant = con;
 	linear = lin;
 	exponent = exp;
 }
 
-void PointLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientcolorLocation, 
-							GLfloat diffuseIntensityLocation, GLfloat positionLocation, 
-							GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentLocation)
+void PointLight::UseLight(GLfloat ambient_intensity_location, GLfloat ambientcolor_location, 
+							GLfloat diffuse_intensity_location, GLfloat position_location, 
+							GLfloat constant_location, GLfloat linear_location, GLfloat exponent_location)
 {
-	glUniform3f(ambientcolorLocation, color.x, color.y, color.z);
-	glUniform1f(ambientIntensityLocation, ambientIntensity);
-	glUniform1f(diffuseIntensityLocation, diffuseIntensity);
+	glUniform3f(ambientcolor_location, color.x, color.y, color.z);
+	glUniform1f(ambient_intensity_location, ambient_intensity);
+	glUniform1f(diffuse_intensity_location, diffuse_intensity);
 
-	glUniform3f(positionLocation, position.x, position.y, position.z);
-	glUniform1f(constantLocation, constant);
-	glUniform1f(linearLocation, linear);
-	glUniform1f(exponentLocation, exponent);
+	glUniform3f(position_location, position.x, position.y, position.z);
+	glUniform1f(constant_location, constant);
+	glUniform1f(linear_location, linear);
+	glUniform1f(exponent_location, exponent);
 }
 
 PointLight::~PointLight()

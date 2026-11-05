@@ -1,8 +1,9 @@
+//>>>>>>>>>>>>>>>>>>>>>> EscenaPlanetaMorado >>>>>>>>>>>>>>>>>>>>>>
 #include "EscenaPlanetaMorado.h"
 
 void EscenaPlanetaMorado::Inicializar()
 {
-	CargarSkybox("assets/planeta_morado/skybox/");
+	CargarSkybox("assets/planeta_morado/texturas/skybox/");
 
 	// Cámara libre de esta escena: posición inicial, vector arriba, yaw, pitch,
 	// velocidad (unidades/segundo) y sensibilidad del ratón

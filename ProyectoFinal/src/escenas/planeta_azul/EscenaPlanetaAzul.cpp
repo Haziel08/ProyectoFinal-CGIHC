@@ -1,8 +1,9 @@
+//>>>>>>>>>>>>>>>>>>>>>> EscenaPlanetaAzul >>>>>>>>>>>>>>>>>>>>>>
 #include "EscenaPlanetaAzul.h"
 
 void EscenaPlanetaAzul::Inicializar()
 {
-	CargarSkybox("assets/planeta_azul/skybox/");
+	CargarSkybox("assets/planeta_azul/texturas/skybox/");
 
 	// Cámara libre de esta escena: posición inicial, vector arriba, yaw, pitch,
 	// velocidad (unidades/segundo) y sensibilidad del ratón

@@ -1,4 +1,5 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de Skybox >>>>>>>>>>>>>>>>>>>>>>
 
 #include "CommonValues.h"
 #include <vector>
@@ -14,15 +15,16 @@ class Skybox
 {
 public:
 	Skybox();
-	Skybox(std::vector<std::string> faceLocations);
-	void DrawSkybox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+	Skybox(std::vector<std::string> face_locations);
+	void DrawSkybox(glm::mat4 view_matrix, glm::mat4 projection_matrix);
 		
 	~Skybox();
 private:
-	MeshModel* skyMesh;
-	Shader* skyShader;
-	GLuint textureId;
-	GLuint uniformProjection, uniformView;
+	MeshModel* sky_mesh;
+	Shader* sky_shader;
+	GLuint texture_id;
+	GLuint uniform_projection, uniform_view;
+	bool transicion_natural = false;
 
 };
 

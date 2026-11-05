@@ -1,0 +1,52 @@
+newmtl separadores_carriles
+Ka 1 1 1
+Kd 0.030 0.500 0.800
+Ks 0.25 0.25 0.25
+Ns 32
+d 1
+illum 2
+
+newmtl rocas_soporte
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.25 0.25 0.25
+Ns 32
+d 1
+illum 2
+map_Kd ../texturas/roca_color.png
+
+newmtl pista_salida
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.25 0.25 0.25
+Ns 32
+d 1
+illum 2
+map_Kd ../texturas/pista_salida.png
+
+newmtl pista_superficie
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.25 0.25 0.25
+Ns 32
+d 1
+illum 2
+map_Kd ../texturas/pista_recta.png
+
+newmtl pista_meta
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.25 0.25 0.25
+Ns 32
+d 1
+illum 2
+map_Kd ../texturas/pista_meta.png
+
+newmtl concreto_grietas
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+d 1
+illum 2
+map_Kd ../texturas/concreto_grietas.png

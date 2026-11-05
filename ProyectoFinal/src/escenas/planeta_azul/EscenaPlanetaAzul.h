@@ -1,13 +1,14 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de EscenaPlanetaAzul >>>>>>>>>>>>>>>>>>>>>>
 /*
  * EscenaPlanetaAzul.h — Planeta Azul
  * Criaturas (Stalker, Air fish, Reaper, Mitón, necromorfo) y chozas tribales.
  *
  * Archivos de esta escena:
- *   código   -> src/escenas/planeta_azul/   (aquí se pueden agregar más .cpp/.h)
+ *   código   -> src/escenas/planeta_azul/   
  *   modelos  -> assets/planeta_azul/modelos/
  *   texturas -> assets/planeta_azul/texturas/
- *   skybox   -> assets/planeta_azul/skybox/
+ *   skybox   -> assets/planeta_azul/texturas/skybox/
  */
 #include "Escena.h"
 
@@ -20,5 +21,5 @@ public:
 	void Dibujar(const ContextoRender& ctx) override;
 
 private:
-	// Aquí van los modelos, texturas y variables de animación de la escena
+	// Recursos y estado de la escena.
 };

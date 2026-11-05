@@ -1,0 +1,2 @@
+# Modelo que supera el limite de 100 MiB de GitHub
+assets/planeta_naranja/modelos/pista_3_carriles.obj filter=lfs diff=lfs merge=lfs -text
