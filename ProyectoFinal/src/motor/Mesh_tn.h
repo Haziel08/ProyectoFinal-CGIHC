@@ -1,4 +1,5 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de Mesh_tn >>>>>>>>>>>>>>>>>>>>>>
 #include <glew.h>
 #include <vector>
 
@@ -7,15 +8,15 @@ class Mesh
 public:
 	Mesh();
 
-	void CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int numOfVertices, unsigned int numberOfIndices);
-	void CreateMeshGeometry(std::vector<GLfloat>& vertices, std::vector<unsigned int>& indices, unsigned int numOfVertices, unsigned int numberOfIndices);
+	void CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int num_of_vertices, unsigned int number_of_indices);
+	void CreateMeshGeometry(std::vector<GLfloat>& vertices, std::vector<unsigned int>& indices, unsigned int num_of_vertices, unsigned int number_of_indices);
 	void RenderMesh();
 	void RenderMeshGeometry();
 	void ClearMesh();
 	~Mesh();
 private:
-	GLuint VAO, VBO, IBO;
-	GLsizei indexCount;
+	GLuint vao, vbo, ibo;
+	GLsizei index_count;
 
 };
 
@@ -23,13 +24,13 @@ class MeshColor
 {
 public:
 	MeshColor();
-	void CreateMeshColor(GLfloat* vertices, unsigned int numOfVertices);
+	void CreateMeshColor(GLfloat* vertices, unsigned int num_of_vertices);
 	void RenderMeshColor();
 	void ClearMeshColor();
 	~MeshColor();
 private:
-	GLuint VAO, VBO;
-	GLsizei  vertexCount;
+	GLuint vao, vbo;
+	GLsizei  vertex_count;
 };
 
 class MeshModel
@@ -37,14 +38,14 @@ class MeshModel
 public:
 	MeshModel();
 
-	void CreateMeshModel(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
+	void CreateMeshModel(GLfloat *vertices, unsigned int *indices, unsigned int num_of_vertices, unsigned int num_of_indices);
 	void RenderMeshModel();
 	void ClearMeshModel();
 
 	~MeshModel();
 
 private:
-	GLuint VAO, VBO, IBO;
-	GLsizei indexCount;
+	GLuint vao, vbo, ibo;
+	GLsizei index_count;
 };
 

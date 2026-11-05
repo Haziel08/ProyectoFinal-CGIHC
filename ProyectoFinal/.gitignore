@@ -1,0 +1,12 @@
+# Archivos locales de Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+
+# Salidas generadas (solo en la raiz; external/bin contiene DLL necesarias)
+/bin/
+/build/
+/Debug/
+/Release/
+/x64/

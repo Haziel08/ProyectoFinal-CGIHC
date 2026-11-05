@@ -99,7 +99,7 @@ void Vegetacion::Dibujar(const ContextoRender& ctx, DirectionalLight* luz, Point
 	shader.UseShader();
 	glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(ctx.proyeccion));
 	glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(ctx.vista));
-	glUniform3f(shader.GetEyePositionLocation(), ctx.posCamara.x, ctx.posCamara.y, ctx.posCamara.z);
+	glUniform3f(shader.GetEyePositionLocation(), ctx.pos_camara.x, ctx.pos_camara.y, ctx.pos_camara.z);
 	shader.SetDirectionalLight(luz);
 	shader.SetPointLights(luces, numLuces);      // fogata y antorchas
 	shader.SetSpotLights(nullptr, 0);

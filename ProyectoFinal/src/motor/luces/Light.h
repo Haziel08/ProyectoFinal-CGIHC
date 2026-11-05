@@ -1,4 +1,5 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de Light >>>>>>>>>>>>>>>>>>>>>>
 
 #include <glew.h>
 #include <glm.hpp>
@@ -8,13 +9,13 @@ class Light
 public:
 	Light();
 	Light(GLfloat red, GLfloat green, GLfloat blue, 
-			GLfloat aIntensity, GLfloat dIntensity);
+			GLfloat a_intensity, GLfloat d_intensity);
 
 	~Light();
 
 protected:
 	glm::vec3 color;
-	GLfloat ambientIntensity;
-	GLfloat diffuseIntensity;
+	GLfloat ambient_intensity;
+	GLfloat diffuse_intensity;
 };
 

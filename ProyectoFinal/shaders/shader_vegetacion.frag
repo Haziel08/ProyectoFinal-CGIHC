@@ -1,22 +1,23 @@
 #version 330
 // shader_vegetacion.frag: copia de shader_light.frag para hojas, pasto y flores.
+//>>>>>>>>>>>>>>>>>>>>>> Entradas y uniforms >>>>>>>>>>>>>>>>>>>>>>>>>
 
-in vec4 vCol;
-in vec2 TexCoord;
-in vec3 Normal;
-in vec3 FragPos;
-in vec4 vColor;
+in vec4 v_col;
+in vec2 tex_coord;
+in vec3 normal;
+in vec3 frag_pos;
+in vec4 v_color;
 
 out vec4 color;
 
-const int MAX_POINT_LIGHTS = 4;
-const int MAX_SPOT_LIGHTS = 4;
+const int max_point_lights = 16;
+const int max_spot_lights = 4;
 
 struct Light
 {
 	vec3 color;
-	float ambientIntensity;
-	float diffuseIntensity;
+	float ambient_intensity;
+	float diffuse_intensity;
 };
 
 struct DirectionalLight 
@@ -44,63 +45,71 @@ struct SpotLight
 
 struct Material
 {
-	float specularIntensity;
+	float specular_intensity;
 	float shininess;
 };
 
-uniform int pointLightCount;
-uniform int spotLightCount;
+uniform int point_light_count;
+uniform int spot_light_count;
 
-uniform DirectionalLight directionalLight;
-uniform PointLight pointLights[MAX_POINT_LIGHTS];
-uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+uniform DirectionalLight directional_light;
+uniform PointLight point_lights[max_point_lights];
+uniform SpotLight spot_lights[max_spot_lights];
 
-uniform sampler2D theTexture;
+uniform sampler2D the_texture;
 uniform Material material;
 
-uniform vec3 eyePosition;
+uniform vec3 eye_position;
+uniform bool normales_geometricas;
+uniform float emision_material;
+uniform bool relieve_vibrante;
+uniform vec2 desplazamiento_textura = vec2(0.0);
+uniform int modo_efecto = 0; // 0: material, 1: fuego, 2: humo de la practica 10.
+uniform float opacidad_particula = 1.0;
+uniform float opacidad_aerea = 1.0;
 
 vec4 CalcLightByDirection(Light light, vec3 direction)
 {
-	vec4 ambientcolor = vec4(light.color, 1.0f) * light.ambientIntensity;
+	vec4 ambient_color = vec4(light.color, 1.0f) * light.ambient_intensity;
 	//producto punto: coseno del ángulo entre los dos vectores y normalizar para que sus módulos sean 1
-	float diffuseFactor = max(dot(normalize(Normal), normalize(direction)), 0.0f);
-	vec4 diffusecolor = vec4(light.color * light.diffuseIntensity * diffuseFactor, 1.0f);
+	float diffuse_factor = max(dot(normalize(normal), normalize(direction)), 0.0f);
+	vec4 diffuse_color = vec4(light.color * light.diffuse_intensity * diffuse_factor, 1.0f);
 	
-	vec4 specularcolor = vec4(0, 0, 0, 0);
+	vec4 specular_color = vec4(0, 0, 0, 0);
 	
-	if(diffuseFactor > 0.0f)
+	if(diffuse_factor > 0.0f)
 	{//si hay diffuse color entonces existe specular color; dependemos de la posición de la cámara
-		vec3 fragToEye = normalize(eyePosition - FragPos);
-		vec3 reflectedVertex = normalize(reflect(direction, normalize(Normal)));
+		vec3 frag_to_eye = normalize(eye_position - frag_pos);
+		vec3 reflected_vertex = normalize(reflect(normales_geometricas ? -direction : direction, normalize(normal)));
 		
-		float specularFactor = dot(fragToEye, reflectedVertex);
-		if(specularFactor > 0.0f)
+		float specular_factor = dot(frag_to_eye, reflected_vertex);
+		if(specular_factor > 0.0f)
 		{
-			specularFactor = pow(specularFactor, material.shininess);
-			specularcolor = vec4(light.color * material.specularIntensity * specularFactor, 1.0f);
+			specular_factor = pow(specular_factor, material.shininess);
+			specular_color = vec4(light.color * material.specular_intensity * specular_factor, 1.0f);
 		}
 	}
 
-	return (ambientcolor + diffusecolor + specularcolor);
+	return (ambient_color + diffuse_color + specular_color);
 }
 
 vec4 CalcDirectionalLight()
 {
-	return CalcLightByDirection(directionalLight.base, directionalLight.direction);
+	return CalcLightByDirection(directional_light.base, directional_light.direction);
 }
 
 //nuevo
-vec4 CalcPointLight(PointLight pLight)
+vec4 CalcPointLight(PointLight p_light)
 {
-	vec3 direction = FragPos - pLight.position;
+	vec3 direction = frag_pos - p_light.position;
 	float distance = length(direction);
 	direction = normalize(direction);
+	if (normales_geometricas) direction = -direction;
 	
-	vec4 color = CalcLightByDirection(pLight.base, direction);
-	float attenuation = pLight.exponent * distance * distance +
-						pLight.linear * distance +
-						pLight.constant;
+	vec4 color = CalcLightByDirection(p_light.base, direction);
+	float attenuation = p_light.exponent * distance * distance +
+						p_light.linear * distance +
+						p_light.constant;
 	
 	return (color / attenuation);
 }
@@ -108,16 +117,16 @@ vec4 CalcPointLight(PointLight pLight)
 
 
 
-vec4 CalcSpotLight(SpotLight sLight)
+vec4 CalcSpotLight(SpotLight s_light)
 {
-	vec3 rayDirection = normalize(FragPos - sLight.base.position);
-	float slFactor = dot(rayDirection, sLight.direction);
+	vec3 ray_direction = normalize(frag_pos - s_light.base.position);
+	float sl_factor = dot(ray_direction, s_light.direction);
 	
-	if(slFactor > sLight.edge)
+	if(sl_factor > s_light.edge)
 	{
-		vec4 color = CalcPointLight(sLight.base);
+		vec4 color = CalcPointLight(s_light.base);
 		
-		return color * (1.0f - (1.0f - slFactor)*(1.0f/(1.0f - sLight.edge)));
+		return color * (1.0f - (1.0f - sl_factor)*(1.0f/(1.0f - s_light.edge)));
 		
 	} else {
 		return vec4(0, 0, 0, 0);
@@ -135,38 +144,69 @@ vec4 CalcSpotLight(SpotLight sLight)
 
 vec4 CalcPointLights()
 {
-	vec4 totalcolor = vec4(0, 0, 0, 0);
-	for(int i = 0; i < pointLightCount; i++)
+	vec4 total_color = vec4(0, 0, 0, 0);
+	for(int i = 0; i < point_light_count; i++)
 	{		
-		totalcolor += CalcPointLight(pointLights[i]);
+		total_color += CalcPointLight(point_lights[i]);
 	}
 	
-	return totalcolor;
+	return total_color;
 }
 
 vec4 CalcSpotLights()
 {
-	vec4 totalcolor = vec4(0, 0, 0, 0);
-	for(int i = 0; i < spotLightCount; i++)
+	vec4 total_color = vec4(0, 0, 0, 0);
+	for(int i = 0; i < spot_light_count; i++)
 	{		
-		totalcolor += CalcSpotLight(spotLights[i]);
+		total_color += CalcSpotLight(spot_lights[i]);
 	}
 	
-	return totalcolor;
+	return total_color;
 }
 
 
+//>>>>>>>>>>>>>>>>>>>>>> Funcion principal del shader >>>>>>>>>>>>>>>>
 void main()
 {
 	// UNICA diferencia con shader_light.frag: las hojas tienen partes
 	// transparentes en su textura; esos pixeles no se dibujan.
-	if (texture(theTexture, TexCoord).a < 0.5)
+	if (texture(the_texture, tex_coord).a < 0.5)
 		discard;
 
-	vec4 finalcolor = CalcDirectionalLight();
-	finalcolor += CalcPointLights();
-	finalcolor += CalcSpotLights();
-	color = texture(theTexture, TexCoord)*vColor;
-	color = texture(theTexture, TexCoord)*vColor*finalcolor;
+	vec4 muestra = texture(the_texture, tex_coord + desplazamiento_textura);
+	if (modo_efecto == 1)
+	{
+		float ancho = mix(0.49, 0.05, tex_coord.y);
+		float borde = 1.0 - smoothstep(ancho * 0.60, ancho, abs(tex_coord.x - 0.5));
+		float punta = 1.0 - smoothstep(0.40, 1.0, tex_coord.y);
+		float raiz = smoothstep(0.0, 0.12, tex_coord.y);
+		color = vec4(muestra.rgb * v_color.rgb * 2.2, muestra.a * borde * punta * raiz * opacidad_particula);
+		return;
+	}
+	if (modo_efecto == 2)
+	{
+		color = vec4(muestra.rgb, muestra.a * opacidad_particula);
+		return;
+	}
+	if (modo_efecto == 3)
+	{
+		float borde = pow(1.0 - clamp(dot(normalize(normal), normalize(eye_position - frag_pos)), 0.0, 1.0), 2.6);
+		color = vec4(v_color.rgb, borde * opacidad_particula);
+		return;
+	}
+	vec4 final_color = CalcDirectionalLight();
+	final_color += CalcPointLights();
+	final_color += CalcSpotLights();
+	vec4 texel = texture(the_texture, tex_coord);
+	if (relieve_vibrante)
+	{
+		float luminancia = dot(texel.rgb, vec3(0.2126, 0.7152, 0.0722));
+		texel.rgb = mix(vec3(luminancia), texel.rgb, 1.65);
+		texel.rgb = max(vec3(0.0), (texel.rgb - vec3(0.18)) * 1.30 + vec3(0.18));
+	}
+	color = texel*v_color*final_color;
+	color.rgb += texture(the_texture, tex_coord).rgb * emision_material;
+	if (normales_geometricas) color.a = texture(the_texture, tex_coord).a * v_color.a;
+	color.a *= opacidad_aerea;
 	
 }

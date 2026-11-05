@@ -1,4 +1,5 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de PointLight >>>>>>>>>>>>>>>>>>>>>>
 #include "Light.h"
 
 class PointLight :
@@ -7,13 +8,13 @@ class PointLight :
 public:
 	PointLight();
 	PointLight(GLfloat red, GLfloat green, GLfloat blue,
-		GLfloat aIntensity, GLfloat dIntensity,
-		GLfloat xPos, GLfloat yPos, GLfloat zPos,
+		GLfloat a_intensity, GLfloat d_intensity,
+		GLfloat x_pos, GLfloat y_pos, GLfloat z_pos,
 		GLfloat con, GLfloat lin, GLfloat exp);
 
-	void UseLight(GLfloat ambientIntensityLocation, GLfloat ambientcolorLocation,
-		GLfloat diffuseIntensityLocation, GLfloat positionLocation,
-		GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentLocation);
+	void UseLight(GLfloat ambient_intensity_location, GLfloat ambientcolor_location,
+		GLfloat diffuse_intensity_location, GLfloat position_location,
+		GLfloat constant_location, GLfloat linear_location, GLfloat exponent_location);
 
 	~PointLight();
 

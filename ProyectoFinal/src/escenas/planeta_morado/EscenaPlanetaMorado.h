@@ -1,13 +1,14 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de EscenaPlanetaMorado >>>>>>>>>>>>>>>>>>>>>>
 /*
  * EscenaPlanetaMorado.h — Planeta Morado
  * Plataforma de lanzamiento Neptuno y cohete, módulos de Subnautica, corales y arbusto bulbo.
  *
  * Archivos de esta escena:
- *   código   -> src/escenas/planeta_morado/   (aquí se pueden agregar más .cpp/.h)
+ *   código   -> src/escenas/planeta_morado/   
  *   modelos  -> assets/planeta_morado/modelos/
  *   texturas -> assets/planeta_morado/texturas/
- *   skybox   -> assets/planeta_morado/skybox/
+ *   skybox   -> assets/planeta_morado/texturas/skybox/
  */
 #include "Escena.h"
 
@@ -20,5 +21,5 @@ public:
 	void Dibujar(const ContextoRender& ctx) override;
 
 private:
-	// Aquí van los modelos, texturas y variables de animación de la escena
+	// Recursos y estado de la escena.
 };

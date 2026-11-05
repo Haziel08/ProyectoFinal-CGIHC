@@ -1,0 +1,43 @@
+newmtl suelo_naranja
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+illum 2
+map_Kd ../texturas/suelo_naranja.jpg
+
+newmtl crater_luna
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+illum 2
+map_Kd ../texturas/crater_luna.png
+map_d ../texturas/crater_luna.png
+
+newmtl roca_piso_1
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+illum 2
+map_Kd ../texturas/roca_piso_1.png
+map_d ../texturas/roca_piso_1.png
+
+newmtl roca_piso_2
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+illum 2
+map_Kd ../texturas/roca_piso_2.png
+map_d ../texturas/roca_piso_2.png
+
+newmtl roca_piso_3
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+illum 2
+map_Kd ../texturas/roca_piso_3.png
+map_d ../texturas/roca_piso_3.png

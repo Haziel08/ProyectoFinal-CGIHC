@@ -49,7 +49,7 @@ void Agua::Dibujar(const ContextoRender& ctx, float tiempo, const DatosLuz& luz)
 	shader.SetMat4("model", glm::mat4(1.0f));
 	shader.SetMat4("view", ctx.vista);
 	shader.SetMat4("projection", ctx.proyeccion);
-	shader.SetVec3("posCamara", ctx.posCamara);
+	shader.SetVec3("posCamara", ctx.pos_camara);
 
 	// Movimiento
 	shader.SetFloat("tiempo", tiempo);

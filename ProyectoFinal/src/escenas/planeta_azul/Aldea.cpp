@@ -18,9 +18,8 @@ static const PuntoAldea posChozas[4] = {
 	{  18.4f, -18.4f, 315.0f },
 };
 
-// Antorchas: las 3 primeras tienen luz; las otras 2 marcan la entrada (solo llama)
+// Antorchas: 3 alrededor de la fogata y 2 en la entrada de la aldea (todas con luz)
 static const int numAntorchas = 5;
-static const int antorchasConLuz = 3;
 static const PuntoAldea posAntorchas[numAntorchas] = {
 	{  13.0f,   0.0f, 0.0f },
 	{  -6.5f,  11.3f, 0.0f },
@@ -72,7 +71,7 @@ void Aldea::Actualizar(float tiempo, bool esDeNoche, Window& ventana)
 	antorchasEncendidas = esDeNoche;
 	if (antorchasEncendidas)
 	{
-		for (int i = 0; i < antorchasConLuz; i++)
+		for (int i = 0; i < numAntorchas; i++)
 		{
 			glm::vec3 p = SobreElSuelo(centro.x + posAntorchas[i].x, centro.y + posAntorchas[i].z)
 				+ glm::vec3(0.0f, altoAntorcha, 0.0f);
@@ -88,7 +87,7 @@ void Aldea::Actualizar(float tiempo, bool esDeNoche, Window& ventana)
 void Aldea::Dibujar(const ContextoRender& ctx)
 {
 	glm::vec3 blanco(1.0f);
-	glUniform3fv(ctx.uColor, 1, glm::value_ptr(blanco));
+	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
 
 	// --- Chozas ---
 	Model* chozas[4] = { &ChozaMuu_M, &ChozaMantah_M, &ChozaKrakee_M, &ChozaAntuk_M };
@@ -98,7 +97,7 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 		model = glm::translate(model, SobreElSuelo(centro.x + posChozas[i].x, centro.y + posChozas[i].z)
 			- glm::vec3(0.0f, 0.3f, 0.0f));                     // un poco enterrada por si hay desnivel
 		model = glm::rotate(model, glm::radians(posChozas[i].giro), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(ctx.uModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 		chozas[i]->RenderModel();
 	}
 
@@ -107,14 +106,14 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 	{
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, SobreElSuelo(centro.x + posAntorchas[i].x, centro.y + posAntorchas[i].z));
-		glUniformMatrix4fv(ctx.uModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 		Antorcha_M.RenderModel();
 	}
 
 	// --- Fogata ---
 	glm::mat4 model(1.0f);
 	model = glm::translate(model, SobreElSuelo(centro.x, centro.y));
-	glUniformMatrix4fv(ctx.uModel, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	Fogata_M.RenderModel();
 }
 

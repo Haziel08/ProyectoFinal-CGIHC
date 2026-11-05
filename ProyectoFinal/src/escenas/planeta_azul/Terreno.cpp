@@ -104,9 +104,9 @@ void Terreno::Dibujar(const ContextoRender& ctx)
 {
 	glm::mat4 model(1.0f);                        // el terreno ya esta en coordenadas del mundo
 	glm::vec3 blanco(1.0f);
-	glUniformMatrix4fv(ctx.uModel, 1, GL_FALSE, glm::value_ptr(model));
-	glUniform3fv(ctx.uColor, 1, glm::value_ptr(blanco));
-	materialSuelo.UseMaterial(ctx.uSpecularIntensity, ctx.uShininess);
+	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
+	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
+	materialSuelo.UseMaterial(ctx.u_specular_intensity, ctx.u_shininess);
 
 	texturaPasto.UseTexture();
 	tierra->RenderMeshModel();

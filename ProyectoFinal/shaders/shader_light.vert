@@ -1,14 +1,15 @@
 #version 330
+//>>>>>>>>>>>>>>>>>>>>>> Entradas y uniforms >>>>>>>>>>>>>>>>>>>>>>>>>
 
 layout (location = 0) in vec3 pos;
 layout (location = 1) in vec2 tex;
 layout (location = 2) in vec3 norm;
 
-out vec4 vCol;
-out vec2 TexCoord;
-out vec3 Normal;
-out vec3 FragPos;
-out vec4 vColor;
+out vec4 v_col;
+out vec2 tex_coord;
+out vec3 normal;
+out vec3 frag_pos;
+out vec4 v_color;
 
 uniform mat4 model;
 uniform mat4 projection;
@@ -16,14 +17,15 @@ uniform mat4 view;
 uniform vec3 color;
 
 
+//>>>>>>>>>>>>>>>>>>>>>> Funcion principal del shader >>>>>>>>>>>>>>>>
 void main()
 {
 	gl_Position = projection * view * model * vec4(pos, 1.0);
-	vCol = vec4(0.0, 1.0, 0.0, 1.0f);
-	vColor=vec4(color,1.0f);
-	TexCoord = tex;
+	v_col = vec4(0.0, 1.0, 0.0, 1.0f);
+	v_color=vec4(color,1.0f);
+	tex_coord = tex;
 	//para tomar las Transformaciones geométricas y la transpuesta es para que las escalas se inviertan en caso de escalas no uniformes en las normales
-	Normal = mat3(transpose(inverse(model))) * norm;
+	normal = mat3(transpose(inverse(model))) * norm;
 	
-	FragPos = (model * vec4(pos, 1.0)).xyz; //para obtener un vec3 sólo posición con respecto al origen en orden xyz: Swizzling 
+	frag_pos = (model * vec4(pos, 1.0)).xyz; //para obtener un vec3 sólo posición con respecto al origen en orden xyz: Swizzling 
 }

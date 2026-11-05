@@ -15,7 +15,7 @@
  *   código   -> src/escenas/planeta_azul/
  *   modelos  -> assets/planeta_azul/modelos/
  *   texturas -> assets/planeta_azul/texturas/
- *   skybox   -> assets/planeta_azul/skybox/dia/  y  skybox/noche/
+ *   skybox   -> assets/planeta_azul/texturas/skybox/dia/  y  .../skybox/noche/
  */
 #include "Escena.h"
 #include "CicloDiaNoche.h"

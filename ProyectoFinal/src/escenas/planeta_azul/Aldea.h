@@ -2,9 +2,8 @@
 // Aldea: chozas tribales alrededor de una fogata, con antorchas.
 //   - La fogata se prende y apaga con la tecla F.
 //   - Las antorchas se prenden solas de noche (ciclo de dia y noche).
-//   - Las luces puntuales van en un arreglo, como en las practicas.
-//     OJO: el shader acepta maximo MAX_POINT_LIGHTS = 4 luces puntuales
-//     (fogata + 3 antorchas). Las demas antorchas solo tienen su llama.
+//   - Las luces puntuales van en un arreglo, como en las practicas
+//     (el shader acepta hasta max_point_lights = 16).
 // Modelos: Wooden Torch y Bonfire de Quaternius (CC0), Stylized Tribal Hut.
 #include "Escena.h"
 #include "Model.h"
@@ -22,7 +21,7 @@ public:
 	void DibujarLlamas(const ContextoRender& ctx, float tiempo);   // fuego (al final, es transparente)
 
 	// Luces puntuales encendidas en este momento (las usa main.cpp)
-	PointLight luces[MAX_POINT_LIGHTS];
+	PointLight luces[max_point_lights];
 	unsigned int numLuces = 0;
 
 	bool fogataEncendida = true;

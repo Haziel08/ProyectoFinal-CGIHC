@@ -1,0 +1,19 @@
+newmtl concreto
+Kd 1 1 1
+Ks 0.08 0.08 0.08
+Ns 8
+illum 2
+map_Kd ../texturas/concreto_grietas.png
+
+newmtl metal
+Kd 0.15 0.18 0.2
+Ks 0.65 0.65 0.65
+Ns 80
+illum 2
+
+newmtl cristal
+Kd 1 1 1
+Ks 1 1 1
+Ns 180
+illum 2
+map_Kd ../texturas/cristal_faro.png

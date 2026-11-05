@@ -1,3 +1,4 @@
+//>>>>>>>>>>>>>>>>>>>>>> Model >>>>>>>>>>>>>>>>>>>>>>
 #include "Model.h"
 #include <unordered_map>
 #include <fstream>
@@ -22,59 +23,84 @@ Model::Model()
 {
 }
 
-void Model::LoadModel(const std::string & fileName, bool aplicarTransformaciones)
+void Model::LoadModel(const std::string & file_name, bool aplicar_transformaciones, bool invertir_normales)
 {
+	normales_geometricas = !invertir_normales;
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
-		| (aplicarTransformaciones ? aiProcess_PreTransformVertices : 0));
+	const aiScene *scene = importer.ReadFile(file_name, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
+		| (aplicar_transformaciones ? aiProcess_PreTransformVertices : 0));
 	if (!scene)
 	{	
-		printf("Falló en cargar el modelo: %s (%s)\n", fileName.c_str(), importer.GetErrorString());
+		printf("Falló en cargar el modelo: %s (%s)\n", file_name.c_str(), importer.GetErrorString());
 		return;
 	}
-	carpetaModelo = CarpetaDe(fileName);
+	carpeta_modelo = CarpetaDe(file_name);
 	LoadNode(scene->mRootNode, scene);
 	LoadMaterials(scene);
 	}
 
 void Model::ClearModel()
 {
-	for (unsigned int i = 0; i < MeshList.size(); i++)
+	for (unsigned int i = 0; i < mesh_list.size(); i++)
 	{
-		if (MeshList[i])
+		if (mesh_list[i])
 		{
-			delete MeshList[i];
-			MeshList[i] = nullptr;
+			delete mesh_list[i];
+			mesh_list[i] = nullptr;
 
 		}
 	}
 
 	std::unordered_set<Texture*> liberadas;
-	for (unsigned int i = 0; i < TextureList.size(); i++)
+	for (unsigned int i = 0; i < texture_list.size(); i++)
 	{
-		if (TextureList[i])
+		if (texture_list[i])
 		{
-			if (liberadas.insert(TextureList[i]).second) delete TextureList[i];
-			TextureList[i] = nullptr;
+			if (liberadas.insert(texture_list[i]).second) delete texture_list[i];
+			texture_list[i] = nullptr;
 		}
 	}
 
 }
 
-void Model::RenderModel()
+void Model::RenderModel(bool aplicar_materiales, GLint specular_location, GLint shininess_location)
 {
-	for (unsigned int i = 0; i < MeshList.size(); i++)
+	GLint programa_material = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &programa_material);
+	GLint uniform_emision = glGetUniformLocation(programa_material, "emision_material");
+	GLint programa = 0;
+	GLint uniform_normales = -1;
+	if (normales_geometricas)
 	{
-		unsigned int materialIndex = meshTotex[i];
-		if (materialIndex < TextureList.size() && TextureList[materialIndex])
+		glGetIntegerv(GL_CURRENT_PROGRAM, &programa);
+		uniform_normales = glGetUniformLocation(programa, "normales_geometricas");
+		glUniform1i(uniform_normales, 1);
+	}
+	for (unsigned int i = 0; i < mesh_list.size(); i++)
+	{
+		unsigned int material_index = mesh_to_texture[i];
+		glUniform1f(uniform_emision, emision_material[material_index]);
+		if (aplicar_materiales && material_index < intensidad_especular.size())
 		{
-			TextureList[materialIndex]->UseTexture();
+			glUniform1f(specular_location, intensidad_especular[material_index]);
+			glUniform1f(shininess_location, brillo_material[material_index]);
 		}
-		MeshList[i]->RenderMeshModel();
+		if (material_index < texture_list.size() && texture_list[material_index])
+		{
+			texture_list[material_index]->UseTexture();
+		}
+		// Desplazamiento de profundidad para imagenes superpuestas con mascara alfa.
+		if (separar_superficie[material_index])
+		{
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(-2.0f, -8.0f);
+		}
+		mesh_list[i]->RenderMeshModel();
+		if (separar_superficie[material_index]) glDisable(GL_POLYGON_OFFSET_FILL);
 
 	}
-
-
+	if (normales_geometricas) glUniform1i(uniform_normales, 0);
+	glUniform1f(uniform_emision, 0.0f);
 }
 
 
@@ -113,7 +139,8 @@ void Model::LoadMesh(aiMesh * mesh, const aiScene * scene)
 		}
 		// Normales invertidas para la convencion del shader de iluminacion.
 		
-		vertices.insert(vertices.end(), { -mesh->mNormals[i].x,-mesh->mNormals[i].y ,-mesh->mNormals[i].z });
+		float signo = normales_geometricas ? 1.0f : -1.0f;
+		vertices.insert(vertices.end(), { signo * mesh->mNormals[i].x, signo * mesh->mNormals[i].y, signo * mesh->mNormals[i].z });
 	}
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
@@ -124,31 +151,45 @@ void Model::LoadMesh(aiMesh * mesh, const aiScene * scene)
 		}
 	}
 
-	MeshModel* newMesh = new MeshModel();
-	newMesh->CreateMeshModel(&vertices[0], &indices[0], vertices.size(), indices.size());
-	MeshList.push_back(newMesh);
-	meshTotex.push_back(mesh->mMaterialIndex);
+	MeshModel* new_mesh = new MeshModel();
+	new_mesh->CreateMeshModel(&vertices[0], &indices[0], vertices.size(), indices.size());
+	mesh_list.push_back(new_mesh);
+	mesh_to_texture.push_back(mesh->mMaterialIndex);
 }
 
 void Model::LoadMaterials(const aiScene * scene)
 {
-	std::unordered_map<std::string, Texture*> loadedTextures; // Mapa para evitar duplicados
-	TextureList.resize(scene->mNumMaterials);
+	std::unordered_map<std::string, Texture*> loaded_textures; // Mapa para evitar duplicados
+	texture_list.resize(scene->mNumMaterials);
+	intensidad_especular.resize(scene->mNumMaterials, 0.25f);
+	brillo_material.resize(scene->mNumMaterials, 32.0f);
+	separar_superficie.resize(scene->mNumMaterials, false);
+	emision_material.resize(scene->mNumMaterials, 0.0f);
 	for (unsigned int i = 0; i < scene ->mNumMaterials; i++)
 	{
 		aiMaterial* material = scene->mMaterials[i];
-		TextureList[i] = nullptr;
+		aiString nombre_material;
+		material->Get(AI_MATKEY_NAME, nombre_material);
+		if (std::string(nombre_material.C_Str()) == "cristal") emision_material[i] = 0.8f;
+		if (std::string(nombre_material.C_Str()) == "borde_rojo") emision_material[i] = 1.6f;
+		if (std::string(nombre_material.C_Str()) == "borde_blanco") emision_material[i] = 1.25f;
+		aiColor3D especular(0.25f, 0.25f, 0.25f);
+		material->Get(AI_MATKEY_COLOR_SPECULAR, especular);
+		intensidad_especular[i] = (especular.r + especular.g + especular.b) / 3.0f;
+		material->Get(AI_MATKEY_SHININESS, brillo_material[i]);
+		separar_superficie[i] = material->GetTextureCount(aiTextureType_OPACITY) > 0;
+		texture_list[i] = nullptr;
 		// GLB: imágenes empacadas en el propio modelo, sin reconstruir sus piezas.
-		aiString embeddedPath;
-		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &embeddedPath) == AI_SUCCESS)
+		aiString embedded_path;
+		if (material->GetTexture(aiTextureType_DIFFUSE, 0, &embedded_path) == AI_SUCCESS)
 		{
-			const aiTexture* embedded = scene->GetEmbeddedTexture(embeddedPath.C_Str());
+			const aiTexture* embedded = scene->GetEmbeddedTexture(embedded_path.C_Str());
 			if (embedded && embedded->mHeight == 0)
 			{
 				Texture* tex = new Texture();
 				if (tex->LoadMemory(reinterpret_cast<const unsigned char*>(embedded->pcData), static_cast<int>(embedded->mWidth)))
 				{
-					TextureList[i] = tex;
+					texture_list[i] = tex;
 					continue;
 				}
 				delete tex;
@@ -165,50 +206,50 @@ void Model::LoadMaterials(const aiScene * scene)
 				std::string filename = (idx == std::string::npos) ? original : original.substr(idx + 1);
 
 				// Se busca la textura: 1) junto al .obj  2) en la carpeta ../texturas/ de la escena
-				std::string texPath = carpetaModelo + filename;
-				if (!ExisteArchivo(texPath))
-					texPath = carpetaModelo + "../texturas/" + filename;
+				std::string tex_path = carpeta_modelo + filename;
+				if (!ExisteArchivo(tex_path))
+					tex_path = carpeta_modelo + "../texturas/" + filename;
 				// Verifica si ya se cargó esta textura antes
-				auto it = loadedTextures.find(texPath);
-				if (it != loadedTextures.end())
+				auto it = loaded_textures.find(tex_path);
+				if (it != loaded_textures.end())
 				{
-					TextureList[i] = it->second; // Reutiliza la textura ya cargada
+					texture_list[i] = it->second; // Reutiliza la textura ya cargada
 				}
 				else
 				{
-					Texture* newTex = new Texture(texPath.c_str());
+					Texture* new_tex = new Texture(tex_path.c_str());
 					std::string ext = filename.substr(filename.find_last_of('.') + 1);
 
 					bool loaded = false;
 					if (ext == "tga" || ext=="png")
 					{
-						loaded = newTex->LoadTextureA();
+						loaded = new_tex->LoadTextureA();
 					}
 					else
 					{
-						loaded = newTex->LoadTexture();
+						loaded = new_tex->LoadTexture();
 					}
 
 					if (loaded)
 					{
-						TextureList[i] = newTex;
-						loadedTextures[texPath] = newTex; // Almacena para reutilizarla
+						texture_list[i] = new_tex;
+						loaded_textures[tex_path] = new_tex; // Almacena para reutilizarla
 					}
 					else
 					{
-						printf("Falló en cargar la Textura :%s\n", texPath.c_str());
-						delete newTex;
+						printf("Falló en cargar la Textura :%s\n", tex_path.c_str());
+						delete new_tex;
 					}
 				}
 			}
 		}
 		//Si no se pudo cargar la textura o no tiene una textura asignada, asignar una textura por defecto
-		if (!TextureList[i])
+		if (!texture_list[i])
 		{
 			aiColor3D diffuse(1.0f, 1.0f, 1.0f);
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
-			TextureList[i] = new Texture();
-			TextureList[i]->LoadColor(diffuse.r, diffuse.g, diffuse.b);
+			texture_list[i] = new Texture();
+			texture_list[i]->LoadColor(diffuse.r, diffuse.g, diffuse.b);
 		}
 
 	}

@@ -5,9 +5,9 @@ void EscenaPlanetaAzul::Inicializar()
 	// --- Skybox de dia y de noche ---
 	// Se cargan sin voltear (otras escenas pueden dejar activado el volteo de stb)
 	stbi_set_flip_vertically_on_load(false);
-	CargarSkybox("assets/planeta_azul/skybox/noche/");
+	CargarSkybox("assets/planeta_azul/texturas/skybox/noche/");
 	skyboxNoche = skybox;
-	CargarSkybox("assets/planeta_azul/skybox/dia/");
+	CargarSkybox("assets/planeta_azul/texturas/skybox/dia/");
 	skyboxDia = skybox;
 
 	// --- Camara: empieza en la orilla mirando hacia +Z (hacia el sol y el lago) ---

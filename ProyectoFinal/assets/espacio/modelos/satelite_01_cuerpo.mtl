@@ -1,0 +1,719 @@
+newmtl orbital_1_Material
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_Material.001
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_Material.002
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_Material.003
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_Material.004
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.001
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.002
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.003
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.004
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.005
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.006
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.007
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.008
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.009
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.010
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.011
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.012
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.013
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.014
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.015
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.016
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.017
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.018
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.019
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.020
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.021
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.022
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.023
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.024
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.025
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.026
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.027
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.028
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_connectors.029
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_foil_covered_cylinder
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.001
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.002
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.003
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.004
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.005
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.006
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.007
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.008
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.009
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.010
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.011
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.012
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.013
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.014
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.015
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.016
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.017
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.018
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.019
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.020
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.021
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.022
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_foil_covered_cylinder.023
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_aislante.png
+
+newmtl orbital_1_main_body
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_main_body.001
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_main_body.002
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_main_body.003
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_main_body.004
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_main_body.005
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_main_body.006
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_solar_panael_base
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_solar_panael_base.001
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_solar_panael_base.002
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_solar_panael_base.003
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_thrusters
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png
+
+newmtl orbital_1_thrusters.001
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_01_cuerpo.png

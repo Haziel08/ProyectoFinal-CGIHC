@@ -8,22 +8,22 @@ class Window
 {
 public:
 	Window();
-	Window(GLint windowWidth, GLint windowHeight);
+	Window(GLint window_width, GLint window_height);
 	int Initialise(const char* titulo = "Proyecto Final CGeIHC");
 
 	// Buffers y estado de la ventana
-	GLfloat getBufferWidth() { return (GLfloat)bufferWidth; }
-	GLfloat getBufferHeight() { return (GLfloat)bufferHeight; }
-	bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
-	void swapBuffers() { glfwSwapBuffers(mainWindow); }
-	void setTitulo(const char* titulo) { glfwSetWindowTitle(mainWindow, titulo); }
+	GLfloat getBufferWidth() { return (GLfloat)buffer_width; }
+	GLfloat getBufferHeight() { return (GLfloat)buffer_height; }
+	bool getShouldClose() { return glfwWindowShouldClose(main_window); }
+	void swapBuffers() { glfwSwapBuffers(main_window); }
+	void setTitulo(const char* titulo) { glfwSetWindowTitle(main_window, titulo); }
 
     //>>>>>>>>>>>>>>>>>>>>>> Estados de la escena >>>>>>>>>>>>>>>>>>>>>>>
-    int getEscenaActiva() const { return escenaActiva; }
-    bool getLuzNaveEncendida() const { return luzNaveEncendida; }
-    bool getMotor1Encendido() const { return motor1Encendido; }
-    bool getMotor2Encendido() const { return motor2Encendido; }
-    bool getVistaGeneralSolicitada() const { return vistaGeneralSolicitada; }
+    int getEscenaActiva() const { return escena_activa; }
+    bool getLuzNaveEncendida() const { return luz_nave_encendida; }
+    bool getMotor1Encendido() const { return motor1_encendido; }
+    bool getMotor2Encendido() const { return motor2_encendido; }
+    bool getVistaGeneralSolicitada() const { return vista_general_solicitada; }
 
 	// Teclado
 	bool* getsKeys() { return keys; }               // usado por Camera::keyControl
@@ -39,27 +39,27 @@ public:
 
 private:
     //>>>>>>>>>>>>>>>>>>>>>> Variables de entrada >>>>>>>>>>>>>>>>>>>>>>>
-    int escenaActiva;
-    bool luzNaveEncendida;
-    bool motor1Encendido;
-    bool motor2Encendido;
-    bool vistaGeneralSolicitada;
+    int escena_activa;
+    bool luz_nave_encendida;
+    bool motor1_encendido;
+    bool motor2_encendido;
+    bool vista_general_solicitada;
 
-	GLFWwindow* mainWindow;
+	GLFWwindow* main_window;
 	GLint width, height;
-	GLint bufferWidth, bufferHeight;
+	GLint buffer_width, buffer_height;
 
 	bool keys[1024];          // tecla abajo
-	bool keysPressed[1024];   // tecla presionada en este frame
+	bool keys_pressed[1024];   // tecla presionada en este frame
 
-	GLfloat lastX;
-	GLfloat lastY;
-	GLfloat xChange;
-	GLfloat yChange;
-	bool mouseFirstMoved;
+	GLfloat last_x;
+	GLfloat last_y;
+	GLfloat x_change;
+	GLfloat y_change;
+	bool mouse_first_moved;
 
 	void createCallbacks();
 	static void ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode);
-	static void ManejaMouse(GLFWwindow* window, double xPos, double yPos);
+	static void ManejaMouse(GLFWwindow* window, double x_pos, double y_pos);
 	static void ManejaResize(GLFWwindow* window, int w, int h);
 };
