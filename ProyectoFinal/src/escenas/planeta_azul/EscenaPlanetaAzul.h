@@ -12,6 +12,9 @@
  *   Fuego          -> llamas animadas (shader_animado, el mismo del agua)
  *   Peces          -> Air fish y Peepers nadando en el lago
  *   Necromorfos    -> NPCs con animacion esqueletal (caminan; bailan con la fogata)
+ *   Stalker        -> AVATAR jerarquico que nada en el lago (aletas y boca)
+ *   Pidgeys        -> aves jerarquicas volando en el cielo (aletean)
+ *   Reaper         -> leviatan jerarquico; tecla G: salta y se come un Pidgey
  *
  * Archivos:
  *   código   -> src/escenas/planeta_azul/
@@ -27,6 +30,9 @@
 #include "Aldea.h"
 #include "Peces.h"
 #include "Necromorfos.h"
+#include "Stalker.h"
+#include "Pidgeys.h"
+#include "Reaper.h"
 
 class EscenaPlanetaAzul : public Escena
 {
@@ -56,6 +62,9 @@ private:
 	Aldea aldea;
 	Peces peces;
 	Necromorfos necromorfos;
+	Stalker stalker;             // avatar
+	Pidgeys pidgeys;
+	Reaper reaper;
 	Agua agua;
 	float nivelAgua = -1.0f;      // altura de la superficie del lago
 

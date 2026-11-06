@@ -1,0 +1,12 @@
+newmtl Body00
+Kd 1 1 1
+Ks 0.25 0.25 0.25
+Ns 16
+map_Kd Pidgey.jpg
+
+newmtl Eye
+Kd 1 1 1
+Ks 0.25 0.25 0.25
+Ns 16
+map_Kd Pidgey_Ojo.jpg
+

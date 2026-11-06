@@ -22,6 +22,9 @@ void EscenaPlanetaAzul::Inicializar()
 	aldea.Crear(terreno);
 	peces.Crear();
 	necromorfos.Crear(terreno, aldea);
+	stalker.Crear();
+	pidgeys.Crear();
+	reaper.Crear();
 
 	luzSol = ciclo.LuzDireccional();
 
@@ -46,6 +49,11 @@ void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 	// Necromorfos: caminan, y bailan mientras la fogata este prendida
 	necromorfos.Actualizar(dt, aldea.fogataEncendida);
 
+	// Avatar nadando, aves volando, y el Reaper (tecla G: salta por un Pidgey)
+	stalker.Actualizar(dt);
+	pidgeys.Actualizar(dt);
+	reaper.Actualizar(dt, ventana, pidgeys);
+
 	// Aquí van las animaciones y las teclas propias de la escena
 }
 
@@ -55,6 +63,9 @@ void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 	terreno.Dibujar(ctx);
 	aldea.Dibujar(ctx);
 	peces.Dibujar(ctx);          // bajo el agua: se dibujan antes que el agua
+	stalker.Dibujar(ctx);
+	reaper.Dibujar(ctx);
+	pidgeys.Dibujar(ctx);
 
 	// Aquí se dibujan los modelos (chozas, criaturas, cosas bajo el agua...)
 
