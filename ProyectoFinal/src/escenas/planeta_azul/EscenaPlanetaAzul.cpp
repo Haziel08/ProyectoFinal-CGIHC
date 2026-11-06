@@ -20,6 +20,8 @@ void EscenaPlanetaAzul::Inicializar()
 
 	vegetacion.Crear(terreno);
 	aldea.Crear(terreno);
+	peces.Crear();
+	necromorfos.Crear(terreno, aldea.centro);
 
 	luzSol = ciclo.LuzDireccional();
 
@@ -38,6 +40,12 @@ void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 	// Aldea: tecla F para la fogata y antorchas que se prenden de noche
 	aldea.Actualizar(tiempo, ciclo.EsDeNoche(), ventana);
 
+	// Peces nadando
+	peces.Actualizar(dt);
+
+	// Necromorfos: caminan, y bailan mientras la fogata este prendida
+	necromorfos.Actualizar(dt, aldea.fogataEncendida);
+
 	// Aquí van las animaciones y las teclas propias de la escena
 }
 
@@ -46,11 +54,13 @@ void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 	// 1) Todo lo opaco primero
 	terreno.Dibujar(ctx);
 	aldea.Dibujar(ctx);
+	peces.Dibujar(ctx);          // bajo el agua: se dibujan antes que el agua
 
 	// Aquí se dibujan los modelos (chozas, criaturas, cosas bajo el agua...)
 
 	// 2) Plantas y rocas (usa su propio shader y luego regresa al de main)
 	vegetacion.Dibujar(ctx, &luzSol, aldea.luces, aldea.numLuces);
+	necromorfos.Dibujar(ctx, &luzSol, aldea.luces, aldea.numLuces);   // shader del esqueleto
 
 	// 3) El agua siempre al final (es transparente)
 	agua.Dibujar(ctx, tiempo, ciclo.Luz());

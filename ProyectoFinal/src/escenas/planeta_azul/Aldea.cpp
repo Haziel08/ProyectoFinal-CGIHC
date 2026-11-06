@@ -10,22 +10,27 @@ struct PuntoAldea
 	float x, z, giro;
 };
 
-// Chozas en circulo (radio 26), mirando hacia la fogata
-static const PuntoAldea posChozas[4] = {
+// Chozas mirando hacia la fogata: 4 cerca (radio 26) y 3 mas lejos (radio 40).
+// La entrada de la aldea queda libre del lado +X.
+static const int numChozas = 7;
+static const PuntoAldea posChozas[numChozas] = {
 	{  18.4f,  18.4f, 225.0f },
 	{ -18.4f,  18.4f, 135.0f },
 	{ -18.4f, -18.4f,  45.0f },
 	{  18.4f, -18.4f, 315.0f },
+	{   0.0f,  40.0f, 180.0f },
+	{ -40.0f,   0.0f,  90.0f },
+	{   0.0f, -40.0f,   0.0f },
 };
 
-// Antorchas: 3 alrededor de la fogata y 2 en la entrada de la aldea (todas con luz)
-static const int numAntorchas = 5;
+// Antorchas (todas con luz de noche):
+//   3 junto a la fogata, 2 en la entrada y 8 en un circulo de radio 33
+static const int numAntorchas = 13;
 static const PuntoAldea posAntorchas[numAntorchas] = {
-	{  13.0f,   0.0f, 0.0f },
-	{  -6.5f,  11.3f, 0.0f },
-	{  -6.5f, -11.3f, 0.0f },
-	{  40.0f,  -8.0f, 0.0f },
-	{  40.0f,   8.0f, 0.0f },
+	{  13.0f,   0.0f, 0.0f }, {  -6.5f,  11.3f, 0.0f }, {  -6.5f, -11.3f, 0.0f },
+	{  40.0f,  -8.0f, 0.0f }, {  40.0f,   8.0f, 0.0f },
+	{  30.5f,  12.6f, 0.0f }, {  12.6f,  30.5f, 0.0f }, { -12.6f,  30.5f, 0.0f }, { -30.5f,  12.6f, 0.0f },
+	{ -30.5f, -12.6f, 0.0f }, { -12.6f, -30.5f, 0.0f }, {  12.6f, -30.5f, 0.0f }, {  30.5f, -12.6f, 0.0f },
 };
 
 static const float altoAntorcha = 3.4f;   // donde empieza la llama (punta de la antorcha)
@@ -71,7 +76,7 @@ void Aldea::Actualizar(float tiempo, bool esDeNoche, Window& ventana)
 	antorchasEncendidas = esDeNoche;
 	if (antorchasEncendidas)
 	{
-		for (int i = 0; i < numAntorchas; i++)
+		for (int i = 0; i < numAntorchas && numLuces < max_point_lights; i++)
 		{
 			glm::vec3 p = SobreElSuelo(centro.x + posAntorchas[i].x, centro.y + posAntorchas[i].z)
 				+ glm::vec3(0.0f, altoAntorcha, 0.0f);
@@ -91,14 +96,14 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 
 	// --- Chozas ---
 	Model* chozas[4] = { &ChozaMuu_M, &ChozaMantah_M, &ChozaKrakee_M, &ChozaAntuk_M };
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < numChozas; i++)
 	{
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, SobreElSuelo(centro.x + posChozas[i].x, centro.y + posChozas[i].z)
 			- glm::vec3(0.0f, 0.3f, 0.0f));                     // un poco enterrada por si hay desnivel
 		model = glm::rotate(model, glm::radians(posChozas[i].giro), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
-		chozas[i]->RenderModel();
+		chozas[i % 4]->RenderModel();      // se repiten los 4 modelos de choza
 	}
 
 	// --- Antorchas ---

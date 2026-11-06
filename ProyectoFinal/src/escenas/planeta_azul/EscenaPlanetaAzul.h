@@ -10,6 +10,8 @@
  *   Vegetacion     -> arboles, pasto, flores y rocas (deja zonas libres)
  *   Aldea          -> chozas, antorchas y fogata (tecla F) con luces puntuales
  *   Fuego          -> llamas animadas (shader_animado, el mismo del agua)
+ *   Peces          -> Air fish y Peepers nadando en el lago
+ *   Necromorfos    -> NPCs con animacion esqueletal (caminan; bailan con la fogata)
  *
  * Archivos:
  *   código   -> src/escenas/planeta_azul/
@@ -23,6 +25,8 @@
 #include "Agua.h"
 #include "Vegetacion.h"
 #include "Aldea.h"
+#include "Peces.h"
+#include "Necromorfos.h"
 
 class EscenaPlanetaAzul : public Escena
 {
@@ -50,6 +54,8 @@ private:
 	Terreno terreno;
 	Vegetacion vegetacion;
 	Aldea aldea;
+	Peces peces;
+	Necromorfos necromorfos;
 	Agua agua;
 	float nivelAgua = -1.0f;      // altura de la superficie del lago
 

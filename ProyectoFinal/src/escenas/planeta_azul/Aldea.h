@@ -1,5 +1,5 @@
 #pragma once
-// Aldea: chozas tribales alrededor de una fogata, con antorchas.
+// Aldea: 7 chozas tribales alrededor de una fogata, con 13 antorchas.
 //   - La fogata se prende y apaga con la tecla F.
 //   - Las antorchas se prenden solas de noche (ciclo de dia y noche).
 //   - Las luces puntuales van en un arreglo, como en las practicas
@@ -24,7 +24,7 @@ public:
 	PointLight luces[max_point_lights];
 	unsigned int numLuces = 0;
 
-	bool fogataEncendida = true;
+	bool fogataEncendida = false;      // empieza apagada; se prende con F
 	bool antorchasEncendidas = false;   // las prende el ciclo de dia y noche
 
 private:

@@ -1,0 +1,98 @@
+#include "Necromorfos.h"
+
+#include <cmath>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
+static const float escalaMixamo = 0.01f;    // Mixamo trabaja en centimetros -> metros
+
+void Necromorfos::Crear(const Terreno& t, glm::vec2 centroFogata)
+{
+	terreno = &t;
+	fogata = centroFogata;
+
+	// Malla + esqueleto + caminata (animacion 0) y despues el baile (animacion 1)
+	necromorfo.Cargar("assets/planeta_azul/modelos/Necromorfo_Caminar.fbx", "assets/planeta_azul/texturas/Necromorfo.jpg");
+	animCaminar = 0;
+	animBailar = necromorfo.AgregarAnimacion("assets/planeta_azul/modelos/Necromorfo_Bailar.fbx");
+
+	shader.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
+
+	//            centro        radio  angulo  velocidad  baila
+	caminantes[0] = { fogata,                     8.0f, 0.0f,   0.25f, true  };
+	caminantes[1] = { fogata,                     8.0f, 3.14f,  0.25f, true  };
+	caminantes[2] = { glm::vec2(110.0f, -30.0f), 15.0f, 0.0f,   0.15f, false };
+	caminantes[3] = { glm::vec2(110.0f, -30.0f), 22.0f, 2.0f,  -0.12f, false };
+}
+
+void Necromorfos::Actualizar(float dt, bool fogataEncendida)
+{
+	tiempo += dt;
+	bailando = fogataEncendida;
+
+	for (int i = 0; i < numCaminantes; i++)
+	{
+		// Los de la aldea se quedan quietos mientras bailan
+		if (bailando && caminantes[i].bailaConFogata)
+			continue;
+		caminantes[i].angulo += caminantes[i].velocidad * dt;
+	}
+}
+
+void Necromorfos::DibujarUno(const Caminante& c, int animacion, float tiempoAnimacion, GLuint uModel)
+{
+	// Posicion en el circulo
+	float x = c.centro.x + c.radio * cosf(c.angulo);
+	float z = c.centro.y + c.radio * sinf(c.angulo);
+
+	float giro;
+	if (animacion == animBailar)
+	{
+		giro = atan2f(fogata.x - x, fogata.y - z);              // voltea hacia la fogata
+	}
+	else
+	{
+		// Direccion de avance = derivada del circulo (con el signo de la velocidad)
+		float s = (c.velocidad >= 0.0f) ? 1.0f : -1.0f;
+		giro = atan2f(-sinf(c.angulo) * s, cosf(c.angulo) * s);
+	}
+
+	glm::mat4 model(1.0f);
+	model = glm::translate(model, glm::vec3(x, terreno->Altura(x, z), z));
+	model = glm::rotate(model, giro, glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(escalaMixamo));
+	glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(model));
+
+	necromorfo.CalcularPose(animacion, tiempoAnimacion);
+	GLint programa = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &programa);
+	necromorfo.Dibujar((GLuint)programa);
+}
+
+void Necromorfos::Dibujar(const ContextoRender& ctx, DirectionalLight* luz, PointLight* luces, unsigned int numLuces)
+{
+	GLint shaderMain = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &shaderMain);
+
+	// Mismos uniforms que main.cpp manda al shader de luz
+	shader.UseShader();
+	glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(ctx.proyeccion));
+	glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(ctx.vista));
+	glUniform3f(shader.GetEyePositionLocation(), ctx.pos_camara.x, ctx.pos_camara.y, ctx.pos_camara.z);
+	shader.SetDirectionalLight(luz);
+	shader.SetPointLights(luces, numLuces);
+	shader.SetSpotLights(nullptr, 0);
+	glUniform3f(shader.getColorLocation(), 1.0f, 1.0f, 1.0f);
+	glUniform1f(shader.GetSpecularIntensityLocation(), 0.3f);
+	glUniform1f(shader.GetShininessLocation(), 16.0f);
+
+	for (int i = 0; i < numCaminantes; i++)
+	{
+		const Caminante& c = caminantes[i];
+		bool baila = bailando && c.bailaConFogata;
+		// Cada uno con un desfase en su animacion para que no se muevan identicos
+		DibujarUno(c, baila ? animBailar : animCaminar, tiempo + i * 0.4f, shader.GetModelLocation());
+	}
+
+	glUseProgram(shaderMain);
+}
