@@ -22,7 +22,7 @@ struct ContextoRender
 	GLuint u_specular_intensity = 0;
 	GLuint u_shininess = 0;
 
-	// Camara del frame (para escenas que usan otro shader, p. ej. agua y fuego)
+	// Camara del frame (para escenas que usan otro shader agua y fuego)
 	glm::mat4 vista = glm::mat4(1.0f);
 	glm::mat4 proyeccion = glm::mat4(1.0f);
 	glm::vec3 pos_camara = glm::vec3(0.0f);
@@ -64,7 +64,7 @@ public:
 	virtual float PlanoCercano() const { return 0.1f; }
 	virtual float AlcanceVista() const { return 3500.0f; }
 
-	// Luces propias de la escena (si no tiene, main.cpp usa las suyas)
+	// Luces propias de la escena
 	virtual DirectionalLight* ObtenerLuzDireccional() { return nullptr; }
 	virtual PointLight* ObtenerLucesPuntuales() { return nullptr; }
 	virtual unsigned int NumLucesPuntuales() { return 0; }

@@ -1,15 +1,5 @@
 #pragma once
-// Peces: Air fish y Peepers nadando dentro del lago (animacion compleja continua).
-//
-//   Air fish -> nadan en forma de "8" (curva de Lissajous):
-//                 x = cx + A * sen(t)        z = cz + B * sen(2t) / 2
-//   Peepers  -> nadan en circulo, en grupo (cardumen):
-//                 x = cx + R * cos(t)        z = cz + R * sen(t)
-//
-//   - El pez gira para mirar hacia donde avanza: giro = atan2(dx, dz),
-//     donde (dx, dz) es la derivada (la direccion del movimiento).
-//   - Sube y baja un poco con un seno, y mueve el cuerpo de lado a lado
-//     (coleteo) con otro seno mas rapido.
+// Peces Air fish y Peepers
 #include "Escena.h"
 #include "Model.h"
 

@@ -4,7 +4,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-// Articulaciones respecto a la cabeza (en metros)
+// Articulaciones respecto a la cabeza
 static const glm::vec3 pivBoca      ( 0.00f, -0.18f,  -0.68f);
 static const glm::vec3 pivTentSupIzq( 0.89f,  0.15f,  -0.39f);
 static const glm::vec3 pivTentSupDer(-0.89f,  0.13f,  -0.50f);
@@ -14,9 +14,9 @@ static const glm::vec3 pivAletaIzq  ( 0.43f, -0.87f,  -2.10f);
 static const glm::vec3 pivAletaDer  (-0.42f, -0.84f,  -2.20f);
 static const glm::vec3 pivCola      (-0.05f,  0.48f, -17.01f);
 
-static const float yBase = -10.0f;          // profundidad cuando nada (agua en y = -1)
+static const float yBase = -10.0f;          // profundidad cuando nada
 static const float duracionSalto = 3.5f;    // segundos
-static const float escala = 1.0f;           // el modelo ya mide ~21 m
+static const float escala = 1.0f;           // el modelo ya mide
 
 void Reaper::Crear()
 {
@@ -82,7 +82,7 @@ void Reaper::Actualizar(float dt, Window& ventana, Pidgeys& pidgeys)
 	}
 
 	// Inclinacion del cuerpo: angulo de la velocidad (vertical contra horizontal).
-	// En el salto se usa directo; al caer al agua regresa poco a poco a horizontal.
+	// En el salto se usa directo al caer al agua regresa poco a poco a horizontal.
 	float inclinacionObjetivo = atan2f(velVertical, velHorizontal);
 	if (saltando)
 		inclinacion = inclinacionObjetivo;
@@ -105,7 +105,7 @@ void Reaper::Dibujar(const ContextoRender& ctx)
 	glm::mat4 model(1.0f);
 	glm::mat4 modelaux(1.0f);
 
-	// --- Cuerpo (padre), gira desde la cabeza ---
+	//Cuerpo
 	model = glm::translate(model, posicion);
 	model = glm::rotate(model, giro, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, -inclinacion, glm::vec3(1.0f, 0.0f, 0.0f));   // nariz arriba/abajo
@@ -114,14 +114,14 @@ void Reaper::Dibujar(const ContextoRender& ctx)
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	Cuerpo_M.RenderModel();
 
-	// --- Boca: baja al abrir ---
+	//Boca
 	model = modelaux;
 	model = glm::translate(model, pivBoca);
 	model = glm::rotate(model, mandibula, glm::vec3(1.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	Boca_M.RenderModel();
 
-	// --- Tentaculos de la cara: los izquierdos giran +, los derechos - (se abren hacia afuera) ---
+	//Tentaculos de la cara
 	model = modelaux;
 	model = glm::translate(model, pivTentSupIzq);
 	model = glm::rotate(model, tentaculos, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -146,7 +146,7 @@ void Reaper::Dibujar(const ContextoRender& ctx)
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	TentInfDer_M.RenderModel();
 
-	// --- Aletas: suben y bajan ---
+	//Aletas
 	model = modelaux;
 	model = glm::translate(model, pivAletaIzq);
 	model = glm::rotate(model, aleteo, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -159,7 +159,7 @@ void Reaper::Dibujar(const ContextoRender& ctx)
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	AletaDer_M.RenderModel();
 
-	// --- Cola: de lado a lado ---
+	//Cola
 	model = modelaux;
 	model = glm::translate(model, pivCola);
 	model = glm::rotate(model, coleteo, glm::vec3(0.0f, 1.0f, 0.0f));

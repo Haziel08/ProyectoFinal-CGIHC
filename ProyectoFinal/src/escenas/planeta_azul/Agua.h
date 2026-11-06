@@ -1,7 +1,6 @@
 #pragma once
-// Agua: superficie semitransparente con olas, dibujada con ShaderAnimado.
-// IMPORTANTE: dibujarla AL FINAL de la escena (despues de todo lo opaco),
-// para que se vean el fondo y las criaturas a traves de ella.
+// Agua superficie semitransparente con olas, dibujada con ShaderAnimado.
+// IMPORTANTE: dibujarla AL FINAL de la escena
 #include <glm.hpp>
 #include "Escena.h"
 #include "Mesh_tn.h"
@@ -12,7 +11,7 @@
 class Agua
 {
 public:
-	// --- Aspecto (se puede ajustar en cualquier momento) ---
+	//Aspecto
 	float amplitud = 0.25f;                         // altura de las olas
 	float frecuencia = 0.15f;                       // olas mas juntas o separadas
 	float velocidad = 1.2f;                         // rapidez de las olas

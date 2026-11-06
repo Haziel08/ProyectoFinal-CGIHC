@@ -19,7 +19,7 @@ struct VerticeAnimado
 	float pesos[4];
 };
 
-// Assimp guarda las matrices por renglones y glm por columnas: hay que transponer
+// Assimp guarda las matrices por renglones y glm por columnas hay que transponer
 static glm::mat4 AGlm(const aiMatrix4x4& m)
 {
 	return glm::transpose(glm::make_mat4(&m.a1));
@@ -50,7 +50,7 @@ int ModeloAnimado::CopiarNodo(const aiNode* nodo)
 bool ModeloAnimado::Cargar(const std::string& archivo, const std::string& rutaTextura)
 {
 	Assimp::Importer importer;
-	// Sin nodos auxiliares de FBX: el arbol queda con un nodo por hueso
+	// Sin nodos auxiliares de FBX el arbol queda con un nodo por hueso
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(archivo, FLAGS_ASSIMP);
 	if (!scene || !scene->mRootNode)
@@ -59,12 +59,12 @@ bool ModeloAnimado::Cargar(const std::string& archivo, const std::string& rutaTe
 		return false;
 	}
 
-	// --- Arbol de huesos ---
+	//Arbol de huesos
 	nodos.clear();
 	CopiarNodo(scene->mRootNode);
 	inversaRaiz = glm::inverse(nodos[0].transformacion);
 
-	// --- Malla: vertices con sus huesos y pesos ---
+	//Malla vertices con sus huesos y pesos 
 	std::vector<VerticeAnimado> vertices;
 	std::vector<unsigned int> indices;
 	for (unsigned int m = 0; m < scene->mNumMeshes; m++)
@@ -77,7 +77,7 @@ bool ModeloAnimado::Cargar(const std::string& archivo, const std::string& rutaTe
 			VerticeAnimado v;
 			v.pos = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 			v.uv = mesh->mTextureCoords[0] ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0.0f);
-			// Normal invertida: misma convencion que Model y shader_light
+			// Normal invertida misma convencion que Model y shader_light
 			v.normal = -glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 			for (int k = 0; k < 4; k++) { v.huesos[k] = 0; v.pesos[k] = 0.0f; }
 			vertices.push_back(v);
@@ -115,7 +115,7 @@ bool ModeloAnimado::Cargar(const std::string& archivo, const std::string& rutaTe
 	}
 	matricesHuesos.assign(offsets.size(), glm::mat4(1.0f));
 
-	// --- Mandar la malla a la tarjeta de video ---
+	//Mandar la malla a la tarjeta de video
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glGenBuffers(1, &VBO);

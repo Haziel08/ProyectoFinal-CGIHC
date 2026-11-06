@@ -1,6 +1,5 @@
 #version 330
-// shader_esqueleto.vert: copia de shader_light.vert que ademas mueve cada
-// vertice con los huesos del esqueleto (animacion esqueletal).
+// shader_esqueleto.vert
 //>>>>>>>>>>>>>>>>>>>>>> Entradas y uniforms >>>>>>>>>>>>>>>>>>>>>>>>>
 
 layout (location = 0) in vec3 pos;

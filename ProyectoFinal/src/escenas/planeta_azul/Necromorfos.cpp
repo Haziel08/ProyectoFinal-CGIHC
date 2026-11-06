@@ -4,10 +4,10 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-static const float escalaMixamo = 0.01f;    // Mixamo trabaja en centimetros -> metros
+static const float escalaMixamo = 0.01f;
 
-// La caminata de Mixamo avanza 1.75 m en 1.5 s (unos 1.17 m/s).
-// Si el circulo los mueve a otra velocidad, los pies "patinan".
+// La caminata
+// Si el circulo los mueve a otra velocidad, los pies patinan
 static const float velocidadCaminata = 1.17f;
 
 // Que necromorfos (por numero de choza) bailan cuando se prende la fogata
@@ -22,12 +22,12 @@ void Necromorfos::Crear(const Terreno& t, const Aldea& aldea)
 	necromorfo.Cargar("assets/planeta_azul/modelos/Necromorfo_Caminar.fbx", "assets/planeta_azul/texturas/Necromorfo.jpg");
 	animCaminar = 0;
 	animBailar = necromorfo.AgregarAnimacion("assets/planeta_azul/modelos/Necromorfo_Bailar.fbx");
-	// La caminata no venia "In Place": la cadera avanzaba sola y al repetirse brincaba
+	// La caminata no venia "In Place" asi que hay que moverle
 	necromorfo.QuitarAvance(animCaminar, "mixamorig:Hips");
 
 	shader.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
 
-	// Uno por choza: su circulo esta 9 m enfrente de la choza (hacia la fogata)
+	// Uno por choza
 	numCaminantes = glm::min(aldea.NumChozas(), maxCaminantes);
 	for (int i = 0; i < numCaminantes; i++)
 	{

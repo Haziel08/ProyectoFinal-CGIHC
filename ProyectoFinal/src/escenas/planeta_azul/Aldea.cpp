@@ -4,13 +4,13 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-// Posiciones RELATIVAS al centro de la aldea: x, z y giro en grados
+// Posiciones al centro de la aldea
 struct PuntoAldea
 {
 	float x, z, giro;
 };
 
-// Chozas mirando hacia la fogata: 4 cerca (radio 26) y 3 mas lejos (radio 40).
+// Chozas mirando hacia la fogata 4 cerca y 3 mas lejos.
 // La entrada de la aldea queda libre del lado +X.
 static const int numChozas = 7;
 static const PuntoAldea posChozas[numChozas] = {
@@ -23,7 +23,7 @@ static const PuntoAldea posChozas[numChozas] = {
 	{   0.0f, -40.0f,   0.0f },
 };
 
-// Antorchas (todas con luz de noche):
+// Antorchas
 //   3 junto a la fogata, 2 en la entrada y 8 en un circulo de radio 33
 static const int numAntorchas = 13;
 static const PuntoAldea posAntorchas[numAntorchas] = {
@@ -33,7 +33,7 @@ static const PuntoAldea posAntorchas[numAntorchas] = {
 	{ -30.5f, -12.6f, 0.0f }, { -12.6f, -30.5f, 0.0f }, {  12.6f, -30.5f, 0.0f }, {  30.5f, -12.6f, 0.0f },
 };
 
-static const float altoAntorcha = 3.4f;   // donde empieza la llama (punta de la antorcha)
+static const float altoAntorcha = 3.4f;   // donde empieza la llama
 
 int Aldea::NumChozas() const
 {
@@ -66,7 +66,7 @@ void Aldea::Crear(const Terreno& t)
 
 void Aldea::Actualizar(float tiempo, bool esDeNoche, Window& ventana)
 {
-	// Tecla F: prender / apagar la fogata
+	// Tecla F prender / apagar la fogata
 	if (ventana.TeclaPresionada(GLFW_KEY_F))
 		fogataEncendida = !fogataEncendida;
 
@@ -80,7 +80,7 @@ void Aldea::Actualizar(float tiempo, bool esDeNoche, Window& ventana)
 		luces[numLuces++] = PointLight(1.0f, 0.55f, 0.2f,        // color naranja
 			0.0f, 3.0f + parpadeo,                               // ambiental, difusa
 			p.x, p.y, p.z,                                       // posicion
-			1.0f, 0.045f, 0.0075f);                              // atenuacion (alcance ~30 m)
+			1.0f, 0.045f, 0.0075f);                              // atenuacion
 	}
 
 	antorchasEncendidas = esDeNoche;
@@ -94,7 +94,7 @@ void Aldea::Actualizar(float tiempo, bool esDeNoche, Window& ventana)
 			luces[numLuces++] = PointLight(1.0f, 0.6f, 0.25f,
 				0.0f, 1.5f + parpadeo,
 				p.x, p.y, p.z,
-				1.0f, 0.09f, 0.032f);                            // alcance ~15 m
+				1.0f, 0.09f, 0.032f);                            // alcance
 		}
 	}
 }
@@ -104,7 +104,7 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 	glm::vec3 blanco(1.0f);
 	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
 
-	// --- Chozas ---
+	//Chozas
 	Model* chozas[4] = { &ChozaMuu_M, &ChozaMantah_M, &ChozaKrakee_M, &ChozaAntuk_M };
 	for (int i = 0; i < numChozas; i++)
 	{
@@ -116,7 +116,7 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 		chozas[i % 4]->RenderModel();      // se repiten los 4 modelos de choza
 	}
 
-	// --- Antorchas ---
+	//Antorchas
 	for (int i = 0; i < numAntorchas; i++)
 	{
 		glm::mat4 model(1.0f);
@@ -125,7 +125,7 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 		Antorcha_M.RenderModel();
 	}
 
-	// --- Fogata ---
+	//Fogata
 	glm::mat4 model(1.0f);
 	model = glm::translate(model, SobreElSuelo(centro.x, centro.y));
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
@@ -134,7 +134,7 @@ void Aldea::Dibujar(const ContextoRender& ctx)
 
 void Aldea::DibujarLlamas(const ContextoRender& ctx, float tiempo)
 {
-	// Llama chica en la punta de cada antorcha (solo de noche)
+	// Llama en la punta de cada antorcha
 	if (antorchasEncendidas)
 	{
 		for (int i = 0; i < numAntorchas; i++)
@@ -144,7 +144,7 @@ void Aldea::DibujarLlamas(const ContextoRender& ctx, float tiempo)
 		}
 	}
 
-	// Llama grande de la fogata (solo si esta prendida)
+	// Llama grande de la fogata solo si esta prendida
 	if (fogataEncendida)
 		fuego.Dibujar(ctx, SobreElSuelo(centro.x, centro.y) + glm::vec3(0.0f, 0.2f, 0.0f), 2.0f, 3.0f, tiempo);
 }

@@ -9,8 +9,8 @@ struct RecorridoOcho
 {
 	float cx, cz;          // centro del 8
 	float anchoX, largoZ;  // tamano del 8
-	float profundidad;     // altura y (el agua esta en y = -1)
-	float velocidad;       // que tan rapido recorre el 8 (radianes por segundo)
+	float profundidad;     // altura
+	float velocidad;       // que tan rapido recorre el 8
 	float fase;            // para que no empiecen todos en el mismo punto
 	float escala;
 };
@@ -22,10 +22,10 @@ static const RecorridoOcho airFishes[] = {
 	{  15.0f, 65.0f, 35.0f, 20.0f, -18.0f, 0.10f, 4.0f, 1.8f },
 };
 
-// Cardumen de Peepers: todos dan vueltas al mismo circulo, uno detras de otro
+// Cardumen de Peepers todos dan vueltas al mismo circulo, uno detras de otro
 static const float centroCardumenX = 10.0f, centroCardumenZ = 80.0f;
 static const float radioCardumen = 18.0f;
-static const float velocidadCardumen = 0.3f;     // radianes por segundo
+static const float velocidadCardumen = 0.3f;
 static const int numPeepers = 6;
 
 void Peces::Crear()
@@ -44,7 +44,7 @@ void Peces::Dibujar(const ContextoRender& ctx)
 	glm::vec3 blanco(1.0f);
 	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
 
-	// --- Air fish: forma de 8 ---
+	//Air fish forma de 8
 	for (const RecorridoOcho& r : airFishes)
 	{
 		float t = tiempo * r.velocidad + r.fase;
@@ -68,7 +68,7 @@ void Peces::Dibujar(const ContextoRender& ctx)
 		AirFish_M.RenderModel();
 	}
 
-	// --- Peepers: cardumen en circulo ---
+	//Peepers cardumen en circulo
 	for (int i = 0; i < numPeepers; i++)
 	{
 		float t = tiempo * velocidadCardumen - i * 0.35f;   // cada uno va un poco atras del anterior

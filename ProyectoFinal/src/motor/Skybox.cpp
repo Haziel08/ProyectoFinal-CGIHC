@@ -20,9 +20,7 @@ Skybox::Skybox(std::vector<std::string> face_locations)
 	int width, height, bit_depth;
 	if (transicion_natural) stbi_set_flip_vertically_on_load(true);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	// Mismo comportamiento que en las prácticas (Texture activaba el volteo antes de cargar el skybox).
-	// Se fija aquí para que no dependa del orden de carga.
-	//	stbi_set_flip_vertically_on_load(true);
+	
 	for (size_t i = 0; i < 6; i++)
 	{
 

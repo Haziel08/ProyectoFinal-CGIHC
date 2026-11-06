@@ -1,10 +1,5 @@
 #pragma once
-// Necromorfos: NPCs con animacion esqueletal (modelo y animaciones de Mixamo).
-//   - Uno por choza: cada uno camina en un circulo pequeno frente a su choza.
-//   - Al prender la fogata (tecla F) los que tienen "bailaConFogata" se
-//     detienen, voltean al fuego y bailan; al apagarla vuelven a caminar.
-// El recorrido en circulo es por codigo:  x = cx + R cos(t),  z = cz + R sen(t)
-// y miran hacia donde avanzan con giro = atan2(dx, dz).
+// Necromorfos NPCs con animacion esqueletal
 #include "Escena.h"
 #include "ModeloAnimado.h"
 #include "Terreno.h"

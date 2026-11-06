@@ -11,7 +11,7 @@ void CicloDiaNoche::Actualizar(float dt)
 
 float CicloDiaNoche::FactorDia() const
 {
-	// Coseno: empieza en 1 (mediodia), baja a 0 a la mitad (medianoche) y regresa
+	// Coseno empieza en 1 (mediodia), baja a 0 a la mitad (medianoche) y regresa
 	float angulo = 2.0f * 3.14159265f * tiempo / duracion;
 	return 0.5f + 0.5f * cosf(angulo);
 }
@@ -20,7 +20,7 @@ DatosLuz CicloDiaNoche::Luz() const
 {
 	float f = FactorDia();
 
-	// Direccion: desde el sol del skybox (hacia +Z y arriba) hacia la escena
+	// Direccion desde el sol del skybox (hacia +Z y arriba) hacia la escena
 	float inc = glm::radians(inclinacionSol);
 	glm::vec3 haciaElSol(0.0f, sinf(inc), cosf(inc));
 

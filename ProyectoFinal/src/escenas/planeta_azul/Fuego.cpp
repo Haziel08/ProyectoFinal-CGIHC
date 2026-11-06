@@ -59,21 +59,21 @@ void Fuego::Dibujar(const ContextoRender& ctx, glm::vec3 posicion, float ancho, 
 	shader.SetMat4("view", ctx.vista);
 	shader.SetMat4("projection", ctx.proyeccion);
 
-	// Movimiento: la llama tiembla rapido y la textura sube
-	shader.SetFloat("tiempo", tiempo + posicion.x);   // cada fuego desfasado, no todos iguales
+	// Movimiento la llama tiembla rapido y la textura sube
+	shader.SetFloat("tiempo", tiempo + posicion.x);   // cada fuego desfasado
 	shader.SetFloat("amplitud", 0.08f);
 	shader.SetFloat("frecuencia", 6.0f);
 	shader.SetFloat("velocidad", 10.0f);
 	shader.SetVec2("velocidadUV", glm::vec2(0.0f, -0.8f));   // la textura sube
 	shader.SetFloat("repeticionUV", 1.0f);
 
-	// Aspecto: sin luz (el fuego brilla solo) y con forma de llama
+	// Aspecto sin luz
 	shader.SetVec3("colorBase", glm::vec3(1.0f));
 	shader.SetFloat("transparencia", 1.0f);
 	shader.SetFloat("desvanecer", 1.0f);
 	shader.SetInt("usarLuz", 0);
 
-	// Mezcla aditiva: el color se SUMA a lo de atras (brilla y lo negro desaparece)
+	// Mezcla
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glDepthMask(GL_FALSE);

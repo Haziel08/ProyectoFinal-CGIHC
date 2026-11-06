@@ -1,7 +1,6 @@
 #pragma once
-// ShaderAnimado: carga shaders/shader_animado.vert y .frag (agua, fuego...)
+// ShaderAnimado: carga shaders/shader_animado.vert y .frag para agua y fuego
 // y permite mandarles valores por nombre: SetFloat("amplitud", 0.3f), etc.
-// Es independiente del Shader de iluminacion (Shader_light), no lo modifica.
 #include <string>
 #include <glew.h>
 #include <glm.hpp>

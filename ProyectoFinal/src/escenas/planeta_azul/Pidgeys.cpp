@@ -4,11 +4,11 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-// Donde se pega cada ala al cuerpo (hombros), en metros
+// Donde se pega cada ala al cuerpo
 static const glm::vec3 hombroIzq( 0.28f, 0.05f, 0.04f);
 static const glm::vec3 hombroDer(-0.28f, 0.05f, 0.04f);
 
-// Vuelo de cada ave de la parvada (todas dan vueltas en circulo)
+// Vuelo de cada ave de la parvada
 struct Vuelo
 {
 	float cx, cz;       // centro del circulo
@@ -73,7 +73,7 @@ void Pidgeys::DibujarAve(const ContextoRender& ctx, glm::vec3 pos, float giro, f
 	glm::mat4 model(1.0f);
 	glm::mat4 modelaux(1.0f);
 
-	// --- Cuerpo (padre) ---
+	//Cuerpo
 	model = glm::translate(model, pos);
 	model = glm::rotate(model, giro, glm::vec3(0.0f, 1.0f, 0.0f));     // hacia donde vuela
 	model = glm::rotate(model, alabeo, glm::vec3(0.0f, 0.0f, 1.0f));   // se inclina en la vuelta
@@ -82,14 +82,14 @@ void Pidgeys::DibujarAve(const ContextoRender& ctx, glm::vec3 pos, float giro, f
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	Cuerpo_M.RenderModel();
 
-	// --- Ala izquierda (hija del cuerpo) ---
+	//Ala izquierda
 	model = modelaux;
 	model = glm::translate(model, hombroIzq);
 	model = glm::rotate(model, aleteo, glm::vec3(0.0f, 0.0f, 1.0f));
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	AlaIzq_M.RenderModel();
 
-	// --- Ala derecha (hija del cuerpo, gira al reves) ---
+	//Ala derecha
 	model = modelaux;
 	model = glm::translate(model, hombroDer);
 	model = glm::rotate(model, -aleteo, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -102,7 +102,7 @@ void Pidgeys::Dibujar(const ContextoRender& ctx)
 	glm::vec3 blanco(1.0f);
 	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
 
-	// --- Parvada ---
+	//Parvada
 	for (int i = 0; i < numAves; i++)
 	{
 		const Vuelo& v = vuelos[i];
@@ -113,7 +113,7 @@ void Pidgeys::Dibujar(const ContextoRender& ctx)
 		float aleteo = glm::radians(40.0f) * sinf(tiempo * 9.0f + i);
 		float y = v.altura + 0.3f * sinf(tiempo * 9.0f + i);              // sube un poco con cada aleteo
 
-		// Direccion de avance = derivada del circulo (con el signo de la velocidad)
+		// Direccion de avance = derivada del circulo 
 		float s = (v.velocidad >= 0.0f) ? 1.0f : -1.0f;
 		float giro = atan2f(-sinf(t) * s, cosf(t) * s);
 		float alabeo = glm::radians(15.0f) * s;                             // se inclina hacia adentro
@@ -121,7 +121,7 @@ void Pidgeys::Dibujar(const ContextoRender& ctx)
 		DibujarAve(ctx, glm::vec3(x, y, z), giro, alabeo, aleteo, v.escala);
 	}
 
-	// --- La presa del Reaper ---
+	//La presa del Reaper
 	if (presaViva)
 	{
 		glm::vec3 p = PosicionPresa();

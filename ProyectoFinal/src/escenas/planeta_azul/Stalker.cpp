@@ -4,7 +4,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-// Articulaciones: donde se pega cada pieza al cuerpo (en metros)
+// Articulaciones
 static const glm::vec3 pivBocaSup     ( 0.00f,  0.05f,  1.08f);
 static const glm::vec3 pivBocaInf     ( 0.00f, -0.02f,  0.98f);
 static const glm::vec3 pivAletaDelIzq ( 0.21f, -0.19f,  0.68f);
@@ -12,12 +12,12 @@ static const glm::vec3 pivAletaDelDer (-0.21f, -0.19f,  0.68f);
 static const glm::vec3 pivAletaTrasIzq( 0.16f, -0.21f, -0.49f);
 static const glm::vec3 pivAletaTrasDer(-0.16f, -0.21f, -0.49f);
 
-// Recorrido: elipse dentro del lago
+// Recorrido elipse dentro del lago
 static const float centroX = 0.0f, centroZ = 70.0f;
 static const float radioX = 45.0f, radioZ = 30.0f;
 static const float profundidad = -5.0f;     // el agua esta en y = -1
 static const float velocidad = 0.12f;       // radianes por segundo
-static const float escala = 1.2f;           // el modelo mide ~5 m, asi queda de ~6 m
+static const float escala = 1.2f;           
 
 void Stalker::Crear()
 {
@@ -40,7 +40,7 @@ void Stalker::Actualizar(float dt)
 	posicion.z = centroZ + radioZ * sinf(angulo);
 	posicion.y = profundidad + 0.5f * sinf(tiempo * 1.5f);
 
-	// Mira hacia donde avanza: derivada de la elipse = (-A sen t, B cos t)
+	// Mira hacia donde avanza derivada de la elipse = (-A sen t, B cos t)
 	giro = atan2f(-radioX * sinf(angulo), radioZ * cosf(angulo));
 }
 
@@ -58,7 +58,7 @@ void Stalker::Dibujar(const ContextoRender& ctx)
 	glm::mat4 model(1.0f);
 	glm::mat4 modelaux(1.0f);
 
-	// --- Cuerpo (padre de todo) ---
+	//Cuerpo
 	model = glm::translate(model, posicion);
 	model = glm::rotate(model, giro + vaiven, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(escala));
@@ -66,21 +66,21 @@ void Stalker::Dibujar(const ContextoRender& ctx)
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	Cuerpo_M.RenderModel();
 
-	// --- Boca superior: sube un poco al abrir ---
+	//Boca superior
 	model = modelaux;
 	model = glm::translate(model, pivBocaSup);
 	model = glm::rotate(model, glm::radians(-6.0f) * abre, glm::vec3(1.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	BocaSup_M.RenderModel();
 
-	// --- Boca inferior: baja al abrir ---
+	//Boca inferior
 	model = modelaux;
 	model = glm::translate(model, pivBocaInf);
 	model = glm::rotate(model, glm::radians(14.0f) * abre, glm::vec3(1.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	BocaInf_M.RenderModel();
 
-	// --- Aletas delanteras (izq gira +, der gira - para que ambas suban juntas) ---
+	//Aletas delanteras
 	model = modelaux;
 	model = glm::translate(model, pivAletaDelIzq);
 	model = glm::rotate(model, remo, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -93,7 +93,7 @@ void Stalker::Dibujar(const ContextoRender& ctx)
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	AletaDelDer_M.RenderModel();
 
-	// --- Aletas traseras ---
+	//Aletas traseras
 	model = modelaux;
 	model = glm::translate(model, pivAletaTrasIzq);
 	model = glm::rotate(model, remoTras, glm::vec3(0.0f, 0.0f, 1.0f));

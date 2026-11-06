@@ -1,8 +1,5 @@
 #pragma once
-// CicloDiaNoche: controla la UNICA luz direccional del planeta azul.
-// - La luz viene del sol dibujado en el skybox (lado Z+, inclinado hacia abajo).
-// - De dia es blanca y fuerte; de noche es azulada y debil (luz de luna).
-// - Un dia completo dura "duracion" segundos (maximo 2 minutos, lineamiento).
+// CicloDiaNoche
 #include <glm.hpp>
 #include "DirectionalLight.h"
 
@@ -19,7 +16,7 @@ class CicloDiaNoche
 {
 public:
 	float duracion = 120.0f;        // segundos de un dia completo
-	float inclinacionSol = 22.0f;   // grados sobre el horizonte (igual que el sol del skybox)
+	float inclinacionSol = 22.0f;   // grados sobre el horizonte
 
 	void Actualizar(float dt);
 

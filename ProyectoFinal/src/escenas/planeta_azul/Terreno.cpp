@@ -12,7 +12,7 @@ Terreno::~Terreno()
 
 float Terreno::DistanciaLago(float x, float z) const
 {
-	// Distancia "ovalada": vale 1 justo en la orilla del lago
+	// Distancia
 	float dx = (x - centroLago.x) / radioLago.x;
 	float dz = (z - centroLago.y) / radioLago.y;
 	return sqrtf(dx * dx + dz * dz);
@@ -29,20 +29,20 @@ float Terreno::Altura(float x, float z) const
 
 	if (d < 1.0f)
 	{
-		// Dentro del lago: baja suave desde la orilla y luego queda un fondo casi plano
+		// Dentro del lago baja suave desde la orilla y luego queda un fondo casi plano
 		float t = glm::smoothstep(1.0f, 0.55f, d);
 		float ondulacionFondo = 0.8f * sinf(x * 0.15f) * sinf(z * 0.12f);
 		return -profundidad * t + ondulacionFondo * t;
 	}
 
-	// Tierra: colinas suaves que crecen al alejarse del lago (cerca de la orilla es plano)
+	// Tierra
 	float colinas = 2.0f + 1.5f * sinf(x * 0.035f) * sinf(z * 0.03f + 1.0f) + 0.5f * sinf(x * 0.11f + z * 0.07f);
 	return colinas * glm::smoothstep(1.0f, 1.6f, d);
 }
 
 glm::vec3 Terreno::NormalEn(float x, float z) const
 {
-	// Pendiente por diferencias: cuanto cambia la altura al moverse un poco en X y Z
+	// Pendiente por diferencias cuanto cambia la altura al moverse un poco en X y Z
 	float e = 0.5f;
 	float hx = (Altura(x + e, z) - Altura(x - e, z)) / (2.0f * e);
 	float hz = (Altura(x, z + e) - Altura(x, z - e)) / (2.0f * e);
@@ -51,7 +51,7 @@ glm::vec3 Terreno::NormalEn(float x, float z) const
 
 void Terreno::AgregarCuadro(std::vector<GLfloat>& v, std::vector<unsigned int>& idx, float x0, float z0, float lado)
 {
-	// 4 esquinas del cuadrito: x, y (altura), z | u, v | normal invertida (convencion del shader)
+	// 4 esquinas del cuadrito
 	float xs[4] = { x0, x0 + lado, x0 + lado, x0 };
 	float zs[4] = { z0, z0, z0 + lado, z0 + lado };
 	unsigned int b = (unsigned int)(v.size() / 8);   // numero del primer vertice nuevo
@@ -102,7 +102,7 @@ void Terreno::Crear()
 
 void Terreno::Dibujar(const ContextoRender& ctx)
 {
-	glm::mat4 model(1.0f);                        // el terreno ya esta en coordenadas del mundo
+	glm::mat4 model(1.0f);                        
 	glm::vec3 blanco(1.0f);
 	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
 	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
