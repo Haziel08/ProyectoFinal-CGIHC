@@ -35,6 +35,16 @@ static const PuntoAldea posAntorchas[numAntorchas] = {
 
 static const float altoAntorcha = 3.4f;   // donde empieza la llama (punta de la antorcha)
 
+int Aldea::NumChozas() const
+{
+	return numChozas;
+}
+
+glm::vec2 Aldea::PosicionChoza(int i) const
+{
+	return centro + glm::vec2(posChozas[i].x, posChozas[i].z);
+}
+
 glm::vec3 Aldea::SobreElSuelo(float x, float z) const
 {
 	return glm::vec3(x, terreno->Altura(x, z), z);

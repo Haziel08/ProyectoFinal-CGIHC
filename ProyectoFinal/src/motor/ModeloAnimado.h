@@ -31,6 +31,11 @@ public:
 	// Otra animacion del MISMO esqueleto (otro FBX de Mixamo). Regresa su numero.
 	int AgregarAnimacion(const std::string& archivo);
 
+	// Si la animacion avanza sola (en Mixamo no se marco "In Place"), deja ese hueso
+	// en su lugar en X y Z; asi el avance lo controla nuestro codigo y no "brinca"
+	// al repetirse. Para Mixamo el hueso es "mixamorig:Hips" (la cadera).
+	void QuitarAvance(int animacion, const std::string& hueso);
+
 	// Calcula la pose de todos los huesos en el segundo indicado (la animacion se repite)
 	void CalcularPose(int animacion, float segundos);
 	// Manda los huesos al shader activo y dibuja la malla

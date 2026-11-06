@@ -24,6 +24,10 @@ public:
 	PointLight luces[max_point_lights];
 	unsigned int numLuces = 0;
 
+	// Donde esta cada choza (en coordenadas del mundo), para poner a sus habitantes
+	int NumChozas() const;
+	glm::vec2 PosicionChoza(int i) const;
+
 	bool fogataEncendida = false;      // empieza apagada; se prende con F
 	bool antorchasEncendidas = false;   // las prende el ciclo de dia y noche
 

@@ -21,7 +21,7 @@ void EscenaPlanetaAzul::Inicializar()
 	vegetacion.Crear(terreno);
 	aldea.Crear(terreno);
 	peces.Crear();
-	necromorfos.Crear(terreno, aldea.centro);
+	necromorfos.Crear(terreno, aldea);
 
 	luzSol = ciclo.LuzDireccional();
 

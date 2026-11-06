@@ -6,23 +6,42 @@
 
 static const float escalaMixamo = 0.01f;    // Mixamo trabaja en centimetros -> metros
 
-void Necromorfos::Crear(const Terreno& t, glm::vec2 centroFogata)
+// La caminata de Mixamo avanza 1.75 m en 1.5 s (unos 1.17 m/s).
+// Si el circulo los mueve a otra velocidad, los pies "patinan".
+static const float velocidadCaminata = 1.17f;
+
+// Que necromorfos (por numero de choza) bailan cuando se prende la fogata
+static const bool bailan[] = { true, false, true, false, false, false, false };
+
+void Necromorfos::Crear(const Terreno& t, const Aldea& aldea)
 {
 	terreno = &t;
-	fogata = centroFogata;
+	fogata = aldea.centro;
 
 	// Malla + esqueleto + caminata (animacion 0) y despues el baile (animacion 1)
 	necromorfo.Cargar("assets/planeta_azul/modelos/Necromorfo_Caminar.fbx", "assets/planeta_azul/texturas/Necromorfo.jpg");
 	animCaminar = 0;
 	animBailar = necromorfo.AgregarAnimacion("assets/planeta_azul/modelos/Necromorfo_Bailar.fbx");
+	// La caminata no venia "In Place": la cadera avanzaba sola y al repetirse brincaba
+	necromorfo.QuitarAvance(animCaminar, "mixamorig:Hips");
 
 	shader.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
 
-	//            centro        radio  angulo  velocidad  baila
-	caminantes[0] = { fogata,                     8.0f, 0.0f,   0.25f, true  };
-	caminantes[1] = { fogata,                     8.0f, 3.14f,  0.25f, true  };
-	caminantes[2] = { glm::vec2(110.0f, -30.0f), 15.0f, 0.0f,   0.15f, false };
-	caminantes[3] = { glm::vec2(110.0f, -30.0f), 22.0f, 2.0f,  -0.12f, false };
+	// Uno por choza: su circulo esta 9 m enfrente de la choza (hacia la fogata)
+	numCaminantes = glm::min(aldea.NumChozas(), maxCaminantes);
+	for (int i = 0; i < numCaminantes; i++)
+	{
+		glm::vec2 choza = aldea.PosicionChoza(i);
+		glm::vec2 haciaFogata = glm::normalize(fogata - choza);
+
+		Caminante& c = caminantes[i];
+		c.centro = choza + haciaFogata * 9.0f;
+		c.radio = 3.5f;
+		c.angulo = i * 1.3f;                                       // cada uno empieza en otro punto
+		float sentido = (i % 2 == 0) ? 1.0f : -1.0f;               // unos van al reves
+		c.velocidad = sentido * velocidadCaminata / c.radio;       // v = w * r  ->  w = v / r
+		c.bailaConFogata = (i < 7) ? bailan[i] : false;
+	}
 }
 
 void Necromorfos::Actualizar(float dt, bool fogataEncendida)

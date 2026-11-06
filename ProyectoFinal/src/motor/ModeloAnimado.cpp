@@ -196,6 +196,23 @@ int ModeloAnimado::AgregarAnimacion(const std::string& archivo)
 	return (int)animaciones.size() - 1;
 }
 
+void ModeloAnimado::QuitarAvance(int animacion, const std::string& hueso)
+{
+	if (animacion < 0 || animacion >= (int)animaciones.size())
+		return;
+	auto canal = animaciones[animacion].canales.find(hueso);
+	if (canal == animaciones[animacion].canales.end() || canal->second.posiciones.empty())
+		return;
+
+	// Todas las posiciones toman la X y Z del primer keyframe (solo se conserva el sube y baja)
+	std::vector<ClavePos>& claves = canal->second.posiciones;
+	for (ClavePos& c : claves)
+	{
+		c.valor.x = claves[0].valor.x;
+		c.valor.z = claves[0].valor.z;
+	}
+}
+
 // Busca entre que dos keyframes cae "tick" y regresa el indice del primero
 template <typename T>
 static int BuscarClave(const std::vector<T>& claves, float tick)

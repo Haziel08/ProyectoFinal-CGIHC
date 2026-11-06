@@ -1,18 +1,19 @@
 #pragma once
 // Necromorfos: NPCs con animacion esqueletal (modelo y animaciones de Mixamo).
-//   - 2 en la aldea: con la fogata apagada caminan en circulo alrededor de ella;
-//     al prender la fogata (tecla F) se detienen, voltean al fuego y bailan.
-//   - 2 en la zona de criaturas: caminan en circulo todo el tiempo.
+//   - Uno por choza: cada uno camina en un circulo pequeno frente a su choza.
+//   - Al prender la fogata (tecla F) los que tienen "bailaConFogata" se
+//     detienen, voltean al fuego y bailan; al apagarla vuelven a caminar.
 // El recorrido en circulo es por codigo:  x = cx + R cos(t),  z = cz + R sen(t)
 // y miran hacia donde avanzan con giro = atan2(dx, dz).
 #include "Escena.h"
 #include "ModeloAnimado.h"
 #include "Terreno.h"
+#include "Aldea.h"
 
 class Necromorfos
 {
 public:
-	void Crear(const Terreno& terreno, glm::vec2 centroFogata);
+	void Crear(const Terreno& terreno, const Aldea& aldea);
 	void Actualizar(float dt, bool fogataEncendida);
 	void Dibujar(const ContextoRender& ctx, DirectionalLight* luz, PointLight* luces, unsigned int numLuces);
 
@@ -23,8 +24,8 @@ private:
 		glm::vec2 centro;
 		float radio;
 		float angulo;        // donde va en el circulo (radianes)
-		float velocidad;     // radianes por segundo
-		bool bailaConFogata; // los de la aldea bailan cuando se prende la fogata
+		float velocidad;     // radianes por segundo (negativa = al reves)
+		bool bailaConFogata;
 	};
 
 	void DibujarUno(const Caminante& c, int animacion, float tiempoAnimacion, GLuint uModel);
@@ -39,6 +40,7 @@ private:
 	int animBailar = 1;
 	Shader shader;              // shader_esqueleto.vert + shader_light.frag
 
-	static const int numCaminantes = 4;
-	Caminante caminantes[numCaminantes];
+	static const int maxCaminantes = 10;
+	Caminante caminantes[maxCaminantes];
+	int numCaminantes = 0;
 };
