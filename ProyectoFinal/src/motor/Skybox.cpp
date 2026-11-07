@@ -1,3 +1,4 @@
+//>>>>>>>>>>>>>>>>>>>>>> Skybox >>>>>>>>>>>>>>>>>>>>>>
 #include "Skybox.h"
 
 
@@ -6,32 +7,35 @@ Skybox::Skybox()
 {
 }
 
-Skybox::Skybox(std::vector<std::string> faceLocations)
+Skybox::Skybox(std::vector<std::string> face_locations)
 {
-	skyShader = new Shader();
-	skyShader->CreateFromFiles("shaders/skybox.vert", "shaders/skybox.frag");
-	uniformProjection = skyShader->GetProjectionLocation();
-	uniformView = skyShader->GetViewLocation();
+	transicion_natural = !face_locations.empty() && face_locations[0].find("planeta_naranja") != std::string::npos;
+	sky_shader = new Shader();
+	sky_shader->CreateFromFiles("shaders/skybox.vert", "shaders/skybox.frag");
+	uniform_projection = sky_shader->GetProjectionLocation();
+	uniform_view = sky_shader->GetViewLocation();
 
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	int width, height, bitDepth;
+	glGenTextures(1, &texture_id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture_id);
+	int width, height, bit_depth;
+	if (transicion_natural) stbi_set_flip_vertically_on_load(true);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	// Mismo comportamiento que en las prácticas (Texture activaba el volteo antes de cargar el skybox).
 	// Se fija aquí para que no dependa del orden de carga.
-	stbi_set_flip_vertically_on_load(true);
-	for (size_t i = 0; i < 6; i++)
+	//	stbi_set_flip_vertically_on_load(true);
+	for (unsigned int i = 0; i < 6; i++)
 	{
 
-		unsigned char *texData = stbi_load(faceLocations[i].c_str(), &width, &height, &bitDepth, 0); //el tipo unsigned char es para un array de bytes de la imagen, obtener datos de la imagen 
-		if (!texData)
+		unsigned char *tex_data = stbi_load(face_locations[i].c_str(), &width, &height, &bit_depth, STBI_rgb);
+		if (!tex_data)
 		{
-			printf("No se encontró : %s\n", faceLocations[i].c_str());
+			printf("No se encontró : %s\n", face_locations[i].c_str());
 			return;
 		}
 		//para cambiar el origen a la esquina inferior izquierda como necesitamos
 		//stbi_set_flip_vertically_on_load(true);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X +i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData); //SIN CANAL ALPHA A ENOS QUE QUERAMOS AGREGAR EFECTO DE PARALLAX
-		stbi_image_free(texData); //para liberar la información de la imagen
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X +i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex_data); //SIN CANAL ALPHA A ENOS QUE QUERAMOS AGREGAR EFECTO DE PARALLAX
+		stbi_image_free(tex_data); //para liberar la información de la imagen
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -40,7 +44,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//Creando el Mesh del skybox
-	unsigned int skyboxIndices[] = {
+	unsigned int skybox_indices[] = {
 		// front
 		0, 1, 2,
 		2, 1, 3,
@@ -61,7 +65,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 		3, 6, 7
 	};
 
-	float skyboxVertices[] = {
+	float skybox_vertices[] = {
 		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,//v0
 		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f,		0.0f, 0.0f, 0.0f,//V1
 		1.0f, 1.0f, -1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,//V2
@@ -71,24 +75,31 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,//V6
 		1.0f, -1.0f, 1.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f//V7
 	};
-	skyMesh = new MeshModel();
-	skyMesh->CreateMeshModel(skyboxVertices, skyboxIndices, 64, 36);
+	sky_mesh = new MeshModel();
+	sky_mesh->CreateMeshModel(skybox_vertices, skybox_indices, 64, 36);
 
 }
 
-void Skybox::DrawSkybox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
+void Skybox::DrawSkybox(glm::mat4 view_matrix, glm::mat4 projection_matrix)
 {
-	viewMatrix = glm::mat4(glm::mat3(viewMatrix));
+	view_matrix = glm::mat4(glm::mat3(view_matrix));
 
-	glDepthMask(false);
-	skyShader->UseShader();
-	glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-	glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	GLint funcion_profundidad = GL_LESS;
+    glGetIntegerv(GL_DEPTH_FUNC, &funcion_profundidad);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(false);
+	sky_shader->UseShader();
+	GLint programa_skybox = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &programa_skybox);
+	glUniform1i(glGetUniformLocation(programa_skybox, "transicion_natural"), transicion_natural);
+	glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection_matrix));
+	glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	//skyShader->Validate();
-	skyMesh->RenderMeshModel();
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture_id);
+	//sky_shader->Validate();
+	sky_mesh->RenderMeshModel();
 	glDepthMask(true);
+    glDepthFunc(funcion_profundidad);
 
 }
 
@@ -96,3 +107,4 @@ void Skybox::DrawSkybox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 Skybox::~Skybox()
 {
 }
+

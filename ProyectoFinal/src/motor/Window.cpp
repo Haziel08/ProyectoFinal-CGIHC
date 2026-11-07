@@ -1,27 +1,34 @@
 #include "Window.h"
 
+//>>>>>>>>>>>>>>>>>>>>>> Constructores >>>>>>>>>>>>>>>>>>>>>>
 Window::Window() : Window(1280, 720) {}
 
-Window::Window(GLint windowWidth, GLint windowHeight)
+Window::Window(GLint window_width, GLint window_height)
 {
-	mainWindow = nullptr;
-	width = windowWidth;
-	height = windowHeight;
-	bufferWidth = windowWidth;
-	bufferHeight = windowHeight;
+    escena_activa = 0;
+    luz_nave_encendida = true;
+    motor1_encendido = true;
+    motor2_encendido = true;
+    vista_general_solicitada = false;
+	main_window = nullptr;
+	width = window_width;
+	height = window_height;
+	buffer_width = window_width;
+	buffer_height = window_height;
 
-	lastX = lastY = 0.0f;
-	xChange = 0.0f;
-	yChange = 0.0f;
-	mouseFirstMoved = true;
+	last_x = last_y = 0.0f;
+	x_change = 0.0f;
+	y_change = 0.0f;
+	mouse_first_moved = true;
 
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = false;
-		keysPressed[i] = false;
+		keys_pressed[i] = false;
 	}
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Inicializacion de GLFW y OpenGL >>>>>>>>>>>>>>>>>>>>>>
 int Window::Initialise(const char* titulo)
 {
 	if (!glfwInit())
@@ -37,39 +44,40 @@ int Window::Initialise(const char* titulo)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-	mainWindow = glfwCreateWindow(width, height, titulo, NULL, NULL);
-	if (!mainWindow)
+	main_window = glfwCreateWindow(width, height, titulo, NULL, NULL);
+	if (!main_window)
 	{
 		printf("Fallo al crear la ventana con GLFW\n");
 		glfwTerminate();
 		return 1;
 	}
 
-	glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
-	glfwMakeContextCurrent(mainWindow);
+	glfwGetFramebufferSize(main_window, &buffer_width, &buffer_height);
+	glfwMakeContextCurrent(main_window);
 	createCallbacks();
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
 		printf("Fallo inicializacion de GLEW\n");
-		glfwDestroyWindow(mainWindow);
-		mainWindow = nullptr;
+		glfwDestroyWindow(main_window);
+		main_window = nullptr;
 		glfwTerminate();
 		return 1;
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	glViewport(0, 0, bufferWidth, bufferHeight);
-	glfwSetWindowUserPointer(mainWindow, this);
+	glViewport(0, 0, buffer_width, buffer_height);
+	glfwSetWindowUserPointer(main_window, this);
 	return 0;
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Registro de eventos >>>>>>>>>>>>>>>>>>>>>>
 void Window::createCallbacks()
 {
-	glfwSetKeyCallback(mainWindow, ManejaTeclado);
-	glfwSetCursorPosCallback(mainWindow, ManejaMouse);
-	glfwSetFramebufferSizeCallback(mainWindow, ManejaResize);
+	glfwSetKeyCallback(main_window, ManejaTeclado);
+	glfwSetCursorPosCallback(main_window, ManejaMouse);
+	glfwSetFramebufferSizeCallback(main_window, ManejaResize);
 }
 
 bool Window::TeclaSostenida(int key) const
@@ -79,80 +87,106 @@ bool Window::TeclaSostenida(int key) const
 
 bool Window::TeclaPresionada(int key) const
 {
-	return key >= 0 && key < 1024 && keysPressed[key];
+	return key >= 0 && key < 1024 && keys_pressed[key];
 }
 
 void Window::NuevoFrame()
 {
+    vista_general_solicitada = false;
 	for (size_t i = 0; i < 1024; i++)
-		keysPressed[i] = false;
+		keys_pressed[i] = false;
 }
 
 GLfloat Window::getXChange()
 {
-	GLfloat theChange = xChange;
-	xChange = 0.0f;
-	return theChange;
+	GLfloat the_change = x_change;
+	x_change = 0.0f;
+	return the_change;
 }
 
 GLfloat Window::getYChange()
 {
-	GLfloat theChange = yChange;
-	yChange = 0.0f;
-	return theChange;
+	GLfloat the_change = y_change;
+	y_change = 0.0f;
+	return the_change;
 }
 
-void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode)
+//>>>>>>>>>>>>>>>>>>>>>> Eventos de teclado >>>>>>>>>>>>>>>>>>>>>>
+void Window::ManejaTeclado(GLFWwindow* window, int key, int, int action, int)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* the_window = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if (action == GLFW_PRESS)
+    {
+        //>>>>>>>>>>>>>>>>>>>>>> Seleccion de escena >>>>>>>>>>>>>>>>>>>>>>>>
+        if (key >= GLFW_KEY_1 && key <= GLFW_KEY_4)
+            the_window->escena_activa = key - GLFW_KEY_1;
+        else if (key >= GLFW_KEY_KP_1 && key <= GLFW_KEY_KP_4)
+            the_window->escena_activa = key - GLFW_KEY_KP_1;
+
+        //>>>>>>>>>>>>>>>>>>>>>> Controles de la nave >>>>>>>>>>>>>>>>>>>>>>>
+        if (the_window->escena_activa == 1)
+        {
+            if (key == GLFW_KEY_Q) the_window->luz_nave_encendida = !the_window->luz_nave_encendida;
+            if (key == GLFW_KEY_E) the_window->motor1_encendido = !the_window->motor1_encendido;
+            if (key == GLFW_KEY_R) the_window->motor2_encendido = !the_window->motor2_encendido;
+            if (key == GLFW_KEY_T) the_window->vista_general_solicitada = true;
+        }
+    }
+
+    if (key >= GLFW_KEY_KP_0 && key <= GLFW_KEY_KP_9)
+        key = GLFW_KEY_0 + (key - GLFW_KEY_KP_0);
 
 	if (key >= 0 && key < 1024)
 	{
 		if (action == GLFW_PRESS)
 		{
-			theWindow->keys[key] = true;
-			theWindow->keysPressed[key] = true;
+			the_window->keys[key] = true;
+			the_window->keys_pressed[key] = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			theWindow->keys[key] = false;
+			the_window->keys[key] = false;
 		}
 	}
 }
 
-void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
+//>>>>>>>>>>>>>>>>>>>>>> Eventos del raton >>>>>>>>>>>>>>>>>>>>>>
+void Window::ManejaMouse(GLFWwindow* window, double x_pos, double y_pos)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* the_window = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
-	if (theWindow->mouseFirstMoved)
+	if (the_window->mouse_first_moved)
 	{
-		theWindow->lastX = (GLfloat)xPos;
-		theWindow->lastY = (GLfloat)yPos;
-		theWindow->mouseFirstMoved = false;
+		the_window->last_x = (GLfloat)x_pos;
+		the_window->last_y = (GLfloat)y_pos;
+		the_window->mouse_first_moved = false;
 	}
 
-	theWindow->xChange = (GLfloat)xPos - theWindow->lastX;
-	theWindow->yChange = theWindow->lastY - (GLfloat)yPos;
+	the_window->x_change = (GLfloat)x_pos - the_window->last_x;
+	the_window->y_change = the_window->last_y - (GLfloat)y_pos;
 
-	theWindow->lastX = (GLfloat)xPos;
-	theWindow->lastY = (GLfloat)yPos;
+	the_window->last_x = (GLfloat)x_pos;
+	the_window->last_y = (GLfloat)y_pos;
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Cambio de dimensiones >>>>>>>>>>>>>>>>>>>>>>
 void Window::ManejaResize(GLFWwindow* window, int w, int h)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* the_window = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (w == 0 || h == 0) return;   // ventana minimizada
-	theWindow->bufferWidth = w;
-	theWindow->bufferHeight = h;
+	the_window->buffer_width = w;
+	the_window->buffer_height = h;
 	glViewport(0, 0, w, h);
 }
 
+//>>>>>>>>>>>>>>>>>>>>>> Liberacion de la ventana >>>>>>>>>>>>>>>>>>>>>>
 Window::~Window()
 {
-	if (mainWindow)
-		glfwDestroyWindow(mainWindow);
+	if (main_window)
+		glfwDestroyWindow(main_window);
 	glfwTerminate();
 }

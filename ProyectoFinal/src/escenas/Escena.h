@@ -1,19 +1,8 @@
 #pragma once
-/*
- * Escena.h
- * Clase base de cada zona del proyecto: Espacio, Planeta Naranja,
- * Planeta Morado y Planeta Azul.
- *
- * Cada escena tiene lo SUYO:
- *   - su skybox      (assets/<escena>/skybox/)
- *   - su cámara      (cada escena recuerda dónde quedó su cámara)
- *   - sus luces
- *   - sus modelos, texturas y animaciones (cuando se agreguen)
- *
- * main.cpp solo elige qué escena está activa y la dibuja, así cada quien
- * trabaja en su carpeta src/escenas/<escena>/ sin tocar la de los demás.
- */
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de Escena >>>>>>>>>>>>>>>>>>>>>>
+// Interfaz comun de las escenas y contexto de dibujo.
 #include <string>
+#include <cmath>
 #include <glew.h>
 #include <glm.hpp>
 
@@ -22,55 +11,105 @@
 #include "Shader_light.h"
 #include "Skybox.h"
 #include "CommonValues.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
+
+class Model;
+class Texture;
 
 // Ubicaciones de los uniforms del shader de iluminación (las llena main.cpp)
 struct ContextoRender
 {
-	GLuint uModel = 0;
-	GLuint uColor = 0;
-	GLuint uSpecularIntensity = 0;
-	GLuint uShininess = 0;
+    GLuint u_model = 0;
+    GLuint u_color = 0;
+    GLuint u_specular_intensity = 0;
+    GLuint u_shininess = 0;
+    glm::mat4 vista{1.0f}, proyeccion{1.0f};
+    glm::vec3 pos_camara{0.0f};
 };
+
+// Ciclo compartido por ambos planetas; mediodia al iniciar y noche entre 30 y 90 s.
+namespace IluminacionAmbiental
+{
+inline constexpr float duracion_dia = 120.0f;
+inline float FactorDia(float tiempo, float duracion = duracion_dia)
+{
+    return 0.5f + 0.5f * std::cos(2.0f * 3.142f * tiempo / duracion);
+}
+} // namespace IluminacionAmbiental
+
+// Parametrizacion comun a los asteroides de superficie y del espacio.
+namespace CurvasOrbitales
+{
+inline glm::vec3 ElipsePlana(float angulo, float semieje_x, float semieje_z)
+{
+    return glm::vec3(semieje_x * std::cos(angulo), 0, semieje_z * std::sin(angulo));
+}
+inline glm::vec3 TangenteElipse(float angulo, float semieje_x, float semieje_z)
+{
+    return glm::vec3(-semieje_x * std::sin(angulo), 0, semieje_z * std::cos(angulo));
+}
+} // namespace CurvasOrbitales
 
 class Escena
 {
 public:
-	virtual ~Escena() {}
+    virtual ~Escena()
+    {
+        delete malla_brillos;
+    }
 
-	// Nombre para el título de la ventana
-	virtual const char* Nombre() const = 0;
+    // Nombre para el título de la ventana
+    virtual const char* Nombre() const = 0;
 
-	// Se llama UNA vez al inicio: skybox, cámara, luces, modelos, texturas.
-	virtual void Inicializar() = 0;
+    // Inicializacion del skybox, camara, modelos y texturas.
+    virtual void Inicializar() = 0;
 
-	// Se llama cada frame mientras la escena está activa (animaciones, teclas propias).
-	// dt = segundos desde el frame anterior.
-	virtual void Actualizar(float dt, Window& ventana) {}
+    // Actualizacion de animaciones y estados de la escena activa.
+    // dt = segundos desde el frame anterior.
+    virtual void Actualizar(float, Window&) {}
 
-	// Dibujar los objetos de la escena (el shader ya está activo).
-	virtual void Dibujar(const ContextoRender& ctx) {}
+    // Dibujar los objetos de la escena (el shader ya está activo).
+    virtual void Dibujar(const ContextoRender&) {}
 
-	// ---- Comunes a todas las escenas ----
-	Camera& ObtenerCamara() { return camara; }
-	void DibujarSkybox(const glm::mat4& vista, const glm::mat4& proyeccion);
-	void AplicarLuces(Shader& shader);
+    // ---- Comunes a todas las escenas ----
+    Camera& ObtenerCamara()
+    {
+        return camara;
+    }
+    virtual DirectionalLight* ObtenerLuzDireccional()
+    {
+        return nullptr;
+    }
+    virtual PointLight* ObtenerLucesPuntuales()
+    {
+        return nullptr;
+    }
+    virtual unsigned int NumLucesPuntuales()
+    {
+        return 0;
+    }
+    virtual bool ObjetivoCamara(int, glm::vec3&, glm::vec3&, float&, float&) const { return false; }
+    virtual float PlanoCercano() const
+    {
+        return 0.1f;
+    }
+    virtual float AlcanceVista() const
+    {
+        return 3500.0f;
+    }
+    void DibujarSkybox(const glm::mat4& vista, const glm::mat4& proyeccion);
 
 protected:
-	// Carga los 6 lados de una carpeta con los nombres que se usaban en clase:
-	// rt, lf, up, dn, bk, ft + extensión.  Ej: CargarSkybox("assets/espacio/skybox/");
-	void CargarSkybox(const std::string& carpeta, const std::string& extension = ".jpg");
+    // Modelo -> centro LED local -> halo que mira a la camara; no crea luces reales.
+    void DibujarBrillos(const ContextoRender& ctx, const Model& modelo, const glm::mat4& padre,
+                        Texture& textura, float intensidad = .65f);
+    MeshModel* malla_brillos = nullptr;
 
-	Camera camara;
-	Skybox skybox;
-	bool tieneSkybox = false;
+    // Carga las seis caras del cubo:
+    // textura_derecha, textura_izquierda, textura_abajo, textura_arriba, textura_atras y textura_frente.
+    void CargarSkybox(const std::string& carpeta, const std::string& extension = ".jpg",
+                      const std::string& prefijo = "textura_");
 
-	// La direccional siempre debe existir (el shader la usa)
-	DirectionalLight luzDireccional = DirectionalLight(1.0f, 1.0f, 1.0f, 0.3f, 0.6f, 0.0f, -1.0f, -0.5f);
-	PointLight lucesPuntuales[MAX_POINT_LIGHTS];
-	unsigned int numLucesPuntuales = 0;
-	SpotLight lucesSpot[MAX_SPOT_LIGHTS];
-	unsigned int numLucesSpot = 0;
+    Camera camara;
+    Skybox skybox;
+    bool tiene_skybox = false;
 };

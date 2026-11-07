@@ -1,0 +1,7 @@
+newmtl _Fuel_Tank_1
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/tanque_pequeno.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2

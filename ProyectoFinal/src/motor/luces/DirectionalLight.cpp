@@ -1,3 +1,4 @@
+//>>>>>>>>>>>>>>>>>>>>>> DirectionalLight >>>>>>>>>>>>>>>>>>>>>>
 #include "DirectionalLight.h"
 
 DirectionalLight::DirectionalLight() : Light()
@@ -6,20 +7,20 @@ DirectionalLight::DirectionalLight() : Light()
 }
 
 DirectionalLight::DirectionalLight(GLfloat red, GLfloat green, GLfloat blue,
-									GLfloat aIntensity, GLfloat dIntensity,
-									GLfloat xDir, GLfloat yDir, GLfloat zDir) : Light(red, green, blue, aIntensity, dIntensity)
+									GLfloat a_intensity, GLfloat d_intensity,
+									GLfloat x_dir, GLfloat y_dir, GLfloat z_dir) : Light(red, green, blue, a_intensity, d_intensity)
 {
-	direction = glm::vec3(xDir, yDir, zDir);
+	direction = glm::vec3(x_dir, y_dir, z_dir);
 }
 
-void DirectionalLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientcolorLocation,
-	GLfloat diffuseIntensityLocation, GLfloat directionLocation)
+void DirectionalLight::UseLight(GLint ambient_intensity_location, GLint ambientcolor_location,
+	GLint diffuse_intensity_location, GLint direction_location)
 {
-	glUniform3f(ambientcolorLocation, color.x, color.y, color.z);
-	glUniform1f(ambientIntensityLocation, ambientIntensity);
+	glUniform3f(ambientcolor_location, color.x, color.y, color.z);
+	glUniform1f(ambient_intensity_location, ambient_intensity);
 
-	glUniform3f(directionLocation, direction.x, direction.y, direction.z);
-	glUniform1f(diffuseIntensityLocation, diffuseIntensity);
+	glUniform3f(direction_location, direction.x, direction.y, direction.z);
+	glUniform1f(diffuse_intensity_location, diffuse_intensity);
 }
 
 DirectionalLight::~DirectionalLight()

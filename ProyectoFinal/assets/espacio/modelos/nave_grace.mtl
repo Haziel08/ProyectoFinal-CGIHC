@@ -1,0 +1,126 @@
+newmtl nave_grace_material_01
+Ka 1 1 1
+Kd 1.000 1.000 0.910
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_02
+Ka 1 1 1
+Kd 0.000 0.000 0.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_03
+Ka 1 1 1
+Kd 0.463 0.451 0.435
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_04
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_05
+Ka 1 1 1
+Kd 0.545 0.545 0.545
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_06
+Ka 1 1 1
+Kd 0.000 0.000 0.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_07
+Ka 1 1 1
+Kd 0.820 0.820 0.820
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_08
+Ka 1 1 1
+Kd 0.318 0.318 0.318
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_09
+Ka 1 1 1
+Kd 0.725 0.365 0.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_10
+Ka 1 1 1
+Kd 0.545 0.545 0.545
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_11
+Ka 1 1 1
+Kd 0.725 0.545 0.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_12
+Ka 1 1 1
+Kd 1.000 1.000 0.910
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_13
+Ka 1 1 1
+Kd 1.000 0.761 0.090
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_14
+Ka 1 1 1
+Kd 0.502 0.502 0.502
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_15
+Ka 1 1 1
+Kd 0.000 0.000 0.275
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_16
+Ka 1 1 1
+Kd 0.502 0.502 0.502
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_17
+Ka 1 1 1
+Kd 0.090 0.545 1.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+
+newmtl nave_grace_material_18
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.45 0.45 0.45
+Ns 64
+illum 2
+

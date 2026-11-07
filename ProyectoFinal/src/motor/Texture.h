@@ -1,20 +1,23 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de Texture >>>>>>>>>>>>>>>>>>>>>>
 #include <glew.h>
 #include <string>
 class Texture
 {
 public:
 	Texture();
-	Texture(const char* FileLoc);
+	Texture(const char* ruta_archivo);
 	bool LoadTexture();
 	bool LoadTextureA();
-	void UseTexture();
+	bool LoadMemory(const unsigned char* bytes, int length);
+	bool LoadColor(float red, float green, float blue);
+	void UseTexture(GLenum unidad = GL_TEXTURE0);
 	void ClearTexture();
 	~Texture();
 private: 
-	GLuint textureID;
-	int width, height, bitDepth;
-	std::string fileLocation;
+	GLuint texture_id;
+	int width, height, bit_depth;
+	std::string file_location;
 
 };
 

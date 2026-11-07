@@ -1,0 +1,7 @@
+newmtl Tree_0Mat
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/corteza_arbol_seco_3.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2

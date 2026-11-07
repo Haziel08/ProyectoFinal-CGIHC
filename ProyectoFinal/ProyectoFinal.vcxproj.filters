@@ -30,56 +30,114 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\*.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\motor\*.cpp">
+    <ClCompile Include="src\motor\Material.cpp">
       <Filter>src\motor</Filter>
     </ClCompile>
-    <ClCompile Include="src\motor\luces\*.cpp">
+    <ClCompile Include="src\motor\Mesh_tn.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\Model.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\Shader_light.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\Skybox.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\Texture.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\Window.cpp">
+      <Filter>src\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor\luces\Light.cpp">
       <Filter>src\motor\luces</Filter>
     </ClCompile>
-    <ClCompile Include="src\escenas\*.cpp">
-      <Filter>src\escenas</Filter>
+    <ClCompile Include="src\motor\luces\PointLight.cpp">
+      <Filter>src\motor\luces</Filter>
     </ClCompile>
-    <ClCompile Include="src\escenas\espacio\*.cpp">
-      <Filter>src\escenas\espacio</Filter>
+    <ClCompile Include="src\motor\luces\SpotLight.cpp">
+      <Filter>src\motor\luces</Filter>
     </ClCompile>
-    <ClCompile Include="src\escenas\planeta_naranja\*.cpp">
-      <Filter>src\escenas\planeta_naranja</Filter>
-    </ClCompile>
-    <ClCompile Include="src\escenas\planeta_morado\*.cpp">
-      <Filter>src\escenas\planeta_morado</Filter>
-    </ClCompile>
-    <ClCompile Include="src\escenas\planeta_azul\*.cpp">
-      <Filter>src\escenas\planeta_azul</Filter>
-    </ClCompile>
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
+    <ClCompile Include="src\**\*.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\*.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\motor\*.h">
+    <ClInclude Include="src\motor\CommonValues.h">
       <Filter>src\motor</Filter>
     </ClInclude>
-    <ClInclude Include="src\motor\luces\*.h">
+    <ClInclude Include="src\motor\Material.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\Mesh_tn.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\Model.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\Shader_light.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\Skybox.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\stb_image.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\Texture.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\Window.h">
+      <Filter>src\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor\luces\Light.h">
       <Filter>src\motor\luces</Filter>
     </ClInclude>
-    <ClInclude Include="src\escenas\*.h">
-      <Filter>src\escenas</Filter>
+    <ClInclude Include="src\motor\luces\PointLight.h">
+      <Filter>src\motor\luces</Filter>
     </ClInclude>
-    <ClInclude Include="src\escenas\espacio\*.h">
-      <Filter>src\escenas\espacio</Filter>
+    <ClInclude Include="src\motor\luces\SpotLight.h">
+      <Filter>src\motor\luces</Filter>
     </ClInclude>
-    <ClInclude Include="src\escenas\planeta_naranja\*.h">
-      <Filter>src\escenas\planeta_naranja</Filter>
-    </ClInclude>
-    <ClInclude Include="src\escenas\planeta_morado\*.h">
-      <Filter>src\escenas\planeta_morado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\escenas\planeta_azul\*.h">
-      <Filter>src\escenas\planeta_azul</Filter>
-    </ClInclude>
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
+    <ClInclude Include="src\**\*.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\*.vert">
@@ -88,5 +146,7 @@
     <None Include="shaders\*.frag">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\*.vert" />
+    <None Include="shaders\*.frag" />
   </ItemGroup>
 </Project>

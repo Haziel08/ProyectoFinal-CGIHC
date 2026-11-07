@@ -1,4 +1,5 @@
 #pragma once
+//>>>>>>>>>>>>>>>>>>>>>> Definiciones de DirectionalLight >>>>>>>>>>>>>>>>>>>>>>
 #include "Light.h"
 
 class DirectionalLight :
@@ -7,11 +8,11 @@ class DirectionalLight :
 public:
 	DirectionalLight();
 	DirectionalLight(GLfloat red, GLfloat green, GLfloat blue, 
-					GLfloat aIntensity, GLfloat dIntensity,
-					GLfloat xDir, GLfloat yDir, GLfloat zDir);
+					GLfloat a_intensity, GLfloat d_intensity,
+					GLfloat x_dir, GLfloat y_dir, GLfloat z_dir);
 
-	void UseLight(GLfloat ambientIntensityLocation, GLfloat ambientcolorLocation,
-		GLfloat diffuseIntensityLocation, GLfloat directionLocation);
+	void UseLight(GLint ambient_intensity_location, GLint ambientcolor_location,
+		GLint diffuse_intensity_location, GLint direction_location);
 
 	~DirectionalLight();
 

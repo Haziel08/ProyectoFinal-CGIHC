@@ -1,0 +1,9 @@
+newmtl tallo
+Kd 0.23 0.09 0.38
+Ks .25 .25 .25
+Ns 20
+newmtl puntas
+Kd 0.76 0.25 0.64
+Ke .12 .04 .14
+Ks .4 .4 .4
+Ns 28

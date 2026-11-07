@@ -1,0 +1,49 @@
+newmtl orbital_2_Antenna
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_02_antena.jpg
+
+newmtl orbital_2_Couro
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_02_aislante.jpg
+
+newmtl orbital_2_Pinos
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_02_pines.jpg
+
+newmtl orbital_2_Placas
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_02_paneles.jpg
+
+newmtl orbital_2_Satélite
+Ns 122.500015
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd ../texturas/satelite_02_cuerpo.jpg
