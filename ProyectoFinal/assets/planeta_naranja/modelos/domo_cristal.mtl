@@ -1,0 +1,16 @@
+newmtl cristal_domo
+Ka 1 1 1
+Kd 0.175 0.218 0.456
+Ks 0.348 0.348 0.348
+Ns 32
+d 0.792
+illum 2
+
+newmtl reflejo_domo
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.950 0.950 0.950
+Ns 180
+d 0.520
+map_Kd ../texturas/reflejo_domo.jpg
+illum 2

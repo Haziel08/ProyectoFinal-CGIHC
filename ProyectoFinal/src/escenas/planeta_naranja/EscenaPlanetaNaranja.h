@@ -7,6 +7,7 @@
 #include "Mesh_tn.h"
 #include "Model.h"
 #include "Texture.h"
+#include "planeta_morado/EscenaPlanetaMorado.h"
 
 //>>>>>>>>>>>>>>>>>>>>>> Interfaz de la escena >>>>>>>>>>>>>>>>>>>>>>>
 class EscenaPlanetaNaranja : public Escena
@@ -17,14 +18,38 @@ public:
     {
         return "Planeta Naranja";
     }
+    bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
     void Inicializar() override;
     void Actualizar(float dt, Window& ventana) override;
     void Dibujar(const ContextoRender& ctx) override;
     glm::mat4 ObtenerMatrizNave() const;
     glm::mat4 ObtenerMatrizNaveEspiral() const;
-    glm::vec3 ObtenerPosicionLuzPoste(int indice, const glm::vec3& ojo) const;
+    DirectionalLight* ObtenerLuzDireccional() override
+    {
+        return &luz_sol;
+    }
+    PointLight* ObtenerLucesPuntuales() override
+    {
+        return luces_arquitectura;
+    }
+    unsigned int NumLucesPuntuales() override
+    {
+        return 4;
+    }
+    bool EsDeNoche() const
+    {
+        return es_noche;
+    }
 
 private:
+    PlanetaAzul::ModeloAnimado rocky_caminante;
+    Shader shader_rocky;
+    bool caminante_cargado = false;
+    float tiempo_rocky = 0;
+    std::array<Model,14> rocky_saludo;
+    CoheteAuxiliar cohete_auxiliar;
+    void CargarRocky();
+    void DibujarRocky(const ContextoRender& ctx);
     //>>>>>>>>>>>>>>>>>>>>>> Constantes compartidas de la escena >>>>>>>>>
     static constexpr float escala_pista = 0.18f;
     static constexpr float escala_nave = 1.1f;
@@ -55,8 +80,17 @@ private:
         int asteroide = 0;
     };
 
+    struct DecoracionEstatica
+    {
+        int tipo;
+        glm::mat4 matriz;
+    };
+
     //>>>>>>>>>>>>>>>>>>>>>> Modelos y mallas >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    Model decorativos[17];
+    std::vector<DecoracionEstatica> decoracion;
     Model suelo, pista, pista_espiral, nave;
+    Model rivales[8];
     Model poste_luz, soporte_faro_lateral, soportes_y_senalizacion;
     Model torre_comunicaciones, torre_control;
     Model montanas[3], roca_periferica;
@@ -71,10 +105,22 @@ private:
     Texture* textura_fuego_asteroide = nullptr;
     Texture* textura_humo = nullptr;
     Texture* textura_aspas = nullptr;
+    Texture textura_halo;
+    MeshModel* malla_halos = nullptr;
+
+    //>>>>>>>>>>>>>>>>>>>>>> Ciclo ambiental y luces arquitectonicas >>>>>>
+    Skybox cielo_dia, cielo_noche;
+    DirectionalLight luz_sol;
+    PointLight luces_arquitectura[4];
+    glm::vec3 posiciones_arquitectura[4];
+    float tiempo_dia = 0.0f;
+    bool es_noche = false;
 
     //>>>>>>>>>>>>>>>>>>>>>> Distribucion y matrices persistentes >>>>>>>>
     glm::mat4 matriz_pista{1.0f}, matriz_nave{1.0f}, matriz_nave_espiral{1.0f};
     std::vector<glm::mat4> matrices_postes, apoyos_faroles_elevados, rocas_perifericas;
+    std::vector<glm::vec3> posiciones_luces_postes;
+    glm::mat4 matrices_rivales[19];
     std::vector<MontanaPeriferica> montanas_perifericas;
     std::vector<TrianguloPista> secciones_pista, secciones_espiral;
     std::array<glm::mat4, 3> matrices_asteroides;
@@ -84,6 +130,7 @@ private:
     glm::mat4 matrices_fuegos[2][2];
 
     //>>>>>>>>>>>>>>>>>>>>>> Estado de la animacion >>>>>>>>>>>>>>>>>>>>>>
+    double tiempo_carreras = 0.0;
     std::vector<float> distancias;
     float longitud_circuito = 0.0f;
     float avance_nave = 0.0f, tiempo_espiral = 0.0f;
@@ -99,7 +146,12 @@ private:
     void CrearMallasAereas();
     void CrearRecorrido();
     void CrearFaros();
+    void CrearIluminacion();
+    void CrearHalos();
+    void ActualizarIluminacion(float dt);
+    void DibujarHalos(const ContextoRender& ctx);
     void CrearPaisajePeriferico();
+    void CrearDecoracion();
 
     //>>>>>>>>>>>>>>>>>>>>>> Geometria y curvas auxiliares >>>>>>>>>>>>>>>
     static glm::mat4 MarcoDeVuelo(const glm::vec3& posicion, const glm::vec3& tangente);
@@ -118,6 +170,7 @@ private:
     //>>>>>>>>>>>>>>>>>>>>>> Animacion y dibujo jerarquico >>>>>>>>>>>>>>>
     void ActualizarNaves(float dt);
     void ActualizarObjetosAereos(float dt);
+    void DibujarDecoracion(const ContextoRender& ctx, bool transparente);
     void DibujarNaves(const ContextoRender& ctx);
     void DibujarObjetosAereos(const ContextoRender& ctx);
 };

@@ -1,5 +1,5 @@
 # Pidgey_Cuerpo: pivote en el origen, unidades en metros
-mtllib Pidgey_Cuerpo.mtl
+mtllib pidgey_ala_der.mtl
 v 0.0947 -0.4391 0.0268
 v 0.1218 -0.4424 0.0473
 v 0.1046 -0.4396 0.0558

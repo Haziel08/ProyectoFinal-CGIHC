@@ -5,8 +5,9 @@ Ns 96
 illum 2
 map_Kd ../texturas/placas_metalicas.png
 
-newmtl borde_blanco
+newmtl tira_nocturna
 Kd 1 1 1
-Ks 0.9 0.9 0.9
+Ks 0.8 0.8 0.8
 Ns 96
 illum 2
+map_Kd ../texturas/tiras_torre.png

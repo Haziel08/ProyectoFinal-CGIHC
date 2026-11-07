@@ -43,7 +43,20 @@ bool Texture::LoadTextureA()
 	GL_LINEAR  aplica sampling y blending de texels más cercanos. GL_NEAREST aplica sample de texel más cercano
 	*/
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		(file_location.find("pista_") != std::string::npos || file_location.find("paneles_solares.png") != std::string::npos || file_location.find("crater_luna.png") != std::string::npos || file_location.find("roca_piso_") != std::string::npos) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+		(file_location.find("metal_rocky_ranuras.png") != std::string::npos ||
+		 file_location.find("corteza_") != std::string::npos ||
+		 file_location.find("casco_nave_") != std::string::npos ||
+		 file_location.find("reflejo_domo") != std::string::npos ||
+		 file_location.find("ramas_arbol") != std::string::npos ||
+		 file_location.find("radiotelescopio") != std::string::npos ||
+		 file_location.find("tanque") != std::string::npos ||
+		 file_location.find("tuberias.png") != std::string::npos ||
+		 file_location.find("deposito_horizontal.png") != std::string::npos ||
+		 file_location.find("pista_") != std::string::npos ||
+		 file_location.find("paneles_solares.png") != std::string::npos ||
+		 file_location.find("crater_luna.png") != std::string::npos ||
+		 file_location.find("roca_piso_") != std::string::npos ||
+         file_location.find("camino_terraceria.png") != std::string::npos) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data);
@@ -74,7 +87,7 @@ bool Texture::LoadTexture()
 	GL_LINEAR  aplica sampling y blending de texels más cercanos. GL_NEAREST aplica sample de texel más cercano
 	*/
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		file_location.find("suelo_naranja.jpg") != std::string::npos ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+		(file_location.find("suelo_naranja.jpg") != std::string::npos || file_location.find("casco_") != std::string::npos || file_location.find("ventanas_estacion") != std::string::npos || file_location.find("luna_") != std::string::npos) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	// stb_image entrega filas RGB consecutivas, sin relleno entre ellas.
@@ -128,9 +141,9 @@ void Texture::ClearTexture()
 	bit_depth = 0;
 	file_location = "";
 }
-void Texture::UseTexture()
+void Texture::UseTexture(GLenum unidad)
 {	//UnitTexture
-	glActiveTexture(GL_TEXTURE0); //para crear un sampler que es lo que necesitan los shaders para poder acceder a la textura: 16 a 32 texturas pueden ser declaradas
+	glActiveTexture(unidad); //para crear un sampler que es lo que necesitan los shaders para poder acceder a la textura: 16 a 32 texturas pueden ser declaradas
 	//si hay mas de 1 unittexture se tiene que crear una unifromvariable que haga cambio entre la unit texture a utilizar
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 

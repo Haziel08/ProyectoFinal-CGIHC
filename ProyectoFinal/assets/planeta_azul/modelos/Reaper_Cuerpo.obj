@@ -1,5 +1,5 @@
 # Reaper_Cuerpo: pivote en el origen, unidades en metros
-mtllib Reaper_Cuerpo.mtl
+mtllib reaper_aleta_der.mtl
 v 0.0995 -0.1950 0.1265
 v 0.1599 -0.1618 0.0981
 v 0.2120 -0.1942 0.0207

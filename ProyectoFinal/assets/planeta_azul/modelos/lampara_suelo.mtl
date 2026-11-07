@@ -1,0 +1,6 @@
+newmtl piedra
+Kd .27 .31 .25
+newmtl madera
+Kd .29 .19 .10
+newmtl luminaria_nocturna
+Kd 1 .76 .35

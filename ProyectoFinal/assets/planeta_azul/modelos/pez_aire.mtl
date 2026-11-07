@@ -1,0 +1,4 @@
+newmtl airsack_fish_opacity
+Kd 1 1 1
+map_Kd ../texturas/pez_aire.jpg
+

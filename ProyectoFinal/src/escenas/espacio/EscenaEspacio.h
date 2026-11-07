@@ -15,6 +15,7 @@ public:
     {
         return "Espacio";
     }
+    bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
     void Inicializar() override;
     void Actualizar(float dt, Window& ventana) override;
     void Dibujar(const ContextoRender& ctx) override;
@@ -41,10 +42,13 @@ private:
     PanelOrbital paneles[2][8];
     int cantidad_paneles[2] = {0, 0};
     Model asteroides[3];
-    Model luna;
+    Model lunas[2];
+    Model estacion_xq6, cabina_estacion, campos_estacion;
+    Model naves_estacion[15];
     //>>>>>>>>>>>>>>>>>>>>>> Texturas y mallas de efectos >>>>>>>>>>>>>>>>>
     Texture textura_nubes;
     Texture textura_fuego;
+    Texture textura_brillos;
     MeshModel* esfera_atmosfera = nullptr;
     MeshModel* malla_estela = nullptr;
     //>>>>>>>>>>>>>>>>>>>>>> Matrices de las jerarquias >>>>>>>>>>>>>>>>>>>
@@ -56,7 +60,10 @@ private:
     glm::mat4 matrices_paneles[3][5][8];
     glm::mat4 matrices_atmosferas[3];
     glm::mat4 matriz_nubes{1.0f};
-    glm::mat4 matriz_luna{1.0f};
+    glm::mat4 matrices_lunas[2];
+    glm::mat4 matriz_estacion{1.0f};
+    glm::mat4 matriz_cabina{1.0f};
+    glm::mat4 matrices_naves[15];
     //>>>>>>>>>>>>>>>>>>>>>> Estado de la animacion >>>>>>>>>>>>>>>>>>>>>>>
     double tiempo = 0.0;
 
@@ -64,5 +71,6 @@ private:
     void CargarModelos();
     void CargarPaneles();
     void CargarTexturas();
+    glm::mat4 matriz_aurora_exploradora{1.0f};
     void ActualizarMatrices();
 };

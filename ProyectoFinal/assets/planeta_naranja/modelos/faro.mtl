@@ -11,9 +11,9 @@ Ks 0.65 0.65 0.65
 Ns 80
 illum 2
 
-newmtl cristal
+newmtl luminaria_nocturna
 Kd 1 1 1
 Ks 1 1 1
 Ns 180
 illum 2
-map_Kd ../texturas/cristal_faro.png
+map_Kd ../texturas/faro_cristal.png

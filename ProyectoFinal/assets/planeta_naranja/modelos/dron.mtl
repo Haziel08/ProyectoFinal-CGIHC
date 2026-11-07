@@ -10,55 +10,61 @@ illum 2
 map_Kd ../texturas/dron_cuerpo.png
 refl _Metallic_.png
 
-newmtl Dron_DL-3__light_
+
+newmtl dron_luz_blanca
 Ns 323.999994
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
+Ke 1.35 1.35 1.35
 Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl emision_blue
+
+newmtl dron_luz_azul
 Ns 323.999994
 Ka 1.000000 1.000000 1.000000
 Kd 0.000000 0.000000 1.000000
 Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
+Ke 1.35 1.35 1.35
 Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl emision_green
+
+newmtl dron_luz_verde
 Ns 323.999994
 Ka 1.000000 1.000000 1.000000
 Kd 0.030325 1.000000 0.040713
 Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
+Ke 1.35 1.35 1.35
 Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl emision_red
+
+newmtl dron_luz_roja
 Ns 323.999994
 Ka 1.000000 1.000000 1.000000
 Kd 1.000000 0.000000 0.000000
 Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
+Ke 1.35 1.35 1.35
 Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl glass
+
+newmtl dron_luz_cristal
 Ns 323.999994
 Ka 1.000000 1.000000 1.000000
 Kd 0.010701 0.800000 0.647783
 Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
+Ke 1.35 1.35 1.35
 Ni 1.000000
 d 1.000000
 illum 2
+
 
 newmtl mgla
 Ns 323.999994
@@ -70,12 +76,13 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl sklo_
+
+newmtl dron_luz_ventana
 Ns 323.999994
 Ka 1.000000 1.000000 1.000000
 Kd 0.284317 0.584186 0.800000
 Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
+Ke 1.35 1.35 1.35
 Ni 1.000000
 d 1.000000
 illum 2

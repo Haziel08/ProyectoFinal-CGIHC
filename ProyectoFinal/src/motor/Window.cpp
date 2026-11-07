@@ -112,7 +112,7 @@ GLfloat Window::getYChange()
 }
 
 //>>>>>>>>>>>>>>>>>>>>>> Eventos de teclado >>>>>>>>>>>>>>>>>>>>>>
-void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode)
+void Window::ManejaTeclado(GLFWwindow* window, int key, int, int action, int)
 {
 	Window* the_window = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
@@ -124,16 +124,21 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
         //>>>>>>>>>>>>>>>>>>>>>> Seleccion de escena >>>>>>>>>>>>>>>>>>>>>>>>
         if (key >= GLFW_KEY_1 && key <= GLFW_KEY_4)
             the_window->escena_activa = key - GLFW_KEY_1;
+        else if (key >= GLFW_KEY_KP_1 && key <= GLFW_KEY_KP_4)
+            the_window->escena_activa = key - GLFW_KEY_KP_1;
 
         //>>>>>>>>>>>>>>>>>>>>>> Controles de la nave >>>>>>>>>>>>>>>>>>>>>>>
         if (the_window->escena_activa == 1)
         {
-            if (key == GLFW_KEY_Z) the_window->luz_nave_encendida = !the_window->luz_nave_encendida;
-            if (key == GLFW_KEY_X) the_window->motor1_encendido = !the_window->motor1_encendido;
-            if (key == GLFW_KEY_C) the_window->motor2_encendido = !the_window->motor2_encendido;
-            if (key == GLFW_KEY_V) the_window->vista_general_solicitada = true;
+            if (key == GLFW_KEY_Y) the_window->luz_nave_encendida = !the_window->luz_nave_encendida;
+            if (key == GLFW_KEY_U) the_window->motor1_encendido = !the_window->motor1_encendido;
+            if (key == GLFW_KEY_I) the_window->motor2_encendido = !the_window->motor2_encendido;
+            if (key == GLFW_KEY_O) the_window->vista_general_solicitada = true;
         }
     }
+
+    if (key >= GLFW_KEY_KP_0 && key <= GLFW_KEY_KP_9)
+        key = GLFW_KEY_0 + (key - GLFW_KEY_KP_0);
 
 	if (key >= 0 && key < 1024)
 	{

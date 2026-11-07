@@ -99,25 +99,25 @@ void Shader::CompileShader(const char* vertex_code, const char* fragment_code)
 	{
 		char loc_buff[100] = { '\0' };
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].base.color", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].base.color", i);
 		uniform_point_light[i].uniform_color = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].base.ambient_intensity", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].base.ambient_intensity", i);
 		uniform_point_light[i].uniform_ambient_intensity = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].base.diffuse_intensity", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].base.diffuse_intensity", i);
 		uniform_point_light[i].uniform_diffuse_intensity = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].position", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].position", i);
 		uniform_point_light[i].uniform_position = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].constant", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].constant", i);
 		uniform_point_light[i].uniform_constant = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].linear", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].linear", i);
 		uniform_point_light[i].uniform_linear = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%d].exponent", i);
+		snprintf(loc_buff, sizeof(loc_buff), "point_lights[%zu].exponent", i);
 		uniform_point_light[i].uniform_exponent = glGetUniformLocation(shader_id, loc_buff);
 	}
 
@@ -127,31 +127,31 @@ void Shader::CompileShader(const char* vertex_code, const char* fragment_code)
 	{
 		char loc_buff[100] = { '\0' };
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.base.color", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.base.color", i);
 		uniform_spot_light[i].uniform_colour = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.base.ambient_intensity", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.base.ambient_intensity", i);
 		uniform_spot_light[i].uniform_ambient_intensity = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.base.diffuse_intensity", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.base.diffuse_intensity", i);
 		uniform_spot_light[i].uniform_diffuse_intensity = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.position", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.position", i);
 		uniform_spot_light[i].uniform_position = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.constant", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.constant", i);
 		uniform_spot_light[i].uniform_constant = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.linear", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.linear", i);
 		uniform_spot_light[i].uniform_linear = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].base.exponent", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].base.exponent", i);
 		uniform_spot_light[i].uniform_exponent = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].direction", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].direction", i);
 		uniform_spot_light[i].uniform_direction = glGetUniformLocation(shader_id, loc_buff);
 
-		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%d].edge", i);
+		snprintf(loc_buff, sizeof(loc_buff), "spot_lights[%zu].edge", i);
 		uniform_spot_light[i].uniform_edge = glGetUniformLocation(shader_id, loc_buff);
 	}
 
@@ -263,13 +263,7 @@ void Shader::AddShader(GLuint the_program, const char* shader_code, GLenum shade
 {
 	GLuint the_shader = glCreateShader(shader_type);
 
-	const GLchar* the_code[1];
-	the_code[0] = shader_code;
-
-	GLint code_length[1];
-	code_length[0] = strlen(shader_code);
-
-	glShaderSource(the_shader, 1, the_code, code_length);
+	glShaderSource(the_shader, 1, &shader_code, nullptr);
 	glCompileShader(the_shader);
 
 	GLint result = 0;

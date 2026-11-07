@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 //>>>>>>>>>>>>>>>>>>>>>> Bibliotecas y cabeceras >>>>>>>>>>>>>>>>>>>>>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <glew.h>
@@ -92,10 +93,12 @@ int main()
     std::vector<Escena*> escenas = {new EscenaEspacio(), planeta_naranja, new EscenaPlanetaMorado(),
                                     new EscenaPlanetaAzul()};
     for (Escena* escena : escenas)
+    {
+        ventana.setTitulo((std::string("Proyecto Final | Cargando ") + escena->Nombre()).c_str());
         escena->Inicializar();
+    }
     //>>>>>>>>>>>>>>>>>>>>>> Luces y estado local del programa >>>>>>>>>>>
     DirectionalLight luz_general(1, 1, 1, 0.3f, 0.6f, 0, -1, -0.5f);
-    DirectionalLight luz_planeta_naranja(1.0f, 0.79f, 0.60f, 0.48f, 0.85f, -0.45f, 0.85f, -0.25f);
     LucesNaves luces;
 
     // Las ubicaciones del shader no cambian durante el ciclo.
@@ -104,6 +107,7 @@ int main()
     ctx.u_color = shader.getColorLocation();
     ctx.u_specular_intensity = shader.GetSpecularIntensityLocation();
     ctx.u_shininess = shader.GetShininessLocation();
+    int camara_activa = 0;
     int escena_actual = ventana.getEscenaActiva();
     ventana.setTitulo(
         (std::string("Proyecto Final CGeIHC  |  ") + escenas[escena_actual]->Nombre()).c_str());
@@ -124,6 +128,7 @@ int main()
         if (seleccion != escena_actual)
         {
             escena_actual = seleccion;
+            camara_activa = 0;
             ventana.setTitulo(
                 (std::string("Proyecto Final CGeIHC  |  ") + escenas[escena_actual]->Nombre()).c_str());
         }
@@ -134,10 +139,34 @@ int main()
 
         //>>>>>>>>>>>>>>>>>>>>>> Camara y proyeccion >>>>>>>>>>>>>>>>>>>>>>>>>
         Camera& camara = escena->ObtenerCamara();
-        camara.keyControl(ventana.getsKeys(), dt);
-        camara.mouseControl(ventana.getXChange(), ventana.getYChange());
-        glm::mat4 vista = camara.calculateViewMatrix();
-        glm::vec3 ojo = camara.getCameraPosition();
+        if (ventana.TeclaPresionada(GLFW_KEY_5)) camara_activa = 0;
+        if (escena_actual == 0 && ventana.TeclaPresionada(GLFW_KEY_6)) camara_activa = 1;
+        if (escena_actual == 1 && ventana.TeclaPresionada(GLFW_KEY_7)) camara_activa = 2;
+        if (escena_actual == 3 && ventana.TeclaPresionada(GLFW_KEY_8)) camara_activa = 3;
+        if (escena_actual == 3 && ventana.TeclaPresionada(GLFW_KEY_9)) camara_activa = 4;
+        if (escena_actual == 1 && ventana.TeclaPresionada(GLFW_KEY_0)) camara_activa = 5;
+
+        glm::vec3 objetivo, rumbo;
+        float distancia, altura;
+        glm::mat4 vista;
+        glm::vec3 ojo;
+        const float raton_x = ventana.getXChange();
+        const float raton_y = ventana.getYChange();
+        if (escena->ObjetivoCamara(camara_activa, objetivo, rumbo, distancia, altura))
+        {
+            rumbo.y = 0.0f;
+            rumbo = glm::normalize(rumbo);
+            ojo = objetivo - rumbo * distancia;
+            ojo.y = altura;
+            vista = glm::lookAt(ojo, objetivo + glm::vec3(0, distancia * .07f, 0), glm::vec3(0, 1, 0));
+        }
+        else
+        {
+            camara.keyControl(ventana.getsKeys(), dt);
+            camara.mouseControl(raton_x, raton_y);
+            vista = camara.calculateViewMatrix();
+            ojo = camara.getCameraPosition();
+        }
         glm::mat4 proyeccion =
             glm::perspective(glm::radians(60.0f), ventana.getBufferWidth() / ventana.getBufferHeight(),
                              escena->PlanoCercano(), escena->AlcanceVista());
@@ -148,16 +177,10 @@ int main()
         {
             ActualizarLucesNave(planeta_naranja->ObtenerMatrizNave(), ventana, luces);
             ActualizarLucesNave(planeta_naranja->ObtenerMatrizNaveEspiral(), ventana, luces);
-            for (int i = 0; i < 9; ++i)
-            {
-                glm::vec3 posicion = planeta_naranja->ObtenerPosicionLuzPoste(i, ojo);
-                luces.puntuales[luces.cantidad_puntuales++] = PointLight(
-                    1, 0.88f, 0.65f, 0, 1.2f, posicion.x, posicion.y, posicion.z, 1, 0.12f, 0.025f);
-            }
         }
 
-        // Luces propias de la escena activa (p. ej. fogata y antorchas del planeta azul)
-        for (unsigned int i = 0; i < escena->NumLucesPuntuales() && luces.cantidad_puntuales < max_point_lights; ++i)
+        for (unsigned int i = 0;
+             i < escena->NumLucesPuntuales() && luces.cantidad_puntuales < max_point_lights; ++i)
             luces.puntuales[luces.cantidad_puntuales++] = escena->ObtenerLucesPuntuales()[i];
 
         //>>>>>>>>>>>>>>>>>>>>>> Skybox >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -170,15 +193,13 @@ int main()
         glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(proyeccion));
         glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(vista));
         glUniform3f(shader.GetEyePositionLocation(), ojo.x, ojo.y, ojo.z);
-        DirectionalLight* luz_escena = escena->ObtenerLuzDireccional();   // la escena puede traer la suya
-        if (luz_escena == nullptr)
-            luz_escena = (escena_actual == 1) ? &luz_planeta_naranja : &luz_general;
-        shader.SetDirectionalLight(luz_escena);
+        DirectionalLight* luz_escena = escena->ObtenerLuzDireccional();
+        shader.SetDirectionalLight(luz_escena ? luz_escena : &luz_general);
         shader.SetPointLights(luces.puntuales, luces.cantidad_puntuales);
         shader.SetSpotLights(luces.focos, luces.cantidad_focos);
 
         //>>>>>>>>>>>>>>>>>>>>>> Modelos de la escena >>>>>>>>>>>>>>>>>>>>>>>>
-        ctx.vista = vista;              // para escenas con shaders propios (agua, fuego)
+        ctx.vista = vista;
         ctx.proyeccion = proyeccion;
         ctx.pos_camara = ojo;
         escena->Dibujar(ctx);

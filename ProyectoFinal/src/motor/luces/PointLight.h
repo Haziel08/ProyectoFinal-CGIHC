@@ -12,9 +12,9 @@ public:
 		GLfloat x_pos, GLfloat y_pos, GLfloat z_pos,
 		GLfloat con, GLfloat lin, GLfloat exp);
 
-	void UseLight(GLfloat ambient_intensity_location, GLfloat ambientcolor_location,
-		GLfloat diffuse_intensity_location, GLfloat position_location,
-		GLfloat constant_location, GLfloat linear_location, GLfloat exponent_location);
+	void UseLight(GLint ambient_intensity_location, GLint ambientcolor_location,
+		GLint diffuse_intensity_location, GLint position_location,
+		GLint constant_location, GLint linear_location, GLint exponent_location);
 
 	~PointLight();
 

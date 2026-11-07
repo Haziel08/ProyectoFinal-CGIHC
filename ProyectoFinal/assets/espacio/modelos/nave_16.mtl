@@ -1,0 +1,7 @@
+newmtl nave_16_material_1
+Ka 1 1 1
+Kd 0.906 0.906 0.906
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+map_Kd ../texturas/casco_nave_16_1.png

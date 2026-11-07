@@ -2,6 +2,8 @@
 //>>>>>>>>>>>>>>>>>>>>>> Coordenadas del recorrido >>>>>>>>>>>>>>>>>>>
 // Coordenadas locales, Y arriba. Curvas subdivididas en rectas del carril central.
 #include <cmath>
+#include <algorithm>
+#include <vector>
 #include <glm.hpp>
 #include <gtc/constants.hpp>
 #include "Escena.h"
@@ -799,6 +801,23 @@ inline const glm::vec3 puntos[] = {
     {0.000f, 0.000f, 0.000f},         // Seg70_Recta_Previa
 };
 inline constexpr int cantidad = sizeof(puntos) / sizeof(puntos[0]);
+// Centro del circuito y desplazamiento fijo de cada carril.
+inline glm::vec3 PuntoCentro(float distancia, const std::vector<float>& distancias)
+{
+    float s = std::fmod(distancia, distancias.back());
+    if (s < 0) s += distancias.back();
+    auto siguiente = std::upper_bound(distancias.begin(), distancias.end(), s);
+    size_t i = static_cast<size_t>(siguiente - distancias.begin() - 1);
+    return glm::mix(puntos[i], puntos[i + 1],
+                    (s - distancias[i]) / (distancias[i + 1] - distancias[i]));
+}
+inline glm::vec3 PuntoCarril(float distancia, const std::vector<float>& distancias, float carril)
+{
+    glm::vec3 adelante = glm::normalize(PuntoCentro(distancia + .5f, distancias) -
+                                      PuntoCentro(distancia - .5f, distancias));
+    return PuntoCentro(distancia, distancias) +
+           glm::normalize(glm::cross(adelante, glm::vec3(0, 1, 0))) * carril;
+}
 } // namespace RecorridoNaranja
 
 //>>>>>>>>>>>>>>>>>>>>>> Recorrido matematico de la pista espiral >>>>>
@@ -965,9 +984,22 @@ inline glm::vec3 Lateral(float tiempo, float peralte)
 
 inline glm::vec3 PuntoCarril(float tiempo, float carril)
 {
+    tiempo = std::fmod(tiempo, tiempo_total);
+    if (tiempo < 0) tiempo += tiempo_total;
     float peralte;
-    glm::vec3 posicion = Punto(tiempo, &peralte);
-    return posicion + Lateral(tiempo, peralte) * carril;
+    glm::vec3 centro = Punto(tiempo, &peralte);
+    glm::vec3 lateral = Lateral(tiempo, peralte);
+    if (tiempo <= 3.0f || tiempo >= 18.0f)
+        return centro + lateral * carril;
+    // El mismo perfil transversal del tablero nivela la entrada de los cuatro carriles.
+    const float pendiente = 135.0f / 140.0f;
+    const float subida = (80.0f + pendiente * 14.0f) - 11.0f - 80.0f;
+    const float duracion = 2.0f * subida / pendiente;
+    float u = glm::clamp((tiempo - 18.0f + duracion) / duracion, 0.0f, 1.0f);
+    float borde = 80.0f + pendiente * duracion * (u * u * u - .5f * u * u * u * u);
+    float angulo = std::asin(glm::clamp((centro.y - lateral.y * 5.5f - borde) / 27.5f, -1.0f, 1.0f));
+    return centro - lateral * 5.5f +
+        (Lateral(tiempo, 0) * std::cos(angulo) - glm::vec3(0, 1, 0) * std::sin(angulo)) * (carril + 5.5f);
 }
 
 inline Estado Evaluar(float tiempo, float carril = -ancho_carril / 2.0f)
@@ -987,7 +1019,8 @@ inline Estado Evaluar(float tiempo, float carril = -ancho_carril / 2.0f)
         estado.adelante = glm::normalize(
             glm::mix(estado.adelante, glm::normalize(Alineado(1.0f, 0.0f) - Alineado(0.0f, 0.0f)),
                      Suavizar(((fase - tiempo_total + tiempo_caida) / tiempo_caida - 0.75f) / 0.25f)));
-    estado.lateral = Lateral(tiempo, estado.peralte);
+    estado.lateral = glm::normalize(PuntoCarril(tiempo, 1) - PuntoCarril(tiempo, 0));
+    estado.peralte = std::atan2(-estado.lateral.y, glm::length(glm::vec2(estado.lateral.x, estado.lateral.z)));
     estado.arriba = glm::normalize(glm::cross(estado.lateral, estado.adelante));
     estado.lateral = glm::normalize(glm::cross(estado.adelante, estado.arriba));
     return estado;

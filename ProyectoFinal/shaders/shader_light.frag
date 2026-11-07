@@ -8,6 +8,8 @@ in vec3 frag_pos;
 in vec4 v_color;
 
 out vec4 color;
+uniform float luces_cohete = 0.0;
+uniform bool recolorar_superficie = false;
 
 const int max_point_lights = 16;
 const int max_spot_lights = 4;
@@ -61,6 +63,13 @@ uniform Material material;
 uniform vec3 eye_position;
 uniform bool normales_geometricas;
 uniform float emision_material;
+uniform float opacidad_material = 1.0;
+uniform float factor_noche = 1.0;
+uniform sampler2D textura_noche;
+uniform bool tiene_textura_noche = false;
+uniform int tipo_emision = 0; // 0 permanente, 1 luminaria, 2 LEDs de pista.
+
+uniform bool recorte_alfa = false;
 uniform bool relieve_vibrante;
 uniform vec2 desplazamiento_textura = vec2(0.0);
 uniform int modo_efecto = 0; // 0: material, 1: fuego, 2: humo de la practica 10.
@@ -182,6 +191,12 @@ void main()
 		color = vec4(muestra.rgb, muestra.a * opacidad_particula);
 		return;
 	}
+    if (modo_efecto == 4) {
+        float radio = length(tex_coord - vec2(0.5)) * 2.0;
+        float borde = 1.0 - smoothstep(0.55, 1.0, radio);
+        color = vec4(muestra.rgb * v_color.rgb, muestra.a * borde * opacidad_particula);
+        return;
+    }
 	if (modo_efecto == 3)
 	{
 		float borde = pow(1.0 - clamp(dot(normalize(normal), normalize(eye_position - frag_pos)), 0.0, 1.0), 2.6);
@@ -192,6 +207,9 @@ void main()
 	final_color += CalcPointLights();
 	final_color += CalcSpotLights();
 	vec4 texel = texture(the_texture, tex_coord);
+    if (recolorar_superficie) texel.rgb = vec3(dot(texel.rgb, vec3(.213,.715,.072)));
+    if (tiene_textura_noche) texel = mix(texel, texture(textura_noche, tex_coord), factor_noche);
+	if (recorte_alfa && texel.a < 0.1) discard;
 	if (relieve_vibrante)
 	{
 		float luminancia = dot(texel.rgb, vec3(0.2126, 0.7152, 0.0722));
@@ -199,8 +217,20 @@ void main()
 		texel.rgb = max(vec3(0.0), (texel.rgb - vec3(0.18)) * 1.30 + vec3(0.18));
 	}
 	color = texel*v_color*final_color;
-	color.rgb += texture(the_texture, tex_coord).rgb * emision_material;
+	color.rgb += texel.rgb * emision_material * (tipo_emision == 1 ? factor_noche : 1.0);
+    if (luces_cohete > 0.0)
+    {
+        vec2 led = abs(fract(tex_coord * vec2(12.0,18.0)) - .5);
+        float baliza = 1.0 - smoothstep(.08,.13,length(led));
+        color.rgb += vec3(1.0,.19,.06) * baliza * luces_cohete;
+    }
+    if (tipo_emision == 2) {
+        bool rojo = texel.r > texel.g * 1.6 && texel.r > texel.b * 1.35;
+        bool azul = texel.b > texel.r * 1.6 && texel.b > texel.g * 0.85;
+        float led = (rojo || azul) ? smoothstep(0.45, 0.90, max(texel.r, texel.b)) : 0.0;
+        color.rgb += texel.rgb * led * factor_noche * 1.6;
+    }
 	if (normales_geometricas) color.a = texture(the_texture, tex_coord).a * v_color.a;
-	color.a *= opacidad_aerea;
+	color.a *= opacidad_aerea * opacidad_material;
 	
 }

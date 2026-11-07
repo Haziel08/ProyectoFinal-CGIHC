@@ -1,0 +1,8 @@
+newmtl casco_figfighter
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.7 0.7 0.7
+Ns 100
+illum 2
+map_Kd ../texturas/casco_figfighter.jpg
+

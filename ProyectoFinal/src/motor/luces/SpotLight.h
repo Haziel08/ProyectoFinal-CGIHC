@@ -14,10 +14,10 @@ public:
 		GLfloat con, GLfloat lin, GLfloat exp,
 		GLfloat edg);
 
-	void UseLight(GLuint ambient_intensity_location, GLuint ambient_colour_location,
-		GLuint diffuse_intensity_location, GLuint position_location, GLuint direction_location,
-		GLuint constant_location, GLuint linear_location, GLuint exponent_location,
-		GLuint edge_location);
+	void UseLight(GLint ambient_intensity_location, GLint ambient_colour_location,
+		GLint diffuse_intensity_location, GLint position_location, GLint direction_location,
+		GLint constant_location, GLint linear_location, GLint exponent_location,
+		GLint edge_location);
 
 	void SetFlash(glm::vec3 pos, glm::vec3 dir);
 	void SetPos(glm::vec3 pos);

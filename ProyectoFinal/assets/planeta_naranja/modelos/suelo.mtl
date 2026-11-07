@@ -41,3 +41,13 @@ Ns 8
 illum 2
 map_Kd ../texturas/roca_piso_3.png
 map_d ../texturas/roca_piso_3.png
+
+newmtl camino_terraceria
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.04 0.04 0.04
+Ns 8
+d 0.900
+illum 2
+map_Kd ../texturas/camino_terraceria.png
+map_d ../texturas/camino_terraceria.png

@@ -1,8 +1,8 @@
 newmtl PeeperTextures
 Kd 1 1 1
-map_Kd Peeper.jpg
+map_Kd ../texturas/peeper.jpg
 
 newmtl Eye2
 Kd 1 1 1
-map_Kd Peeper_Ojo.jpg
+map_Kd ../texturas/peeper_ojo.jpg
 
