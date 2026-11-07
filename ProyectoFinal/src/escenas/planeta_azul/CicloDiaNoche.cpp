@@ -26,7 +26,7 @@ DatosLuz CicloDiaNoche::Luz() const
 
 	DatosLuz luz;
 	luz.direccion = -haciaElSol;
-	luz.color = glm::mix(glm::vec3(0.45f, 0.55f, 0.85f), glm::vec3(1.0f), f);   // luna -> blanco
+	luz.color = glm::mix(colorNoche, colorDia, f);
 	luz.ambiental = glm::mix(0.12f, 0.40f, f);
 	luz.difusa = glm::mix(0.15f, 0.85f, f);
 	return luz;
