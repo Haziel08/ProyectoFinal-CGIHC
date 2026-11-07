@@ -1564,8 +1564,7 @@ void EscenaPlanetaNaranja::CargarRocky()
     if (caminante_cargado)
     {
         rocky_caminante.QuitarAvance(0,"Hips");
-        shader_rocky.CreateFromString(PlanetaAzul::esqueleto_vert,
-            shader_rocky.ReadFile("shaders/shader_light.frag").c_str());
+        shader_rocky.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
     }
     rocky_saludo[0].LoadModel(ruta+"rocky_torso.obj",false,false);
     rocky_saludo[1].LoadModel(ruta+"rocky_brazo_derecho.obj",false,false);

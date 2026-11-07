@@ -167,8 +167,7 @@ void EscenaPlanetaMorado::Inicializar()
     flora[4].LoadModel("assets/planeta_azul/modelos/roca_mediana_2.obj");
     avatar_cargado = avatar.Cargar(ruta+"avatar_animado.fbx", "");
     if (avatar_cargado)
-        shader_avatar.CreateFromString(PlanetaAzul::esqueleto_vert,
-            shader_avatar.ReadFile("shaders/shader_light.frag").c_str());
+        shader_avatar.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
     const char* piezas[] = {"central","izquierdo","derecho"};
     const char* partes[] = {"cohete","torre","plataforma"};
     for (int i=0;i<3;++i)

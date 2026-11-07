@@ -7,6 +7,7 @@
 #include "Mesh_tn.h"
 #include "Model.h"
 #include "Texture.h"
+#include "ModeloAnimado.h"
 #include "planeta_morado/EscenaPlanetaMorado.h"
 
 //>>>>>>>>>>>>>>>>>>>>>> Interfaz de la escena >>>>>>>>>>>>>>>>>>>>>>>
@@ -42,7 +43,7 @@ public:
     }
 
 private:
-    PlanetaAzul::ModeloAnimado rocky_caminante;
+    ModeloAnimado rocky_caminante;
     Shader shader_rocky;
     bool caminante_cargado = false;
     float tiempo_rocky = 0;

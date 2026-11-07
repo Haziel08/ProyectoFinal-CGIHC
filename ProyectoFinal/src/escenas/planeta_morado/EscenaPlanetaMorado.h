@@ -4,7 +4,7 @@
 #include "Texture.h"
 #include <vector>
 #include <array>
-#include "planeta_azul/EscenaPlanetaAzul.h"
+#include "ModeloAnimado.h"
 
 class CoheteAuxiliar
 {
@@ -65,7 +65,7 @@ private:
     size_t cuadro_segundo = 0, lazo_segundo = 0;
     float tiempo_segundo = 0.0f;
     bool segundo_activo = false;
-    PlanetaAzul::ModeloAnimado avatar;
+    ModeloAnimado avatar;
     Shader shader_avatar;
     bool avatar_cargado = false;
     void CargarSegundoCohete(const std::string& ruta);
