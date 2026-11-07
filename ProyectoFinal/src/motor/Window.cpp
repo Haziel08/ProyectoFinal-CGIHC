@@ -130,10 +130,10 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int, int action, int)
         //>>>>>>>>>>>>>>>>>>>>>> Controles de la nave >>>>>>>>>>>>>>>>>>>>>>>
         if (the_window->escena_activa == 1)
         {
-            if (key == GLFW_KEY_Y) the_window->luz_nave_encendida = !the_window->luz_nave_encendida;
-            if (key == GLFW_KEY_U) the_window->motor1_encendido = !the_window->motor1_encendido;
-            if (key == GLFW_KEY_I) the_window->motor2_encendido = !the_window->motor2_encendido;
-            if (key == GLFW_KEY_O) the_window->vista_general_solicitada = true;
+            if (key == GLFW_KEY_Q) the_window->luz_nave_encendida = !the_window->luz_nave_encendida;
+            if (key == GLFW_KEY_E) the_window->motor1_encendido = !the_window->motor1_encendido;
+            if (key == GLFW_KEY_R) the_window->motor2_encendido = !the_window->motor2_encendido;
+            if (key == GLFW_KEY_T) the_window->vista_general_solicitada = true;
         }
     }
 

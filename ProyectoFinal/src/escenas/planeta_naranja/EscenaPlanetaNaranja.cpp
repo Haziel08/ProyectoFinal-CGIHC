@@ -833,7 +833,7 @@ void EscenaPlanetaNaranja::Actualizar(float dt, Window& ventana)
                         -25.0f, 150.0f, 0.3f);
     ActualizarNaves(dt);
     tiempo_rocky += dt;
-    cohete_auxiliar.Actualizar(dt,ventana.TeclaPresionada(GLFW_KEY_P));
+    cohete_auxiliar.Actualizar(dt,ventana.TeclaPresionada(GLFW_KEY_F));
     ActualizarObjetosAereos(dt);
 }
 
@@ -1127,7 +1127,7 @@ void EscenaPlanetaNaranja::DibujarDecoracion(const ContextoRender& ctx, bool tra
     for (const auto* elemento : orden)
     {
         glUniform1f(glGetUniformLocation(programa, "opacidad_aerea"),
-                    elemento->tipo == portal_azul ? .55f : 1.0f);
+                    elemento->tipo == portal_azul ? .55f : (elemento->tipo == domo_cristal ? .32f : 1.0f));
         glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(elemento->matriz));
         if (elemento->tipo == domo_cristal)
         {
@@ -1555,12 +1555,21 @@ bool EscenaPlanetaNaranja::ObjetivoCamara(int modo, glm::vec3& objetivo, glm::ve
     return true;
 }
 
+glm::mat4 EscenaPlanetaNaranja::MarcoFaroRival(bool espiral) const
+{
+    const int indice = espiral ? 0 : 11;
+    return glm::rotate(matrices_rivales[indice],
+        -glm::radians(giros_rivales[configuraciones_rivales[indice].modelo]),glm::vec3(0,1,0));
+}
+
 //>>>>>>>>>>>>>>>>>>>>>> Rocky animado y jerarquias de los domos >>>>>>>>>>>>>>>>>>>>>>
 void EscenaPlanetaNaranja::CargarRocky()
 {
     const std::string ruta = "assets/planeta_naranja/modelos/";
     caminante_cargado = rocky_caminante.Cargar(ruta+"rocky_caminando.fbx",
         "assets/planeta_naranja/texturas/rocky_caminando.png",true);
+    protos_cargado = protos.Cargar(ruta+"protos.fbx","",true);
+    if (protos_cargado) protos.QuitarAvance(0,"mixamorig:Hips");
     if (caminante_cargado)
     {
         rocky_caminante.QuitarAvance(0,"Hips");
@@ -1577,9 +1586,6 @@ void EscenaPlanetaNaranja::CargarRocky()
     rocky_saludo[8].LoadModel(ruta+"rocky_pata_trasera_inferior.obj",false,false);
     rocky_saludo[9].LoadModel(ruta+"rocky_pata_derecha_superior.obj",false,false);
     rocky_saludo[10].LoadModel(ruta+"rocky_pata_derecha_inferior.obj",false,false);
-    rocky_saludo[11].LoadModel(ruta+"rocky_dedo_derecho_1.obj",false,false);
-    rocky_saludo[12].LoadModel(ruta+"rocky_dedo_derecho_2.obj",false,false);
-    rocky_saludo[13].LoadModel(ruta+"rocky_dedo_derecho_3.obj",false,false);
 }
 
 void EscenaPlanetaNaranja::DibujarRocky(const ContextoRender& ctx)
@@ -1604,13 +1610,13 @@ void EscenaPlanetaNaranja::DibujarRocky(const ContextoRender& ctx)
         const glm::mat4 brazo = articular(raiz,{-.148f,.589f,.167f},-1.65f*alzar,{0,0,1});
         const glm::mat4 mano = articular(brazo,{-.322f,.456f,.250f},.28f*alzar*std::sin(fase*9.0f),{0,0,1});
         pieza(0,raiz); pieza(1,brazo); pieza(2,mano);
-        pieza(3,raiz); pieza(4,raiz);
+        const glm::mat4 brazo_alto = articular(raiz,{.148f,.589f,.167f},
+            .27f*alzar + .19f*alzar*std::sin(fase*9.0f),{0,0,1});
+        pieza(3,brazo_alto);
+        pieza(4,articular(brazo_alto,{.365f,.670f,.319f},.26f*alzar*std::sin(fase*9.0f),{0,1,0}));
         pieza(5,raiz); pieza(6,raiz);
         pieza(7,raiz); pieza(8,raiz);
         pieza(9,raiz); pieza(10,raiz);
-        pieza(11,articular(mano,{-.157f,.390f,.441f},.10f*alzar*std::sin(fase*9.0f),{1,0,0}));
-        pieza(12,articular(mano,{-.209f,.351f,.447f},.12f*alzar*std::sin(fase*9.0f+.4f),{1,0,0}));
-        pieza(13,articular(mano,{-.180f,.315f,.402f},.14f*alzar*std::sin(fase*9.0f+.8f),{1,0,0}));
     }
     if (!caminante_cargado) return;
     GLint anterior = 0, programa = 0;
@@ -1626,24 +1632,36 @@ void EscenaPlanetaNaranja::DibujarRocky(const ContextoRender& ctx)
     glUniform3f(shader_rocky.getColorLocation(),1,1,1);
     glUniform1f(shader_rocky.GetSpecularIntensityLocation(),.16f);
     glUniform1f(shader_rocky.GetShininessLocation(),16);
-    auto caminar = [&](glm::vec2 p,glm::vec2 d,float fase,float escala) {
+    auto caminar = [&](ModeloAnimado& actor,glm::vec2 p,glm::vec2 d,float fase,float escala) {
         glm::mat4 m = glm::translate(glm::mat4(1),glm::vec3(p.x,
             altura_suelo+AlturaSuelo(p.x,p.y)+(std::abs(p.y)<1 ? .55f : 0),p.y));
         m = glm::scale(glm::rotate(m,std::atan2(d.x,d.y),glm::vec3(0,1,0)),glm::vec3(escala)) *
-            rocky_caminante.Normalizacion();
+            actor.Normalizacion();
         glUniformMatrix4fv(shader_rocky.GetModelLocation(),1,GL_FALSE,glm::value_ptr(m));
-        rocky_caminante.CalcularPose(0,fase);
-        rocky_caminante.Dibujar(GLuint(programa));
+        actor.CalcularPose(0,fase);
+        actor.Dibujar(GLuint(programa));
     };
-    caminar(PuntoRocky(tiempo_rocky),PuntoRocky(tiempo_rocky+.08f)-PuntoRocky(tiempo_rocky-.08f),
-            tiempo_rocky,7.0f);
-    const glm::vec2 zonas[] = {{340,212},{340,295},{-335,-182},{345,-225},{-350,220}};
-    for (int i = 0; i < 5; ++i)
+    caminar(rocky_caminante,PuntoRocky(tiempo_rocky),PuntoRocky(tiempo_rocky+.08f)-PuntoRocky(tiempo_rocky-.08f),
+            tiempo_rocky,10.0f);
+    const glm::vec2 zonas[] = {{340,212},{340,295},{-335,-182},{345,-225},{-350,220},{-470,235},{140,-510},{440,-340}};
+    for (int i = 0; i < 8; ++i)
     {
         const float a = tiempo_rocky*.45f+i*1.3f;
         const glm::vec3 ocho = RecorridoAereo::Ocho(a,6,4);
         const glm::vec3 tangente = RecorridoAereo::TangenteOcho(a,6,4);
-        caminar(zonas[i]+glm::vec2(ocho.x,ocho.z),{tangente.x,tangente.z},tiempo_rocky+i*.23f,5.8f);
+        caminar(rocky_caminante,zonas[i]+glm::vec2(ocho.x,ocho.z),{tangente.x,tangente.z},tiempo_rocky+i*.23f,8.5f);
+    }
+    if (protos_cargado)
+    {
+        const glm::vec2 zonas_protos[] = {{435,340},{470,385},{530,305},{320,470},
+                                         {-410,155},{-440,-220},{205,-535}};
+        for (int i = 0; i < 7; ++i)
+        {
+            const float a = tiempo_rocky*.42f+i;
+            const glm::vec3 p = RecorridoAereo::Ocho(a,5,3);
+            const glm::vec3 d = RecorridoAereo::TangenteOcho(a,5,3);
+            caminar(protos,zonas_protos[i]+glm::vec2(p.x,p.z),{d.x,d.z},tiempo_rocky+i*.17f,7);
+        }
     }
     glUseProgram(anterior);
 }

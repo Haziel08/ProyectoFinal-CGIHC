@@ -29,6 +29,7 @@ public:
     void Dibujar(const ContextoRender& ctx) override;
     DirectionalLight* ObtenerLuzDireccional() override { return &luz; }
     ~EscenaPlanetaMorado() override;
+    bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
 
 private:
     struct Instancia
@@ -38,8 +39,10 @@ private:
     };
     std::vector<Instancia> poblado, vegetacion, sierra;
     Model refugios[2], flora[5], montanas[3], meteoritos[3];
-    Model sonda_cuerpo, sonda_rotor, cohete, motores[3], plataforma, neptuno[3];
+    Model sonda_cuerpo, sonda_rotor, cohete, motores[3], plataforma, neptuno[3], antena;
     MeshModel suelo, base_inferior, base_media, base_lanzamiento, caminos, plano_estela, malla_estela;
+    Texture halo_arbol;
+    MeshModel plano_halo;
     Texture textura_suelo, textura_camino, textura_estela, textura_humo;
     Skybox cielo_dia, cielo_noche;
     DirectionalLight luz;
@@ -65,9 +68,10 @@ private:
     size_t cuadro_segundo = 0, lazo_segundo = 0;
     float tiempo_segundo = 0.0f;
     bool segundo_activo = false;
-    ModeloAnimado avatar;
+    ModeloAnimado saru;
+    bool saru_cargado = false;
+    float tiempo_npc = 0;
     Shader shader_avatar;
-    bool avatar_cargado = false;
     void CargarSegundoCohete(const std::string& ruta);
     void ActualizarSegundoCohete(float dt);
     void DibujarAvatar(const ContextoRender& ctx);

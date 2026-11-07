@@ -18,7 +18,7 @@ static const float centro_x = 0.0f, centro_z = 70.0f;
 static const float radio_x = 45.0f, radio_z = 30.0f;
 static const float profundidad = -5.0f;     // el agua esta en y = -1
 static const float velocidad = 0.12f;       // radianes por segundo
-static const float escala = 1.2f;           
+static const float escala = 2.4f;           
 
 void Stalker::Crear()
 {

@@ -88,17 +88,17 @@ bool EscenaPlanetaAzul::ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3&
 {
     if (modo == 3)
     {
-        objetivo = stalker.posicion;
+        objetivo = stalker.posicion + glm::vec3(0,.5f,0);
         rumbo = glm::vec3(sinf(stalker.giro), 0, cosf(stalker.giro));
-        distancia = 8.0f;
+        distancia = 12.0f;
         altura = -2.0f;
         return true;
     }
     if (modo != 4) return false;
-    objetivo = necromorfos.PosicionPatrulla() + glm::vec3(0,1,0);
+    objetivo = necromorfos.PosicionPatrulla() + glm::vec3(0,2,0);
     rumbo = necromorfos.RumboPatrulla();
-    distancia = 8.0f;
-    altura = 4.5f;
+    distancia = 12.0f;
+    altura = 6.5f;
     return true;
 }
 

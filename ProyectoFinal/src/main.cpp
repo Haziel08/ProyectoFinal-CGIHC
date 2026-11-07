@@ -54,6 +54,14 @@ SpotLight CrearFaroNave(const glm::vec3& p, const glm::vec3& d, float escala)
                      (0.015f / 2.0f) / (escala * escala), 30);
 }
 
+SpotLight CrearFaroRival(const glm::mat4& marco)
+{
+    const glm::vec3 posicion(marco*glm::vec4(0,.3f,3.5f,1));
+    const glm::vec3 rumbo = glm::normalize(glm::vec3(marco*glm::vec4(0,-.27f,1,0)));
+    return SpotLight(.82f,.91f,1,0,3.2f,posicion.x,posicion.y,posicion.z,
+        rumbo.x,rumbo.y,rumbo.z,1,.036f,.004f,26);
+}
+
 //>>>>>>>>>>>>>>>>>>>>>> Actualizacion de luces >>>>>>>>>>>>>>>>>>>>>>
 void ActualizarLucesNave(const glm::mat4& modelo_nave, const Window& ventana, LucesNaves& luces)
 {
@@ -139,6 +147,9 @@ int main()
 
         //>>>>>>>>>>>>>>>>>>>>>> Camara y proyeccion >>>>>>>>>>>>>>>>>>>>>>>>>
         Camera& camara = escena->ObtenerCamara();
+        if (escena_actual == 2 &&
+            (ventana.TeclaPresionada(GLFW_KEY_I) || ventana.TeclaPresionada(GLFW_KEY_0)))
+            camara_activa = 6;
         if (ventana.TeclaPresionada(GLFW_KEY_5)) camara_activa = 0;
         if (escena_actual == 0 && ventana.TeclaPresionada(GLFW_KEY_6)) camara_activa = 1;
         if (escena_actual == 1 && ventana.TeclaPresionada(GLFW_KEY_7)) camara_activa = 2;
@@ -177,6 +188,8 @@ int main()
         {
             ActualizarLucesNave(planeta_naranja->ObtenerMatrizNave(), ventana, luces);
             ActualizarLucesNave(planeta_naranja->ObtenerMatrizNaveEspiral(), ventana, luces);
+            luces.focos[luces.cantidad_focos++] = CrearFaroRival(planeta_naranja->MarcoFaroRival(false));
+            luces.focos[luces.cantidad_focos++] = CrearFaroRival(planeta_naranja->MarcoFaroRival(true));
         }
 
         for (unsigned int i = 0;

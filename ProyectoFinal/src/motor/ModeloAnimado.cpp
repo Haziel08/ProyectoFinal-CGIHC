@@ -136,7 +136,18 @@ bool ModeloAnimado::Cargar(const std::string& archivo, const std::string& ruta_t
 	num_indices = (GLsizei)indices.size();
 
 	if (ruta_textura.empty())
-        textura.LoadColor(.62f,.44f,.73f);
+    {
+        const aiTexture* imagen = nullptr;
+        for (unsigned i = 0; i < scene->mNumMaterials && !imagen; ++i)
+        {
+            aiString ruta;
+            if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE,0,&ruta) == AI_SUCCESS)
+                imagen = scene->GetEmbeddedTexture(ruta.C_Str());
+        }
+        if (!imagen || imagen->mHeight || !textura.LoadMemory(
+            reinterpret_cast<const unsigned char*>(imagen->pcData),int(imagen->mWidth)))
+            textura.LoadColor(.62f,.44f,.73f);
+    }
     else
     {
         textura = Texture(ruta_textura.c_str());

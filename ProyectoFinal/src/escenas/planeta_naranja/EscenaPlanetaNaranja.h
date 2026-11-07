@@ -7,7 +7,6 @@
 #include "Mesh_tn.h"
 #include "Model.h"
 #include "Texture.h"
-#include "ModeloAnimado.h"
 #include "planeta_morado/EscenaPlanetaMorado.h"
 
 //>>>>>>>>>>>>>>>>>>>>>> Interfaz de la escena >>>>>>>>>>>>>>>>>>>>>>>
@@ -25,6 +24,7 @@ public:
     void Dibujar(const ContextoRender& ctx) override;
     glm::mat4 ObtenerMatrizNave() const;
     glm::mat4 ObtenerMatrizNaveEspiral() const;
+    glm::mat4 MarcoFaroRival(bool espiral) const;
     DirectionalLight* ObtenerLuzDireccional() override
     {
         return &luz_sol;
@@ -43,11 +43,12 @@ public:
     }
 
 private:
-    ModeloAnimado rocky_caminante;
+    ModeloAnimado rocky_caminante, protos;
+    bool protos_cargado = false;
     Shader shader_rocky;
     bool caminante_cargado = false;
     float tiempo_rocky = 0;
-    std::array<Model,14> rocky_saludo;
+    std::array<Model,11> rocky_saludo;
     CoheteAuxiliar cohete_auxiliar;
     void CargarRocky();
     void DibujarRocky(const ContextoRender& ctx);

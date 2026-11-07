@@ -8,6 +8,7 @@ in vec3 frag_pos;
 in vec4 v_color;
 
 out vec4 color;
+uniform float brillo_frutos = 0.0;
 uniform float luces_cohete = 0.0;
 uniform bool recolorar_superficie = false;
 
@@ -218,6 +219,8 @@ void main()
 	}
 	color = texel*v_color*final_color;
 	color.rgb += texel.rgb * emision_material * (tipo_emision == 1 ? factor_noche : 1.0);
+    float azul_fruto = smoothstep(.12,.38,texel.b-max(texel.r,texel.g));
+    color.rgb += brillo_frutos * azul_fruto * texel.rgb;
     if (luces_cohete > 0.0)
     {
         vec2 led = abs(fract(tex_coord * vec2(12.0,18.0)) - .5);

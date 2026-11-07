@@ -5,11 +5,11 @@ namespace PlanetaAzul
 //>>>>>>>>>>>>>>>>>>>>>> Necromorfos >>>>>>>>>>>>>>>>>>>>>>
 
 
-static const float escala_mixamo = 0.01f;
+static const float altura_necromorfo = 3.4f;
 
 // La caminata
 // Si el circulo los mueve a otra velocidad, los pies patinan
-static const float velocidad_caminata = 1.17f;
+static const float velocidad_caminata = 2.05f;
 
 // Que necromorfos (por numero de choza) bailan cuando se prende la fogata
 static const bool bailan[] = { true, false, true, false, false, false, false };
@@ -20,7 +20,7 @@ void Necromorfos::Crear(const Terreno& t, const Aldea& aldea)
 	fogata = aldea.centro;
 
 	// Malla + esqueleto + caminata (animacion 0) y despues el baile (animacion 1)
-	necromorfo.Cargar("assets/planeta_azul/modelos/necromorfo_caminar.fbx", "assets/planeta_azul/texturas/necromorfo.jpg");
+	necromorfo.Cargar("assets/planeta_azul/modelos/necromorfo_caminar.fbx", "assets/planeta_azul/texturas/necromorfo.jpg",true);
 	anim_caminar = 0;
 	anim_bailar = necromorfo.AgregarAnimacion("assets/planeta_azul/modelos/necromorfo_bailar.fbx");
 	// La caminata no venia "In Place" asi que hay que moverle
@@ -124,13 +124,13 @@ void Necromorfos::DibujarUno(const Caminante& c, int animacion, float tiempo_ani
 	glm::mat4 model(1.0f);
 	model = glm::translate(model, glm::vec3(x, terreno->Altura(x, z), z));
 	model = glm::rotate(model, giro, glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(escala_mixamo));
+	model = glm::scale(model, glm::vec3(altura_necromorfo))*necromorfo.Normalizacion();
     if (&c == caminantes)
     {
         const glm::vec3 rumbo = RumboPatrulla();
         model = glm::translate(glm::mat4(1), PosicionPatrulla());
         model = glm::rotate(model, atan2f(rumbo.x, rumbo.z), glm::vec3(0, 1, 0));
-        model = glm::scale(model, glm::vec3(escala_mixamo));
+        model = glm::scale(model, glm::vec3(altura_necromorfo))*necromorfo.Normalizacion();
         animacion = anim_caminar;
     }
     glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
