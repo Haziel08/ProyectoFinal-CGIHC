@@ -542,3 +542,13 @@ bool EscenaEspacio::ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rum
     altura = objetivo.y + 165.0f;
     return true;
 }
+
+//>>>>>>>>>>>>>>>>>>>>>> Avatar >>>>>>>>>>>>>>>>>>>>>>
+// El marine da vueltas en la plataforma que rodea la cupula central de la estacion
+bool EscenaEspacio::CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const
+{
+    estatura = 8.0f;   // la estacion esta escalada x22
+    const glm::vec3 plataforma = origen_estacion + glm::vec3(0, 22.0f * 4.13f, 0);
+    CirculoAvatar(tiempo, plataforma, 22.0f * 13.6f, estatura * 1.1f, posicion, rumbo);
+    return true;
+}

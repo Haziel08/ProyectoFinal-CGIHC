@@ -27,8 +27,9 @@ public:
 	void Dibujar(const ContextoRender& ctx);                 // chozas, antorchas y fogata
 	void DibujarLlamas(const ContextoRender& ctx, float tiempo);   // fuego
 
-	// Luces puntuales encendidas en este momento
+	// Luces puntuales encendidas en este momento (y donde esta cada una)
 	PointLight luces[max_point_lights];
+	glm::vec3 pos_luces[max_point_lights];
 	unsigned int num_luces = 0;
 
 	// Donde esta cada choza, para poner a sus habitantes
@@ -36,12 +37,13 @@ public:
 	glm::vec2 PosicionChoza(int i) const;
 
 	bool fogata_encendida = false;      // empieza apagada; se prende con F
-	bool antorchas_encendidas = false;   // las prende el ciclo de dia y noche
+	bool antorchas_encendidas = false;   // las prende el ciclo de noche; tecla K las prende / apaga
 
 private:
 	glm::vec3 SobreElSuelo(float x, float z) const;   //x, altura del terreno, z
 
 	const Terreno* terreno = nullptr;
+	bool era_de_noche = false;          // para saber cuando cambia el ciclo
 	Fuego fuego;
 
 	Model choza_muu;

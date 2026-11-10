@@ -1,4 +1,5 @@
 #include "EscenaPlanetaAzul.h"
+#include <algorithm>
 
 namespace PlanetaAzul
 {
@@ -30,6 +31,8 @@ void EscenaPlanetaAzul::Inicializar()
 	stalker.Crear();
 	pidgeys.Crear();
 	reaper.Crear();
+	pez_abisal.Crear(terreno);
+	arboles.Crear(terreno);
 
 	luz_sol = ciclo.LuzDireccional();
 
@@ -44,7 +47,7 @@ void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 	luz_sol = ciclo.LuzDireccional();
 	skybox = ciclo.EsDeNoche() ? skybox_noche : skybox_dia;
 
-	// Aldea: tecla F para la fogata y antorchas que se prenden de noche
+	// Aldea: tecla Y para la fogata, antorchas de noche o con la tecla K
 	aldea.Actualizar(tiempo, ciclo.EsDeNoche(), ventana);
 
 	// Peces nadando
@@ -58,29 +61,76 @@ void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 	pidgeys.Actualizar(dt);
 	reaper.Actualizar(dt, ventana, pidgeys);
 
+	// Pez abisal (tecla L: su linterna) y arboles del fondo (tecla J)
+	pez_abisal.Actualizar(dt, ventana);
+	arboles.Actualizar(dt, ciclo.EsDeNoche(), ventana);
+
+	EscogerLuces();
+}
+
+void EscenaPlanetaAzul::EscogerLuces()
+{
+	// 1) Todas las luces prendidas en un solo arreglo
+	const int maximo = max_point_lights + ArbolesLuminosos::num_arboles;
+	PointLight todas[maximo];
+	float distancia[maximo];
+	int n = 0;
+	for (unsigned int i = 0; i < aldea.num_luces; i++, n++)
+	{
+		todas[n] = aldea.luces[i];
+		distancia[n] = glm::length(aldea.pos_luces[i] - ultima_camara);
+	}
+	for (unsigned int i = 0; i < arboles.num_luces; i++, n++)
+	{
+		todas[n] = arboles.luces[i];
+		distancia[n] = glm::length(arboles.pos_luces[i] - ultima_camara);
+	}
+
+	// 2) Se ordenan por distancia a la camara y se toman las primeras 16
+	int orden[maximo];
+	for (int i = 0; i < n; i++) orden[i] = i;
+	std::sort(orden, orden + n, [&](int a, int b) { return distancia[a] < distancia[b]; });
+	num_luces = 0;
+	for (int i = 0; i < n && num_luces < max_point_lights; i++)
+		luces[num_luces++] = todas[orden[i]];
 }
 
 void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 {
+	ultima_camara = ctx.pos_camara;
 	// 1) Todo lo opaco primero
 	terreno.Dibujar(ctx);
 	aldea.Dibujar(ctx);
     DibujarLamparas(ctx);
 	peces.Dibujar(ctx);          // bajo el agua: se dibujan antes que el agua
+	pez_abisal.Dibujar(ctx);
+	arboles.Dibujar(ctx);
 	stalker.Dibujar(ctx);
 	reaper.Dibujar(ctx);
 	pidgeys.Dibujar(ctx);
 
 
 	// 2) Plantas y rocas
-	vegetacion.Dibujar(ctx, &luz_sol, aldea.luces, aldea.num_luces);
-	necromorfos.Dibujar(ctx, &luz_sol, aldea.luces, aldea.num_luces);   // shader del esqueleto
+	vegetacion.Dibujar(ctx, &luz_sol, luces, num_luces);
+	necromorfos.Dibujar(ctx, &luz_sol, luces, num_luces);   // shader del esqueleto
+
+	// Brillo del farol: va bajo el agua, antes de dibujar el agua
+	pez_abisal.DibujarHalo(ctx);
 
 	// 3) El agua es transparente
 	agua.Dibujar(ctx, tiempo, ciclo.Luz());
 
 	// 4) El fuego al final de todo
 	aldea.DibujarLlamas(ctx, tiempo);
+}
+
+// El marine da vueltas alrededor de la aldea, por fuera de las chozas
+bool EscenaPlanetaAzul::CaminoAvatar(float t, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const
+{
+	estatura = 2.2f;
+	CirculoAvatar(t, glm::vec3(aldea.centro.x, 0, aldea.centro.y), 50.0f, estatura * 1.1f, posicion, rumbo);
+	posicion.y = terreno.Altura(posicion.x, posicion.z);
+	return true;
 }
 
 bool EscenaPlanetaAzul::ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo,

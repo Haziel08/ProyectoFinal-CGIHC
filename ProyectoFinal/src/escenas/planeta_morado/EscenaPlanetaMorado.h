@@ -30,6 +30,7 @@ public:
     DirectionalLight* ObtenerLuzDireccional() override { return &luz; }
     ~EscenaPlanetaMorado() override;
     bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
+    bool CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const override;
 
 private:
     struct Instancia

@@ -78,13 +78,23 @@ void Aldea::Actualizar(float tiempo, bool es_de_noche, Window& ventana)
 	{
 		glm::vec3 p = SobreElSuelo(centro.x, centro.y) + glm::vec3(0.0f, 1.0f, 0.0f);
 		float parpadeo = 0.3f * sinf(tiempo * 9.0f);           // la luz tiembla como fuego
+		pos_luces[num_luces] = p;
 		luces[num_luces++] = PointLight(1.0f, 0.55f, 0.2f,        // color naranja
 			0.0f, 3.0f + parpadeo,                               // ambiental, difusa
 			p.x, p.y, p.z,                                       // posicion
 			1.0f, 0.045f, 0.007f);                              // atenuacion
 	}
 
-	antorchas_encendidas = es_de_noche;
+	// Al anochecer se prenden solas y al amanecer se apagan;
+	// en cualquier momento la tecla K las prende o apaga a mano
+	if (es_de_noche != era_de_noche)
+	{
+		antorchas_encendidas = es_de_noche;
+		era_de_noche = es_de_noche;
+	}
+	if (ventana.TeclaPresionada(GLFW_KEY_K))
+		antorchas_encendidas = !antorchas_encendidas;
+
 	if (antorchas_encendidas)
 	{
 		for (int i = 0; i < num_antorchas && num_luces < max_point_lights; i++)
@@ -92,6 +102,7 @@ void Aldea::Actualizar(float tiempo, bool es_de_noche, Window& ventana)
 			glm::vec3 p = SobreElSuelo(centro.x + pos_antorchas[i].x, centro.y + pos_antorchas[i].z)
 				+ glm::vec3(0.0f, alto_antorcha, 0.0f);
 			float parpadeo = 0.2f * sinf(tiempo * 12.0f + i);
+			pos_luces[num_luces] = p;
 			luces[num_luces++] = PointLight(1.0f, 0.6f, 0.25f,
 				0.0f, 1.5f + parpadeo,
 				p.x, p.y, p.z,

@@ -21,6 +21,7 @@
 #include "planeta_naranja/EscenaPlanetaNaranja.h"
 #include "planeta_morado/EscenaPlanetaMorado.h"
 #include "planeta_azul/EscenaPlanetaAzul.h"
+#include "AvatarMarine.h"
 
 //>>>>>>>>>>>>>>>>>>>>>> Tipos y funciones de iluminacion >>>>>>>>>>>>
 namespace
@@ -105,6 +106,10 @@ int main()
         ventana.setTitulo((std::string("Proyecto Final | Cargando ") + escena->Nombre()).c_str());
         escena->Inicializar();
     }
+    // El avatar se carga una vez y se usa en todas las escenas
+    ventana.setTitulo("Proyecto Final | Cargando avatar");
+    AvatarMarine avatar;
+    avatar.Cargar();
     //>>>>>>>>>>>>>>>>>>>>>> Luces y estado local del programa >>>>>>>>>>>
     DirectionalLight luz_general(1, 1, 1, 0.3f, 0.6f, 0, -1, -0.5f);
     LucesNaves luces;
@@ -144,6 +149,7 @@ int main()
         //>>>>>>>>>>>>>>>>>>>>>> Animacion de la escena >>>>>>>>>>>>>>>>>>>>>>
         Escena* escena = escenas[escena_actual];
         escena->Actualizar(dt, ventana);
+        avatar.Actualizar(dt);
 
         //>>>>>>>>>>>>>>>>>>>>>> Camara y proyeccion >>>>>>>>>>>>>>>>>>>>>>>>>
         Camera& camara = escena->ObtenerCamara();
@@ -156,6 +162,7 @@ int main()
         if (escena_actual == 3 && ventana.TeclaPresionada(GLFW_KEY_8)) camara_activa = 3;
         if (escena_actual == 3 && ventana.TeclaPresionada(GLFW_KEY_9)) camara_activa = 4;
         if (escena_actual == 1 && ventana.TeclaPresionada(GLFW_KEY_0)) camara_activa = 5;
+        if (ventana.TeclaPresionada(GLFW_KEY_M)) camara_activa = 9;     // camara del avatar (todas)
 
         glm::vec3 objetivo, rumbo;
         float distancia, altura;
@@ -163,7 +170,10 @@ int main()
         glm::vec3 ojo;
         const float raton_x = ventana.getXChange();
         const float raton_y = ventana.getYChange();
-        if (escena->ObjetivoCamara(camara_activa, objetivo, rumbo, distancia, altura))
+        const bool sigue_camara = camara_activa == 9
+            ? avatar.Camara(*escena, objetivo, rumbo, distancia, altura)
+            : escena->ObjetivoCamara(camara_activa, objetivo, rumbo, distancia, altura);
+        if (sigue_camara)
         {
             rumbo.y = 0.0f;
             rumbo = glm::normalize(rumbo);
@@ -195,6 +205,8 @@ int main()
         for (unsigned int i = 0;
              i < escena->NumLucesPuntuales() && luces.cantidad_puntuales < max_point_lights; ++i)
             luces.puntuales[luces.cantidad_puntuales++] = escena->ObtenerLucesPuntuales()[i];
+        for (unsigned int i = 0; i < escena->NumFocos() && luces.cantidad_focos < max_spot_lights; ++i)
+            luces.focos[luces.cantidad_focos++] = escena->ObtenerFocos()[i];
 
         //>>>>>>>>>>>>>>>>>>>>>> Skybox >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         glClearColor(0, 0, 0, 1);
@@ -216,6 +228,8 @@ int main()
         ctx.proyeccion = proyeccion;
         ctx.pos_camara = ojo;
         escena->Dibujar(ctx);
+        avatar.Dibujar(ctx, *escena, luz_escena ? luz_escena : &luz_general,
+                       luces.puntuales, luces.cantidad_puntuales, luces.focos, luces.cantidad_focos);
 
         glUseProgram(0);
         ventana.swapBuffers();

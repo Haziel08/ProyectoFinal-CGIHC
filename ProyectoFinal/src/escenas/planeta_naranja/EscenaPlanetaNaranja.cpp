@@ -1665,3 +1665,13 @@ void EscenaPlanetaNaranja::DibujarRocky(const ContextoRender& ctx)
     }
     glUseProgram(anterior);
 }
+
+//>>>>>>>>>>>>>>>>>>>>>> Avatar >>>>>>>>>>>>>>>>>>>>>>
+// El marine da vueltas dentro del circuito de Rocky, siguiendo el suelo
+bool EscenaPlanetaNaranja::CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const
+{
+    estatura = 7.0f;
+    CirculoAvatar(tiempo, glm::vec3(-90, 0, 0), 455.0f, estatura * 1.1f, posicion, rumbo);
+    posicion.y = altura_suelo + AlturaSuelo(posicion.x, posicion.z);
+    return true;
+}

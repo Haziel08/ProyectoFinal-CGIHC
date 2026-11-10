@@ -19,6 +19,7 @@ public:
         return "Planeta Naranja";
     }
     bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
+    bool CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const override;
     void Inicializar() override;
     void Actualizar(float dt, Window& ventana) override;
     void Dibujar(const ContextoRender& ctx) override;

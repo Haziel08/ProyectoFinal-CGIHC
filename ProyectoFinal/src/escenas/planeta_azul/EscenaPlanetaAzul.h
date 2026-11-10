@@ -19,6 +19,8 @@
 #include "Stalker.h"
 #include "Pidgeys.h"
 #include "Reaper.h"
+#include "PezAbisal.h"
+#include "ArbolesLuminosos.h"
 
 namespace PlanetaAzul
 {
@@ -37,9 +39,15 @@ public:
 	// main.cpp usa esta luz cuando el planeta azul esta activo
 	DirectionalLight* ObtenerLuzDireccional() override { return &luz_sol; }
 
-	// main.cpp usa las luces de la aldea fogata y antorchas
-	PointLight* ObtenerLucesPuntuales() override { return aldea.luces; }
-	unsigned int NumLucesPuntuales() override { return aldea.num_luces; }
+	// main.cpp usa las luces puntuales mas cercanas (fogata, antorchas y arboles)
+	PointLight* ObtenerLucesPuntuales() override { return luces; }
+	unsigned int NumLucesPuntuales() override { return num_luces; }
+
+	// Reflector del pez abisal
+	SpotLight* ObtenerFocos() override { return &pez_abisal.foco; }
+	unsigned int NumFocos() override { return pez_abisal.linterna ? 1 : 0; }
+
+	bool CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const override;
 
 private:
 	float tiempo = 0.0f;          // reloj de la escena
@@ -57,6 +65,8 @@ private:
 	Stalker stalker;             // avatar
 	Pidgeys pidgeys;
 	Reaper reaper;
+	PezAbisal pez_abisal;
+	ArbolesLuminosos arboles;
 	Agua agua;
     Model lampara_suelo;
     Texture halo_suelo;
@@ -64,6 +74,12 @@ private:
     void CargarLamparas();
     void DibujarLamparas(const ContextoRender& ctx);
     float nivel_agua = -1.0f;      // altura de la superficie del lago
+
+	// El shader solo acepta 16 luces puntuales: de todas se mandan las 16 mas cercanas a la camara
+	PointLight luces[max_point_lights];
+	unsigned int num_luces = 0;
+	glm::vec3 ultima_camara{ 0.0f };
+	void EscogerLuces();
 
 };
 }
