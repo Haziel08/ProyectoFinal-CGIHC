@@ -4,7 +4,7 @@
 #include "Texture.h"
 #include <vector>
 #include <array>
-#include "ModeloAnimado.h"
+#include "planeta_azul/EscenaPlanetaAzul.h"
 
 class CoheteAuxiliar
 {
@@ -29,8 +29,8 @@ public:
     void Dibujar(const ContextoRender& ctx) override;
     DirectionalLight* ObtenerLuzDireccional() override { return &luz; }
     ~EscenaPlanetaMorado() override;
+    PointLight LuzLocal() const override;
     bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
-    bool CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const override;
 
 private:
     struct Instancia
@@ -69,7 +69,7 @@ private:
     size_t cuadro_segundo = 0, lazo_segundo = 0;
     float tiempo_segundo = 0.0f;
     bool segundo_activo = false;
-    ModeloAnimado saru;
+    PlanetaAzul::ModeloAnimado saru;
     bool saru_cargado = false;
     float tiempo_npc = 0;
     Shader shader_avatar;

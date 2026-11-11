@@ -194852,7 +194852,7 @@ vn -0.921669 0.004483 0.387952
 vn 0.387940 -0.003443 0.921678
 vn 0.921669 -0.004483 -0.387952
 vn -0.387940 0.003443 -0.921678
-mtllib torre_comunicaciones.mtl
+mtllib torres.mtl
 o Torre_comunicaciones_placas_metalicas
 usemtl placas_torre
 f 1/1 2/2 3/3

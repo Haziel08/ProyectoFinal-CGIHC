@@ -1,6 +1,6 @@
 //>>>>>>>>>>>>>>>>>>>>>> Recursos y geometria del planeta morado >>>>>>>>>>>>>>>>>>>>>>
 #include "EscenaPlanetaMorado.h"
-#include "planeta_naranja/RecorridoNaranja.h"
+#include "planeta_naranja/recorridos/RecorridoNaranja.h"
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include <random>
@@ -189,8 +189,8 @@ void EscenaPlanetaMorado::Inicializar()
     flora[2].LoadModel(ruta+"hongos_acidos.obj",false,false);
     sonda_cuerpo.LoadModel(ruta+"sonda_cuerpo.obj",false,false);
     sonda_rotor.LoadModel(ruta+"sonda_rotor.obj",false,false);
-    cohete.LoadModel(ruta+"p10_nave.obj");
-    plataforma.LoadModel(ruta+"p10_plataforma.obj");
+    cohete.LoadModel(ruta+"cohete_1.obj");
+    plataforma.LoadModel(ruta+"plataforma_cohete.obj");
     antena.LoadModel("assets/planeta_naranja/modelos/radiotelescopio.obj",false,false);
     CargarSegundoCohete(ruta);
     auxiliar.Cargar();
@@ -199,16 +199,22 @@ void EscenaPlanetaMorado::Inicializar()
     saru_cargado = saru.Cargar(ruta+"saru.fbx","assets/planeta_morado/texturas/saru_color.jpg",true);
     if (saru_cargado) saru.QuitarAvance(0,"mixamorig:Hips");
     if (saru_cargado)
-        shader_avatar.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
-    const char* piezas[] = {"central","izquierdo","derecho"};
-    const char* partes[] = {"cohete","torre","plataforma"};
-    for (int i=0;i<3;++i)
-    {
-        motores[i].LoadModel(ruta+"p10_motor_"+piezas[i]+".obj");
-        neptuno[i].LoadModel(ruta+"neptuno_"+partes[i]+".obj");
-        montanas[i].LoadModel("assets/planeta_naranja/modelos/montana_0"+std::to_string(i+1)+".obj",false,false);
-        meteoritos[i].LoadModel("assets/planeta_naranja/modelos/asteroide_0"+std::to_string(i+1)+".obj",false,false);
-    }
+        shader_avatar.CreateFromString(PlanetaAzul::esqueleto_vert,
+            shader_avatar.ReadFile("shaders/shader_light.frag").c_str());
+    // Cargo por separado las piezas que se separan al lanzar el cohete.
+    motores[0].LoadModel(ruta+"motor_central.obj");
+    motores[1].LoadModel(ruta+"motor_izquierdo.obj");
+    motores[2].LoadModel(ruta+"motor_derecho.obj");
+    neptuno[0].LoadModel(ruta+"neptuno_cohete.obj");
+    neptuno[1].LoadModel(ruta+"neptuno_torre.obj");
+    neptuno[2].LoadModel(ruta+"neptuno_plataforma.obj");
+
+    montanas[0].LoadModel("assets/planeta_naranja/modelos/montana_01.obj",false,false);
+    meteoritos[0].LoadModel("assets/planeta_naranja/modelos/asteroide_01.obj",false,false);
+    montanas[1].LoadModel("assets/planeta_naranja/modelos/montana_02.obj",false,false);
+    meteoritos[1].LoadModel("assets/planeta_naranja/modelos/asteroide_02.obj",false,false);
+    montanas[2].LoadModel("assets/planeta_naranja/modelos/montana_03.obj",false,false);
+    meteoritos[2].LoadModel("assets/planeta_naranja/modelos/asteroide_03.obj",false,false);
     textura_suelo = Texture("assets/planeta_morado/texturas/suelo_morado.jpg");
     textura_suelo.LoadTexture();
     textura_suelo.UseTexture();
@@ -323,7 +329,7 @@ void EscenaPlanetaMorado::Actualizar(float dt, Window& ventana)
 {
     tiempo = std::fmod(tiempo+dt,1800.0f);
     tiempo_npc += dt;
-    const bool reiniciar = ventana.TeclaPresionada(GLFW_KEY_P);
+    const bool reiniciar = ventana.TeclaPresionada(GLFW_KEY_B);
     if (reiniciar)
     {
         lanzamiento = true;
@@ -417,10 +423,18 @@ void EscenaPlanetaMorado::Dibujar(const ContextoRender& ctx)
     auxiliar.Dibujar(ctx,{24,6,91},0);
     dibujar(cohete,matriz_cohete);
     if (!cuadros_cohete.empty())
-        for (size_t i = 0; i < segundo_cohete.size(); ++i)
-            dibujar(segundo_cohete[i],matrices_segundo[i]);
+    {
+        // Cuerpo, tres propulsores y capsula del segundo cohete.
+        dibujar(segundo_cohete[0],matrices_segundo[0]);
+        dibujar(segundo_cohete[1],matrices_segundo[1]);
+        dibujar(segundo_cohete[2],matrices_segundo[2]);
+        dibujar(segundo_cohete[3],matrices_segundo[3]);
+        dibujar(segundo_cohete[4],matrices_segundo[4]);
+    }
     if (saru_cargado) DibujarAvatar(ctx);
-    for (int i=0;i<3;++i) dibujar(motores[i],matrices_motores[i]);
+    dibujar(motores[0],matrices_motores[0]);
+    dibujar(motores[1],matrices_motores[1]);
+    dibujar(motores[2],matrices_motores[2]);
     dibujar(neptuno[2],Colocar({-90,6,55},0,glm::vec3(1.2f)));
     dibujar(neptuno[0],MatrizNeptuno(tiempo_cohete));
     dibujar(neptuno[1],Colocar({-105,13.4f,55},0,glm::vec3(1.2f)));
@@ -517,27 +531,49 @@ EscenaPlanetaMorado::~EscenaPlanetaMorado()
 //>>>>>>>>>>>>>>>>>>>>>> Segundo cohete por keyframes >>>>>>>>>>>>>>>>>>>>>>
 void EscenaPlanetaMorado::CargarSegundoCohete(const std::string& ruta)
 {
-    std::ifstream archivo(ruta+"keyframes_cohete.txt");
+    std::ifstream archivo("src/escenas/planeta_morado/recorridos/cohete_2_frames.txt");
     std::string linea;
+    CuadroCohete cuadro{};
+    for (auto& pieza : cuadro.piezas) pieza.acoplada = true;
     while (std::getline(archivo,linea))
     {
         std::istringstream fila(linea);
-        if (linea.rfind("LAZO",0) == 0)
+        fila >> std::ws;
+        if (fila.eof() || fila.peek() == '#') continue;
+        if (fila.peek() == 'L')
         {
             std::string etiqueta;
             fila >> etiqueta >> lazo_segundo;
-            continue;
+            break;
         }
-        CuadroCohete cuadro{};
-        if (!(fila >> cuadro.duracion >> cuadro.motor) || cuadro.duracion <= 0) continue;
-        for (size_t i = 0; i < cuadro.piezas.size(); ++i)
+
+        // Conservo la ultima pose de las piezas que no aparecen en este cuadro.
+        if (!(fila >> cuadro.duracion >> cuadro.motor) || cuadro.duracion <= 0)
         {
-            auto& pieza = cuadro.piezas[i];
-            if (i != 0) fila >> pieza.acoplada;
-            fila >> pieza.posicion.x >> pieza.posicion.y >> pieza.posicion.z
-                 >> pieza.angulos.x >> pieza.angulos.y >> pieza.angulos.z;
+            cuadros_cohete.clear();
+            break;
         }
-        if (fila) cuadros_cohete.push_back(cuadro);
+        bool tiene_cuerpo = !cuadros_cohete.empty();
+        int indice;
+        while (!fila.eof())
+        {
+            fila >> std::ws;
+            if (fila.eof()) break;
+            if (!(fila >> indice) || indice < 0 || indice >= int(cuadro.piezas.size()))
+                break;
+            auto& pieza = cuadro.piezas[indice];
+            if (!(fila >> pieza.posicion.x >> pieza.posicion.y >> pieza.posicion.z
+                       >> pieza.angulos.x >> pieza.angulos.y >> pieza.angulos.z))
+                break;
+            pieza.acoplada = false;
+            tiene_cuerpo = tiene_cuerpo || indice == 0;
+        }
+        if (fila.fail() || !fila.eof() || !tiene_cuerpo)
+        {
+            cuadros_cohete.clear();
+            break;
+        }
+        cuadros_cohete.push_back(cuadro);
     }
     if (cuadros_cohete.size() < 2)
     {
@@ -545,9 +581,11 @@ void EscenaPlanetaMorado::CargarSegundoCohete(const std::string& ruta)
         return;
     }
     if (lazo_segundo >= cuadros_cohete.size()-1) lazo_segundo = 0;
-    const char* nombres[] = {"cuerpo","booster1","booster2","booster3","capsula"};
-    for (size_t i = 0; i < segundo_cohete.size(); ++i)
-        segundo_cohete[i].LoadModel(ruta+"cohete_"+nombres[i]+".obj");
+    segundo_cohete[0].LoadModel(ruta+"cohete_cuerpo.obj");
+    segundo_cohete[1].LoadModel(ruta+"cohete_propulsor_1.obj");
+    segundo_cohete[2].LoadModel(ruta+"cohete_propulsor_2.obj");
+    segundo_cohete[3].LoadModel(ruta+"cohete_propulsor_3.obj");
+    segundo_cohete[4].LoadModel(ruta+"cohete_capsula.obj");
     ActualizarSegundoCohete(0);
 }
 
@@ -593,8 +631,20 @@ void EscenaPlanetaMorado::ActualizarSegundoCohete(float dt)
                 const glm::mat4 base = matriz(padre.posicion,padre.angulos);
                 return padre.posicion + glm::mat3(base)*offset;
             };
-            matrices_segundo[i] = glm::scale(matriz(
-                glm::mix(posicion(inicio,cuerpo_a),posicion(fin,cuerpo_b),u),
+            glm::vec3 punto = glm::mix(posicion(inicio,cuerpo_a),posicion(fin,cuerpo_b),u);
+            if (i == 4 && lazo_segundo > 0 && cuadro_segundo >= lazo_segundo &&
+                cuadros_cohete.size() - lazo_segundo >= 4)
+            {
+                // Suavizo la orbita cerrada de la capsula entre los cuadros conservados.
+                const size_t ultimo = cuadros_cohete.size() - 1;
+                const size_t anterior = cuadro_segundo == lazo_segundo ? ultimo - 1 : cuadro_segundo - 1;
+                const size_t siguiente = cuadro_segundo + 2 > ultimo ? lazo_segundo + 1 : cuadro_segundo + 2;
+                const glm::vec3 entrada = .5f * (fin.posicion - cuadros_cohete[anterior].piezas[i].posicion);
+                const glm::vec3 salida = .5f * (cuadros_cohete[siguiente].piezas[i].posicion - inicio.posicion);
+                punto += u * (1 - u) * ((1 - u) * (entrada - (fin.posicion - inicio.posicion)) -
+                                         u * (salida - (fin.posicion - inicio.posicion)));
+            }
+            matrices_segundo[i] = glm::scale(matriz(punto,
                 glm::mix(inicio.acoplada ? cuerpo_a.angulos : inicio.angulos,
                          fin.acoplada ? cuerpo_b.angulos : fin.angulos,u)),glm::vec3(escala*2.75f));
         }
@@ -617,7 +667,7 @@ void EscenaPlanetaMorado::DibujarAvatar(const ContextoRender& ctx)
     glUniform3f(shader_avatar.getColorLocation(),1,1,1);
     glUniform1f(shader_avatar.GetSpecularIntensityLocation(),.18f);
     glUniform1f(shader_avatar.GetShininessLocation(),16);
-    auto dibujar_actor = [&](ModeloAnimado& actor,glm::vec3 p,float giro,float escala,float fase) {
+    auto dibujar_actor = [&](PlanetaAzul::ModeloAnimado& actor,glm::vec3 p,float giro,float escala,float fase) {
         const glm::mat4 modelo = Colocar(p,giro,glm::vec3(escala))*actor.Normalizacion();
         glUniformMatrix4fv(shader_avatar.GetModelLocation(),1,GL_FALSE,glm::value_ptr(modelo));
         actor.CalcularPose(0,fase);
@@ -652,8 +702,8 @@ void CoheteAuxiliar::Cargar()
     cabina.LoadModel(ruta+"cohete_auxiliar_cabina.obj");
     cuerpo.LoadModel(ruta+"cohete_auxiliar_cuerpo.obj");
     motor.LoadModel(ruta+"cohete_auxiliar_motor.obj");
-    plataforma.LoadModel(ruta+"p10_plataforma.obj");
-    std::ifstream archivo(ruta+"cohete_auxiliar_keyframes.txt");
+    plataforma.LoadModel(ruta+"plataforma_cohete.obj");
+    std::ifstream archivo("src/escenas/planeta_morado/recorridos/cohete_auxiliar_frames.txt");
     int cantidad = 0;
     archivo >> cantidad;
     for (int i = 0; i < cantidad; ++i)
@@ -703,11 +753,8 @@ CoheteAuxiliar::~CoheteAuxiliar()
     plataforma.ClearModel();
 }
 
-//>>>>>>>>>>>>>>>>>>>>>> Avatar >>>>>>>>>>>>>>>>>>>>>>
-// El marine da vueltas entre los cohetes y el poblado (ahi no hay arboles)
-bool EscenaPlanetaMorado::CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const
+PointLight EscenaPlanetaMorado::LuzLocal() const
 {
-    estatura = 16.0f;
-    CirculoAvatar(tiempo, glm::vec3(0, 0, 0), 175.0f, estatura * 1.1f, posicion, rumbo);
-    return true;
+    // Centro del camino entre la plataforma y el poblado, con altura para iluminar ambos bordes.
+    return PointLight(.12f,1.0f,.22f,0,4.5f,-17.5f,18.0f,201.625f,1,.014f,.00065f);
 }

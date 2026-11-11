@@ -16,10 +16,10 @@ public:
         return "Espacio";
     }
     bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
-    bool CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const override;
     void Inicializar() override;
     void Actualizar(float dt, Window& ventana) override;
     void Dibujar(const ContextoRender& ctx) override;
+    const glm::mat4& MarcoEstacion() const { return matriz_estacion; }
     float PlanoCercano() const override
     {
         return 2.0f;
@@ -66,11 +66,14 @@ private:
     glm::mat4 matriz_cabina{1.0f};
     glm::mat4 matrices_naves[15];
     //>>>>>>>>>>>>>>>>>>>>>> Estado de la animacion >>>>>>>>>>>>>>>>>>>>>>>
+    glm::vec3 cuadros_naves[8]{};
+    bool vuelo_estacion_activo = false;
     double tiempo = 0.0;
 
     //>>>>>>>>>>>>>>>>>>>>>> Carga y actualizacion de jerarquias >>>>>>>>>>>
     void CargarModelos();
     void CargarPaneles();
+    void CargarCuadrosNaves();
     void CargarTexturas();
     glm::mat4 matriz_aurora_exploradora{1.0f};
     void ActualizarMatrices();
