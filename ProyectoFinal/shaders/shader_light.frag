@@ -13,7 +13,7 @@ uniform float luces_cohete = 0.0;
 uniform bool recolorar_superficie = false;
 
 const int max_point_lights = 16;
-const int max_spot_lights = 4;
+const int max_spot_lights = 5;
 
 struct Light
 {

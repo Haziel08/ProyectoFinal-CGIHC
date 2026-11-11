@@ -28,6 +28,18 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{6BF34332-7370-4330-9B08-87C1552703F1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\escenas\espacio\recorridos">
+      <UniqueIdentifier>{edd52f93-09e0-4397-b385-fd1cb96d785e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\planeta_azul\recorridos">
+      <UniqueIdentifier>{9ada68e5-31e1-49ca-ab64-055062a5c2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\planeta_morado\recorridos">
+      <UniqueIdentifier>{e96c6c8d-0e35-450f-85a8-81da5fc48ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\escenas\planeta_naranja\recorridos">
+      <UniqueIdentifier>{5969bee1-dbd0-43ac-a669-275096e22dc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\motor\Material.cpp">
@@ -148,5 +160,33 @@
     </None>
     <None Include="shaders\*.vert" />
     <None Include="shaders\*.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\escenas\espacio\recorridos\marine_frames.txt">
+      <Filter>src\escenas\espacio\recorridos</Filter>
+    </None>
+    <None Include="src\escenas\espacio\recorridos\naves_estacion_frames.txt">
+      <Filter>src\escenas\espacio\recorridos</Filter>
+    </None>
+    <None Include="src\escenas\planeta_azul\recorridos\marine_frames.txt">
+      <Filter>src\escenas\planeta_azul\recorridos</Filter>
+    </None>
+    <None Include="src\escenas\planeta_morado\recorridos\cohete_2_frames.txt">
+      <Filter>src\escenas\planeta_morado\recorridos</Filter>
+    </None>
+    <None Include="src\escenas\planeta_morado\recorridos\cohete_auxiliar_frames.txt">
+      <Filter>src\escenas\planeta_morado\recorridos</Filter>
+    </None>
+    <None Include="src\escenas\planeta_morado\recorridos\marine_frames.txt">
+      <Filter>src\escenas\planeta_morado\recorridos</Filter>
+    </None>
+    <None Include="src\escenas\planeta_naranja\recorridos\marine_frames.txt">
+      <Filter>src\escenas\planeta_naranja\recorridos</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\escenas\planeta_naranja\recorridos\RecorridoNaranja.h">
+      <Filter>src\escenas\planeta_naranja\recorridos</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

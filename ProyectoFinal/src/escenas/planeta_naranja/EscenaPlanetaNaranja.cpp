@@ -1,6 +1,6 @@
 //>>>>>>>>>>>>>>>>>>>>>> Bibliotecas y cabeceras >>>>>>>>>>>>>>>>>>>>>
 #include "EscenaPlanetaNaranja.h"
-#include "RecorridoNaranja.h"
+#include "recorridos/RecorridoNaranja.h"
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -65,34 +65,40 @@ struct ConfiguracionRival
 {
     int modelo;
     bool espiral;
-    float carril, fase, velocidad, escala;
+    float carril, separacion, ventaja, escala;
+    float fase = 0.0f;
 };
+constexpr int rival_camara_espiral = 1; // nave_17
 const float giros_rivales[] = {0, 0, 0, 0, -90, -90, 0, 0};
 const ConfiguracionRival configuraciones_rivales[] = {
-    {7, true, -16.500f, 0.000f, 0.900f, 1.000f},       {0, true, -16.500f, 1.0f / 3.0f, 0.900f, 0.920f},
-    {2, true, -16.500f, 2.0f / 3.0f, 0.900f, 0.920f},  {1, true, -5.500f, 1.0f / 3.0f, 1.000f, 0.920f},
-    {3, true, -5.500f, 2.0f / 3.0f, 1.000f, 0.920f},   {4, true, 5.500f, 0.000f, 1.100f, 0.920f},
-    {5, true, 5.500f, 1.0f / 3.0f, 1.100f, 0.920f},    {6, true, 5.500f, 2.0f / 3.0f, 1.100f, 0.920f},
-    {2, true, 16.500f, 0.000f, 1.180f, 0.920f},        {3, true, 16.500f, 1.0f / 3.0f, 1.180f, 0.920f},
-    {0, true, 16.500f, 2.0f / 3.0f, 1.180f, 0.920f},   {7, false, -40.000f, 0.000f, 0.900f, 0.650f},
-    {0, false, -40.000f, 1.0f / 3.0f, 0.900f, 0.620f}, {2, false, -40.000f, 2.0f / 3.0f, 0.900f, 0.620f},
-    {1, false, 0.000f, 1.0f / 3.0f, 1.000f, 0.620f},   {4, false, 0.000f, 2.0f / 3.0f, 1.000f, 0.620f},
-    {3, false, 40.000f, 0.000f, 1.100f, 0.620f},       {5, false, 40.000f, 1.0f / 3.0f, 1.100f, 0.620f},
-    {6, false, 40.000f, 2.0f / 3.0f, 1.100f, 0.620f}};
+    {7, true, -16.500f, 0.0f, 0.0f, 1.000f},       {0, true, -16.500f, 18.0f, 0.0008f, 0.920f},
+    {2, true, -16.500f, 36.0f, 0.0010f, 0.920f},  {1, true, -5.500f, 16.0f, 0.0012f, 0.920f},
+    {3, true, -5.500f, 34.0f, 0.0006f, 0.920f},   {4, true, 5.500f, 0.0f, 0.0f, 0.920f},
+    {5, true, 5.500f, 18.0f, 0.0010f, 0.920f},    {6, true, 5.500f, 36.0f, 0.0012f, 0.920f},
+    {2, true, 16.500f, 6.0f, 0.0006f, 0.920f},        {3, true, 16.500f, 24.0f, 0.0008f, 0.920f},
+    {0, true, 16.500f, 42.0f, 0.0010f, 0.920f},   {7, false, -40.0f, 0.0f, 0.0f, 0.650f},
+    {0, false, -40.000f, 18.0f, 0.0006f, 0.620f}, {2, false, -40.000f, 36.0f, 0.0008f, 0.620f},
+    {1, false, 0.000f, 16.0f, 0.0010f, 0.620f},   {4, false, 0.000f, 34.0f, 0.0012f, 0.620f},
+    {3, false, 40.0f, 0.0f, 0.0f, 0.620f},       {5, false, 40.000f, 18.0f, 0.0008f, 0.620f},
+    {6, false, 40.000f, 36.0f, 0.0010f, 0.620f},
+    {0,true,-16.5f,0,0,.92f,.20f}, {2,true,5.5f,0,0,.92f,.37f},
+    {4,true,16.5f,0,0,.92f,.56f}, {6,true,-16.5f,0,0,.92f,.74f},
+    {3,true,5.5f,0,0,.92f,.86f}, {5,true,16.5f,0,0,.92f,.93f},
+    {1,false,-40,0,0,.62f,.18f}, {2,false,40,0,0,.62f,.36f},
+    {4,false,-40,0,0,.62f,.55f}, {6,false,40,0,0,.62f,.73f},
+    {7,false,-40,0,0,.65f,.87f}, {0,false,40,0,0,.62f,.94f}};
 } // namespace
 
 //>>>>>>>>>>>>>>>>>>>>>> Inicializacion: orden de los recursos >>>>>>>>>>>>>>>>>>>
 void EscenaPlanetaNaranja::Inicializar()
 {
-    CargarSkybox("assets/planeta_naranja/texturas/", ".jpg", "cielo_");
+    CargarSkybox("assets/planeta_naranja/texturas/skybox/noche/", ".jpg", "textura_",
+                 "assets/planeta_naranja/texturas/skybox/dia/textura_abajo.jpg");
+    cielo_noche = skybox;
+    CargarSkybox("assets/planeta_naranja/texturas/skybox/dia/", ".jpg");
     cielo_dia = skybox;
-    cielo_noche = Skybox({"assets/planeta_naranja/texturas/cielo_noche_derecha.jpg",
-                          "assets/planeta_naranja/texturas/cielo_noche_izquierda.jpg",
-                          "assets/planeta_naranja/texturas/cielo_abajo.jpg",
-                          "assets/planeta_naranja/texturas/cielo_noche_arriba.jpg",
-                          "assets/planeta_naranja/texturas/cielo_noche_atras.jpg",
-                          "assets/planeta_naranja/texturas/cielo_noche_frente.jpg"});
     camara = Camera(glm::vec3(110, altura_suelo + 1.7f, 55), glm::vec3(0, 1, 0), -120, 0, 35, 0.3f);
+    matrices_rivales.resize(std::size(configuraciones_rivales));
     CargarModelos();
     CargarRocky();
     cohete_auxiliar.Cargar();
@@ -681,7 +687,7 @@ void EscenaPlanetaNaranja::ActualizarIluminacion(float dt)
     {
         const auto& p = posiciones_arquitectura[i];
         luces_arquitectura[i] =
-            PointLight(1, .91f, .76f, 0, i < 2 ? (es_noche ? 3.2f : 0.0f) : (es_noche ? 2.8f : 1.2f), p.x,
+            PointLight(1, .91f, .76f, 0, i < 2 ? (es_noche ? 3.2f : 0.0f) : (luces_domos_encendidas ? (es_noche ? 2.8f : 1.2f) : 0.0f), p.x,
                        p.y, p.z, 1, .04f, .0015f);
     }
 }
@@ -825,25 +831,28 @@ void EscenaPlanetaNaranja::DibujarHalos(const ContextoRender& ctx)
 //>>>>>>>>>>>>>>>>>>>>>> Animacion de la escena >>>>>>>>>>>>>>>>>>>
 void EscenaPlanetaNaranja::Actualizar(float dt, Window& ventana)
 {
+    if (ventana.TeclaPresionada(GLFW_KEY_Y)) luces_domos_encendidas = !luces_domos_encendidas;
     ActualizarIluminacion(dt);
     motor1 = ventana.getMotor1Encendido();
     motor2 = ventana.getMotor2Encendido();
-    if (ventana.getVistaGeneralSolicitada())
-        camara = Camera(glm::vec3(700.0f, altura_suelo + 700.0f, 1100.0f), glm::vec3(0, 1, 0), -126.0f,
-                        -25.0f, 150.0f, 0.3f);
     ActualizarNaves(dt);
     tiempo_rocky += dt;
-    cohete_auxiliar.Actualizar(dt,ventana.TeclaPresionada(GLFW_KEY_F));
+    cohete_auxiliar.Actualizar(dt,ventana.TeclaPresionada(GLFW_KEY_V));
     ActualizarObjetosAereos(dt);
 }
 
 //>>>>>>>>>>>>>>>>>>>>>> Jerarquias completas: pistas -> naves -> motores >>>>>>>>>>>>>>>>>>>
 void EscenaPlanetaNaranja::ActualizarNaves(float dt)
 {
+    constexpr float velocidad_base = 16.2f;
+    constexpr float ritmo_espiral = 1.15f;
+    constexpr float multiplicador_carrera = 1.35f;
+    const float dt_carrera = dt * multiplicador_carrera;
+
     // Padre 1: pista inferior -> trayectoria -> orientacion y escala de la nave.
 
     // Distancia real por segundo; conserva el sobrante al pasar de segmento.
-    avance_nave = std::fmod(avance_nave + (16.2f / escala_pista) * dt, longitud_circuito);
+    avance_nave = std::fmod(avance_nave + (velocidad_base / escala_pista) * dt_carrera, longitud_circuito);
     const float semilargo = 13.0f * escala_nave;
     glm::vec3 centro = PuntoPista(avance_nave);
     glm::vec3 adelante =
@@ -863,24 +872,27 @@ void EscenaPlanetaNaranja::ActualizarNaves(float dt)
 
     // Padre 2: espiral -> trayectoria -> orientacion y escala de la nave.
 
-    tiempo_espiral = std::fmod(tiempo_espiral + 1.15f * dt, RecorridoEspiral::tiempo_total);
+    constexpr float escala_nave_fuego = 0.198f;
+    tiempo_espiral = std::fmod(tiempo_espiral + ritmo_espiral * dt_carrera, RecorridoEspiral::tiempo_total);
     RecorridoEspiral::Estado estado = RecorridoEspiral::Evaluar(tiempo_espiral);
     matriz_nave_espiral = glm::scale(
         glm::mat4(glm::vec4(-estado.adelante, 0), glm::vec4(estado.arriba, 0),
                   glm::vec4(-estado.lateral, 0),
                   glm::vec4(estado.posicion + estado.arriba * 1.2f + glm::vec3(0, altura_suelo, 0), 1)),
-        glm::vec3(0.198f));
+        glm::vec3(escala_nave_fuego));
 
-    // Cada fila conserva su carril y su separacion; la velocidad varia entre carriles.
-    tiempo_carreras += dt;
-    for (int i = 0; i < 19; ++i)
+    // La ventaja se acumula suavemente hasta seis unidades para conservar la formacion.
+    tiempo_carreras += dt_carrera;
+    for (size_t i = 0; i < matrices_rivales.size(); ++i)
     {
         const auto& rival = configuraciones_rivales[i];
+        const float adelanto = rival.separacion +
+            6.0f * float(-std::expm1(-tiempo_carreras * rival.ventaja * velocidad_base / 6.0));
         if (rival.espiral)
         {
-            float tiempo = float(std::fmod(tiempo_carreras * 1.15f * rival.velocidad +
-                                               rival.fase * RecorridoEspiral::tiempo_total,
-                                           RecorridoEspiral::tiempo_total));
+            const float tiempo = std::fmod(tiempo_espiral + adelanto / velocidad_base * ritmo_espiral +
+                                           rival.fase * RecorridoEspiral::tiempo_total,
+                                           RecorridoEspiral::tiempo_total);
             auto estado_rival = RecorridoEspiral::Evaluar(tiempo, rival.carril);
             float intervalo_casco =
                 3.5f * rival.escala /
@@ -904,9 +916,8 @@ void EscenaPlanetaNaranja::ActualizarNaves(float dt)
         }
         else
         {
-            float distancia = float(std::fmod(tiempo_carreras * (16.2f / escala_pista) * rival.velocidad +
-                                                  rival.fase * longitud_circuito,
-                                              longitud_circuito));
+            const float distancia = std::fmod(avance_nave + adelanto / escala_pista +
+                                               rival.fase * longitud_circuito, longitud_circuito);
             glm::vec3 centro_rival = RecorridoNaranja::PuntoCarril(distancia, distancias, rival.carril);
             glm::vec3 frente_rival =
                 glm::normalize(RecorridoNaranja::PuntoCarril(distancia + 6, distancias, rival.carril) -
@@ -932,6 +943,16 @@ void EscenaPlanetaNaranja::ActualizarNaves(float dt)
         matrices_rivales[i] =
             glm::rotate(matrices_rivales[i], glm::radians(giros_rivales[rival.modelo]), glm::vec3(0, 1, 0));
     }
+
+    // Intercambiar las plazas de la espiral. La nave con fuego mira hacia -X y la nave 17 hacia +Z.
+    const float escala_nave_camara = configuraciones_rivales[rival_camara_espiral].escala;
+    const glm::mat4 plaza_fuego = matriz_nave_espiral;
+    glm::mat4& plaza_camara = matrices_rivales[rival_camara_espiral];
+    const float relacion_escalas = escala_nave_fuego / escala_nave_camara;
+    matriz_nave_espiral = glm::mat4(-plaza_camara[2] * relacion_escalas,
+        plaza_camara[1] * relacion_escalas, plaza_camara[0] * relacion_escalas, plaza_camara[3]);
+    plaza_camara = glm::mat4(plaza_fuego[2] / relacion_escalas,
+        plaza_fuego[1] / relacion_escalas, -plaza_fuego[0] / relacion_escalas, plaza_fuego[3]);
 
     // Hijos de ambas naves: salida del motor -> orientacion -> escala del fuego.
     for (int indice_nave = 0; indice_nave < 2; ++indice_nave)
@@ -1079,7 +1100,7 @@ void EscenaPlanetaNaranja::Dibujar(const ContextoRender& ctx)
     {
         DibujarBrillos(ctx, nave, matriz_nave, textura_halo);
         DibujarBrillos(ctx, nave, matriz_nave_espiral, textura_halo);
-        for (size_t i = 0; i < sizeof(configuraciones_rivales) / sizeof(configuraciones_rivales[0]); ++i)
+        for (size_t i = 0; i < matrices_rivales.size(); ++i)
             DibujarBrillos(ctx, rivales[configuraciones_rivales[i].modelo], matrices_rivales[i],
                            textura_halo);
         for (const auto& padre : matrices_drones)
@@ -1149,13 +1170,12 @@ void EscenaPlanetaNaranja::DibujarNaves(const ContextoRender& ctx)
     // Padres: nave del circuito inferior y nave de la espiral.
     glUniform1f(ctx.u_specular_intensity, 0.6f);
     glUniform1f(ctx.u_shininess, 64.0f);
-    for (const auto& raiz_nave : {matriz_nave, matriz_nave_espiral})
-    {
-        glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(raiz_nave));
-        nave.RenderModel();
-    }
+    glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matriz_nave));
+    nave.RenderModel();
+    glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matriz_nave_espiral));
+    nave.RenderModel();
 
-    for (int i = 0; i < 19; ++i)
+    for (size_t i = 0; i < matrices_rivales.size(); ++i)
     {
         glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matrices_rivales[i]));
         rivales[configuraciones_rivales[i].modelo].RenderModel(true, ctx.u_specular_intensity,
@@ -1169,16 +1189,20 @@ void EscenaPlanetaNaranja::DibujarNaves(const ContextoRender& ctx)
     glUniform3f(ctx.u_color, 2, 2, 2);
     glUniform1f(ctx.u_specular_intensity, 0);
     fuego->UseTexture();
-    for (int motor = 0; motor < 2; ++motor)
+    auto dibujar_fuego = [&](const glm::mat4& matriz)
     {
-        if (!(motor == 0 ? motor1 : motor2))
-            continue;
-        for (int indice_nave = 0; indice_nave < 2; ++indice_nave)
-        {
-            glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE,
-                               glm::value_ptr(matrices_fuegos[indice_nave][motor]));
-            malla_fuego->RenderMeshModel();
-        }
+        glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matriz));
+        malla_fuego->RenderMeshModel();
+    };
+    if (motor1)
+    {
+        dibujar_fuego(matrices_fuegos[0][0]);
+        dibujar_fuego(matrices_fuegos[1][0]);
+    }
+    if (motor2)
+    {
+        dibujar_fuego(matrices_fuegos[0][1]);
+        dibujar_fuego(matrices_fuegos[1][1]);
     }
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
@@ -1207,11 +1231,11 @@ void EscenaPlanetaNaranja::DibujarObjetosAereos(const ContextoRender& ctx)
         glUniform1i(normales, 1);
         glUniform1f(ctx.u_specular_intensity, 0.8f);
         glUniform1f(ctx.u_shininess, 96.0f);
-        for (int rotor = 0; rotor < 2; ++rotor)
-        {
-            glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matrices_rotores[dron][rotor]));
-            malla_aspas_dron->RenderMeshModel();
-        }
+        // Dibujo cada rotor con la matriz que hereda del cuerpo del dron.
+        glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matrices_rotores[dron][0]));
+        malla_aspas_dron->RenderMeshModel();
+        glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(matrices_rotores[dron][1]));
+        malla_aspas_dron->RenderMeshModel();
         glUniform1i(normales, 0);
     }
     glEnable(GL_BLEND);
@@ -1547,12 +1571,26 @@ bool EscenaPlanetaNaranja::ObjetivoCamara(int modo, glm::vec3& objetivo, glm::ve
         altura = altura_suelo+13.0f;
         return true;
     }
-    if (modo != 2) return false;
-    objetivo = glm::vec3(matriz_nave_espiral[3]);
-    rumbo = -glm::vec3(matriz_nave_espiral[0]);
+    if (modo == 9)
+    {
+        objetivo = {0,altura_suelo+35.0f,0};
+        rumbo = {-700,0,-1100};
+        distancia = 1304.0f;
+        altura = altura_suelo+700.0f;
+        return true;
+    }
+    if (modo != 2 && modo != 10) return false;
+    const glm::mat4& marco = modo == 2 ? MarcoNaveCamara() : matriz_nave;
+    objetivo = glm::vec3(marco[3]);
+    rumbo = modo == 2 ? glm::vec3(marco[2]) : -glm::vec3(marco[0]);
     distancia = 22.0f;
     altura = objetivo.y + 10.0f;
     return true;
+}
+
+const glm::mat4& EscenaPlanetaNaranja::MarcoNaveCamara() const
+{
+    return matrices_rivales[rival_camara_espiral];
 }
 
 glm::mat4 EscenaPlanetaNaranja::MarcoFaroRival(bool espiral) const
@@ -1573,7 +1611,8 @@ void EscenaPlanetaNaranja::CargarRocky()
     if (caminante_cargado)
     {
         rocky_caminante.QuitarAvance(0,"Hips");
-        shader_rocky.CreateFromFiles("shaders/shader_esqueleto.vert", "shaders/shader_light.frag");
+        shader_rocky.CreateFromString(PlanetaAzul::esqueleto_vert,
+            shader_rocky.ReadFile("shaders/shader_light.frag").c_str());
     }
     rocky_saludo[0].LoadModel(ruta+"rocky_torso.obj",false,false);
     rocky_saludo[1].LoadModel(ruta+"rocky_brazo_derecho.obj",false,false);
@@ -1632,7 +1671,7 @@ void EscenaPlanetaNaranja::DibujarRocky(const ContextoRender& ctx)
     glUniform3f(shader_rocky.getColorLocation(),1,1,1);
     glUniform1f(shader_rocky.GetSpecularIntensityLocation(),.16f);
     glUniform1f(shader_rocky.GetShininessLocation(),16);
-    auto caminar = [&](ModeloAnimado& actor,glm::vec2 p,glm::vec2 d,float fase,float escala) {
+    auto caminar = [&](PlanetaAzul::ModeloAnimado& actor,glm::vec2 p,glm::vec2 d,float fase,float escala) {
         glm::mat4 m = glm::translate(glm::mat4(1),glm::vec3(p.x,
             altura_suelo+AlturaSuelo(p.x,p.y)+(std::abs(p.y)<1 ? .55f : 0),p.y));
         m = glm::scale(glm::rotate(m,std::atan2(d.x,d.y),glm::vec3(0,1,0)),glm::vec3(escala)) *
@@ -1666,12 +1705,7 @@ void EscenaPlanetaNaranja::DibujarRocky(const ContextoRender& ctx)
     glUseProgram(anterior);
 }
 
-//>>>>>>>>>>>>>>>>>>>>>> Avatar >>>>>>>>>>>>>>>>>>>>>>
-// El marine da vueltas dentro del circuito de Rocky, siguiendo el suelo
-bool EscenaPlanetaNaranja::CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const
+float EscenaPlanetaNaranja::SueloPatrulla(float x, float z) const
 {
-    estatura = 7.0f;
-    CirculoAvatar(tiempo, glm::vec3(-90, 0, 0), 455.0f, estatura * 1.1f, posicion, rumbo);
-    posicion.y = altura_suelo + AlturaSuelo(posicion.x, posicion.z);
-    return true;
+    return altura_suelo + AlturaSuelo(x, z);
 }

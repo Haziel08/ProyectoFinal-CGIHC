@@ -1,6 +1,6 @@
 //>>>>>>>>>>>>>>>>>>>>>> Bibliotecas y cabeceras >>>>>>>>>>>>>>>>>>>>>
 #include "EscenaEspacio.h"
-#include "planeta_naranja/RecorridoNaranja.h"
+#include "planeta_naranja/recorridos/RecorridoNaranja.h"
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -16,15 +16,14 @@ const float pi = glm::pi<float>();
 const glm::vec3 origen_estacion(254.778f, 202.409f, 1036.046f);
 struct ConfiguracionPlaneta
 {
-    const char* modelo;
     glm::vec3 centro;
     float radio, inclinacion, periodo_rotacion;
     glm::vec3 color_atmosfera;
 };
 const ConfiguracionPlaneta configuraciones_planetas[] = {
-    {"planeta_azul", {0, -495, -13480}, 2200, -8, 180, {.15f, .45f, 1}},
-    {"planeta_naranja", {13500, 355, 7020}, 2500, 14, 160, {1, .3f, .08f}},
-    {"planeta_morado", {-13200, 605, 6520}, 2350, -12, 210, {.55f, .18f, 1}}};
+    {{0, -495, -13480}, 2200, -8, 180, {.15f, .45f, 1}},
+    {{13500, 355, 7020}, 2500, 14, 160, {1, .3f, .08f}},
+    {{-13200, 605, 6520}, 2350, -12, 210, {.55f, .18f, 1}}};
 float Fase(double tiempo, float periodo)
 {
     return float(std::fmod(tiempo / periodo, 1.0)) * 2 * pi;
@@ -134,24 +133,7 @@ const ConfiguracionNave configuraciones_naves[] = {{"nave_grace", 0, 0.480f, 180
                                                    {"nave_14", 0, 0.950f, 180.0f, 0.0f, 0.0f, -90.0f},
                                                    {"nave_16", 1, 0.950f},
                                                    {"nave_aurora", 2, 1.150f, 0.0f, 1.0f, 1.300f}};
-struct FrameNave
-{
-    float avance, altura, giro;
-};
-const FrameNave keyframes_naves[] = {{0, 0, 0},           {0, 1, 0}, {0, 1, 1}, {1.0f / 3.0f, 1, 1},
-                                     {2.0f / 3.0f, 1, 1}, {1, 1, 1}, {1, 1, 0}, {1, 0, 0}};
-const float duracion_keyframe = 6.0f;
-const float pasos_keyframe = 90.0f;
-
-FrameNave InterpolarNave(int indice, float pasos)
-{
-    const FrameNave& inicio = keyframes_naves[indice];
-    const FrameNave& fin = keyframes_naves[indice + 1];
-    return {inicio.avance + (fin.avance - inicio.avance) / pasos_keyframe * pasos,
-            inicio.altura + (fin.altura - inicio.altura) / pasos_keyframe * pasos,
-            inicio.giro + (fin.giro - inicio.giro) / pasos_keyframe * pasos};
-}
-
+// Cada cuadro dura seis segundos. Entre cuadros interpolo avance, altura y giro.
 // Arco exterior abierto: sale radialmente y llega radialmente a la siguiente plataforma.
 glm::vec3 PuntoVueloNave(float avance, float altura, int nave, int plataforma)
 {
@@ -170,23 +152,23 @@ glm::vec3 PuntoVueloNave(float avance, float altura, int nave, int plataforma)
 }
 
 // Cada intervalo dura lo mismo; las distancias cortas producen despegues y aterrizajes lentos.
-glm::mat4 MatrizVueloNave(double tiempo, int nave)
+glm::mat4 MatrizVueloNave(double tiempo, int nave, const glm::vec3 (&cuadros)[8])
 {
-    float paso = float(std::fmod((tiempo + 31.5 * (nave / 4)) / duracion_keyframe, 21.0));
+    float paso = float(std::fmod((tiempo + 31.5 * (nave / 4)) / 6.0, 21.0));
     int intervalo = int(paso);
     int cuadro = intervalo % 7;
     int plataforma = (intervalo / 7) % 3;
-    FrameNave frame = InterpolarNave(cuadro, (paso - intervalo) * pasos_keyframe);
-    glm::vec3 tangente = PuntoVueloNave(glm::min(frame.avance + .001f, 1.0f), 1, nave, plataforma) -
-                         PuntoVueloNave(glm::max(frame.avance - .001f, 0.0f), 1, nave, plataforma);
+    const glm::vec3 frame = glm::mix(cuadros[cuadro], cuadros[cuadro + 1], paso - intervalo);
+    glm::vec3 tangente = PuntoVueloNave(glm::min(frame.x + .001f, 1.0f), 1, nave, plataforma) -
+                         PuntoVueloNave(glm::max(frame.x - .001f, 0.0f), 1, nave, plataforma);
     float giro = std::atan2(tangente.x, tangente.z);
     if (cuadro < 2 || cuadro >= 5)
     {
         float estacionado = -(plataforma + (cuadro >= 5 ? 1 : 0)) * 2.0f * pi / 3.0f +
                             glm::radians(configuraciones_naves[nave].giro_estacionado);
-        giro = estacionado + std::remainder(giro - estacionado, 2.0f * pi) * frame.giro;
+        giro = estacionado + std::remainder(giro - estacionado, 2.0f * pi) * frame.z;
     }
-    return Trasladar(PuntoVueloNave(frame.avance, frame.altura, nave, plataforma)) *
+    return Trasladar(PuntoVueloNave(frame.x, frame.y, nave, plataforma)) *
            Girar(giro + glm::radians(configuraciones_naves[nave].giro_modelo), glm::vec3(0, 1, 0)) *
            Escalar(configuraciones_naves[nave].escala);
 }
@@ -231,6 +213,7 @@ void EscenaEspacio::Inicializar()
     camara = Camera(origen_estacion + glm::vec3(2100, 1100, 2800), glm::vec3(0, 1, 0), -126.87f, -17.447f,
                     550, .3f);
     CargarModelos();
+    CargarCuadrosNaves();
     CargarTexturas();
     esfera_atmosfera = CrearEsfera();
     malla_estela = CrearEstela();
@@ -241,17 +224,17 @@ void EscenaEspacio::Inicializar()
 //>>>>>>>>>>>>>>>>>>>>>> Carga de modelos >>>>>>>>>>>>>>>>>>>
 void EscenaEspacio::CargarModelos()
 {
-    for (int i = 0; i < 3; ++i)
-    {
-        planetas[i].LoadModel(std::string("assets/espacio/modelos/") + configuraciones_planetas[i].modelo +
-                                  ".obj",
-                              false, false);
-        asteroides[i].LoadModel(
-            "assets/planeta_naranja/modelos/asteroide_0" + std::to_string(i + 1) + ".obj", false, false);
-    }
-    for (int i = 0; i < 2; ++i)
-        cuerpos_satelites[i].LoadModel(
-            "assets/espacio/modelos/satelite_0" + std::to_string(i + 1) + "_cuerpo.obj", false, false);
+    planetas[0].LoadModel("assets/espacio/modelos/planeta_azul.obj", false, false);
+    planetas[1].LoadModel("assets/espacio/modelos/planeta_naranja.obj", false, false);
+    planetas[2].LoadModel("assets/espacio/modelos/planeta_morado.obj", false, false);
+
+    asteroides[0].LoadModel("assets/planeta_naranja/modelos/asteroide_01.obj", false, false);
+    asteroides[1].LoadModel("assets/planeta_naranja/modelos/asteroide_02.obj", false, false);
+    asteroides[2].LoadModel("assets/planeta_naranja/modelos/asteroide_03.obj", false, false);
+
+    cuerpos_satelites[0].LoadModel("assets/espacio/modelos/satelite_01_cuerpo.obj", false, false);
+    cuerpos_satelites[1].LoadModel("assets/espacio/modelos/satelite_02_cuerpo.obj", false, false);
+
     estacion_xq6.LoadModel("assets/espacio/modelos/estacion_xq6.obj", false, false);
     cabina_estacion.LoadModel("assets/espacio/modelos/cabina_estacion.obj", false, false);
     campos_estacion.LoadModel("assets/espacio/modelos/campos_estacion.obj", false, false);
@@ -264,24 +247,56 @@ void EscenaEspacio::CargarModelos()
     lunas[1].LoadModel("assets/espacio/modelos/luna_morada.obj", false, false);
 }
 
+void EscenaEspacio::CargarCuadrosNaves()
+{
+    std::ifstream archivo("src/escenas/espacio/recorridos/naves_estacion_frames.txt");
+    std::string encabezado;
+    std::getline(archivo, encabezado);
+    glm::vec3 cuadros[8];
+    for (auto& cuadro : cuadros)
+        if (!(archivo >> cuadro.x >> cuadro.y >> cuadro.z) ||
+            !std::isfinite(cuadro.x) || !std::isfinite(cuadro.y) || !std::isfinite(cuadro.z) ||
+            cuadro.x < 0 || cuadro.x > 1 || cuadro.y < 0 || cuadro.y > 1 || cuadro.z < 0 || cuadro.z > 1)
+        {
+            fprintf(stderr, "No se pudieron leer los cuadros de vuelo de la estacion.\n");
+            return;
+        }
+    std::copy(std::begin(cuadros), std::end(cuadros), cuadros_naves);
+    vuelo_estacion_activo = true;
+}
+
 //>>>>>>>>>>>>>>>>>>>>>> Carga de paneles: modelos, bisagras y ejes >>>>>>>>>>>>>>>>>>>
 void EscenaEspacio::CargarPaneles()
 {
-    std::ifstream datos("assets/espacio/modelos/satelites_paneles.dat");
-    int tipo, indice;
-    glm::vec3 p, e;
-    while (datos >> tipo >> indice >> p.x >> p.y >> p.z >> e.x >> e.y >> e.z)
+    auto cargar = [](PanelOrbital& panel, const char* archivo, glm::vec3 pivote, glm::vec3 eje)
     {
-        if (tipo < 0 || tipo > 1 || indice < 0 || indice >= 8)
-            continue;
-        auto& panel = paneles[tipo][indice];
-        panel.pivote = p;
-        panel.eje = glm::normalize(e);
-        panel.modelo.LoadModel("assets/espacio/modelos/satelite_0" + std::to_string(tipo + 1) + "_panel_0" +
-                                   std::to_string(indice + 1) + ".obj",
-                               false, false);
-        cantidad_paneles[tipo] = std::max(cantidad_paneles[tipo], indice + 1);
-    }
+        panel.modelo.LoadModel(archivo, false, false);
+        panel.pivote = pivote;
+        panel.eje = eje;
+    };
+
+    cargar(paneles[0][0], "assets/espacio/modelos/satelite_01_panel_01.obj",
+           {0.0360635594f, -0.130380347f, -0.0926922858f}, {0, 1, 0});
+    cargar(paneles[0][1], "assets/espacio/modelos/satelite_01_panel_02.obj",
+           {-0.053971f, -0.130380347f, 0.685360909f}, {0, 1, 0});
+    cargar(paneles[0][2], "assets/espacio/modelos/satelite_01_panel_03.obj",
+           {-0.053971f, 0.129141003f, 0.685360909f}, {0, 1, 0});
+    cargar(paneles[0][3], "assets/espacio/modelos/satelite_01_panel_04.obj",
+           {0.0360635594f, 0.130380347f, -0.0926922858f}, {0, 1, 0});
+    cargar(paneles[0][4], "assets/espacio/modelos/satelite_01_panel_05.obj",
+           {0.0413291454f, -0.0173205398f, -0.117412902f}, {1, 0, 0});
+    cargar(paneles[0][5], "assets/espacio/modelos/satelite_01_panel_06.obj",
+           {-0.0413291454f, -0.0173205398f, 0.596897006f}, {1, 0, 0});
+    cargar(paneles[0][6], "assets/espacio/modelos/satelite_01_panel_07.obj",
+           {-0.0471931696f, -0.0173205398f, 0.647571921f}, {1, 0, 0});
+    cargar(paneles[0][7], "assets/espacio/modelos/satelite_01_panel_08.obj",
+           {0.0471931696f, -0.0173205398f, -0.16808778f}, {1, 0, 0});
+    cargar(paneles[1][0], "assets/espacio/modelos/satelite_02_panel_01.obj",
+           {-0.208061039f, -0.0368656069f, -0.239125252f}, {0, 0, 1});
+    cargar(paneles[1][1], "assets/espacio/modelos/satelite_02_panel_02.obj",
+           {-0.208061218f, -0.0368656069f, 0.239125252f}, {0, 0, 1});
+    cantidad_paneles[0] = 8;
+    cantidad_paneles[1] = 2;
 }
 
 //>>>>>>>>>>>>>>>>>>>>>> Carga de texturas >>>>>>>>>>>>>>>>>>>
@@ -312,7 +327,7 @@ void EscenaEspacio::ActualizarMatrices()
     matriz_cabina = matriz_estacion * Trasladar(glm::vec3(0, 4.129f, 0)) *
                     Girar(Fase(tiempo, 120.0f), glm::vec3(0, 1, 0));
     for (int i = 0; i < 15; ++i)
-        matrices_naves[i] = matriz_estacion * MatrizVueloNave(tiempo, i);
+        matrices_naves[i] = matriz_estacion * MatrizVueloNave(vuelo_estacion_activo ? tiempo : -31.5 * (i / 4), i, cuadros_naves);
     for (int planeta = 0; planeta < 3; ++planeta)
     {
         float radio_planeta = configuraciones_planetas[planeta].radio;
@@ -426,13 +441,27 @@ void EscenaEspacio::Dibujar(const ContextoRender& ctx)
     estacion_xq6.RenderModel(true, ctx.u_specular_intensity, ctx.u_shininess);
     EnviarMatriz(matriz_cabina);
     cabina_estacion.RenderModel(true, ctx.u_specular_intensity, ctx.u_shininess);
-    for (int i = 0; i < 15; ++i)
+    auto dibujar_nave = [&](Model& modelo, const glm::mat4& matriz)
     {
-        EnviarMatriz(matrices_naves[i]);
-        naves_estacion[i].RenderModel(true, ctx.u_specular_intensity, ctx.u_shininess);
-    }
-    EnviarMatriz(matriz_aurora_exploradora);
-    naves_estacion[14].RenderModel(true, ctx.u_specular_intensity, ctx.u_shininess);
+        EnviarMatriz(matriz);
+        modelo.RenderModel(true, ctx.u_specular_intensity, ctx.u_shininess);
+    };
+    dibujar_nave(naves_estacion[0], matrices_naves[0]);
+    dibujar_nave(naves_estacion[1], matrices_naves[1]);
+    dibujar_nave(naves_estacion[2], matrices_naves[2]);
+    dibujar_nave(naves_estacion[3], matrices_naves[3]);
+    dibujar_nave(naves_estacion[4], matrices_naves[4]);
+    dibujar_nave(naves_estacion[5], matrices_naves[5]);
+    dibujar_nave(naves_estacion[6], matrices_naves[6]);
+    dibujar_nave(naves_estacion[7], matrices_naves[7]);
+    dibujar_nave(naves_estacion[8], matrices_naves[8]);
+    dibujar_nave(naves_estacion[9], matrices_naves[9]);
+    dibujar_nave(naves_estacion[10], matrices_naves[10]);
+    dibujar_nave(naves_estacion[11], matrices_naves[11]);
+    dibujar_nave(naves_estacion[12], matrices_naves[12]);
+    dibujar_nave(naves_estacion[13], matrices_naves[13]);
+    dibujar_nave(naves_estacion[14], matrices_naves[14]);
+    dibujar_nave(naves_estacion[14], matriz_aurora_exploradora);
     glUniform1f(ctx.u_specular_intensity, .15f);
     glUniform1f(ctx.u_shininess, 24);
     for (int p = 0; p < 3; ++p)
@@ -540,15 +569,5 @@ bool EscenaEspacio::ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rum
     rumbo = glm::normalize(glm::vec3(matriz_aurora_exploradora[2]));
     distancia = 390.0f;
     altura = objetivo.y + 165.0f;
-    return true;
-}
-
-//>>>>>>>>>>>>>>>>>>>>>> Avatar >>>>>>>>>>>>>>>>>>>>>>
-// El marine da vueltas en la plataforma que rodea la cupula central de la estacion
-bool EscenaEspacio::CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const
-{
-    estatura = 8.0f;   // la estacion esta escalada x22
-    const glm::vec3 plataforma = origen_estacion + glm::vec3(0, 22.0f * 4.13f, 0);
-    CirculoAvatar(tiempo, plataforma, 22.0f * 13.6f, estatura * 1.1f, posicion, rumbo);
     return true;
 }

@@ -272828,7 +272828,7 @@ vn -0.270598 0.707107 -0.653281
 vn 0.270598 0.707107 0.653281
 vn 0.270598 -0.707107 0.653281
 vn -0.270598 -0.707107 -0.653281
-mtllib torre_control.mtl
+mtllib torres.mtl
 o Torre_control_placas_metalicas
 usemtl placas_torre
 f 1/1 2/2 3/3

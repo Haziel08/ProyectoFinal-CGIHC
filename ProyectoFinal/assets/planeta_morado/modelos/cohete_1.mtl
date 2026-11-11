@@ -1,0 +1,11 @@
+# Blender 5.2.2 LTS MTL File: 'Cohete_P10.blend'
+# www.blender.org
+
+newmtl M_Orig_Shuttle
+Ns 250.000000
+Ka 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd ../texturas/cohete_1.png

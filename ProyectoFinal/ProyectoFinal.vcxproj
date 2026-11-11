@@ -24,6 +24,7 @@
     <ClInclude Include="src\**\*.h" />
     <None Include="shaders\*.vert" />
     <None Include="shaders\*.frag" />
+    <None Include="src\**\*_frames.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -107,4 +108,12 @@ exit /b 0</Command>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
+  <Target Name="CopiarCuadrosDeAnimacion" AfterTargets="Build">
+    <ItemGroup>
+      <CuadrosAnimacion Include="$(ProjectDir)src\**\*_frames.txt" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CuadrosAnimacion)"
+          DestinationFiles="@(CuadrosAnimacion->'$(OutDir)src\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
 </Project>

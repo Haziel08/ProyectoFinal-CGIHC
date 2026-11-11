@@ -7,12 +7,13 @@
 #include "Texture.h"
 #include <gtc/type_ptr.hpp>
 
-void Escena::CargarSkybox(const std::string& carpeta, const std::string& ext, const std::string& prefijo)
+void Escena::CargarSkybox(const std::string& carpeta, const std::string& ext, const std::string& prefijo,
+                            const std::string& cara_inferior)
 {
     // Orden de las caras para la direccion de muestreo del shader.
     std::vector<std::string> caras = {
         carpeta + prefijo + "derecha" + ext, carpeta + prefijo + "izquierda" + ext,
-        carpeta + prefijo + "abajo" + ext,   carpeta + prefijo + "arriba" + ext,
+        cara_inferior.empty() ? carpeta + prefijo + "abajo" + ext : cara_inferior,   carpeta + prefijo + "arriba" + ext,
         carpeta + prefijo + "atras" + ext,   carpeta + prefijo + "frente" + ext};
     skybox = Skybox(caras);
     tiene_skybox = true;

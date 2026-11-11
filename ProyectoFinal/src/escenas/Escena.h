@@ -49,16 +49,6 @@ inline glm::vec3 TangenteElipse(float angulo, float semieje_x, float semieje_z)
 }
 } // namespace CurvasOrbitales
 
-// Camino del avatar: da vueltas a un circulo a velocidad constante
-// tiempo -> angulo = distancia / radio; el rumbo es la tangente del circulo
-inline void CirculoAvatar(float tiempo, glm::vec3 centro, float radio, float velocidad,
-                          glm::vec3& posicion, glm::vec3& rumbo)
-{
-    float angulo = tiempo * velocidad / radio;
-    posicion = centro + glm::vec3(radio * std::cos(angulo), 0, radio * std::sin(angulo));
-    rumbo = glm::vec3(-std::sin(angulo), 0, std::cos(angulo));
-}
-
 class Escena
 {
 public:
@@ -97,18 +87,12 @@ public:
     {
         return 0;
     }
-    // Reflectores (spotlights) propios de la escena
-    virtual SpotLight* ObtenerFocos()
-    {
-        return nullptr;
-    }
-    virtual unsigned int NumFocos()
-    {
-        return 0;
-    }
     virtual bool ObjetivoCamara(int, glm::vec3&, glm::vec3&, float&, float&) const { return false; }
-    // Donde camina el avatar (marine) en esta escena: posicion, hacia donde mira y su estatura
-    virtual bool CaminoAvatar(float, glm::vec3&, glm::vec3&, float&) const { return false; }
+    virtual float SueloPatrulla(float, float) const { return 0.0f; }
+    virtual void PrepararLuces(const glm::vec3&) {}
+    virtual SpotLight* ObtenerFocos() { return nullptr; }
+    virtual unsigned int NumFocos() { return 0; }
+    virtual PointLight LuzLocal() const { return {}; }
     virtual float PlanoCercano() const
     {
         return 0.1f;
@@ -128,7 +112,8 @@ protected:
     // Carga las seis caras del cubo:
     // textura_derecha, textura_izquierda, textura_abajo, textura_arriba, textura_atras y textura_frente.
     void CargarSkybox(const std::string& carpeta, const std::string& extension = ".jpg",
-                      const std::string& prefijo = "textura_");
+                      const std::string& prefijo = "textura_",
+                      const std::string& cara_inferior = {});
 
     Camera camara;
     Skybox skybox;

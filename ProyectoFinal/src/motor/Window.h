@@ -23,7 +23,6 @@ public:
     bool getLuzNaveEncendida() const { return luz_nave_encendida; }
     bool getMotor1Encendido() const { return motor1_encendido; }
     bool getMotor2Encendido() const { return motor2_encendido; }
-    bool getVistaGeneralSolicitada() const { return vista_general_solicitada; }
 
 	// Teclado
 	bool* getsKeys() { return keys; }               // usado por Camera::keyControl
@@ -43,7 +42,6 @@ private:
     bool luz_nave_encendida;
     bool motor1_encendido;
     bool motor2_encendido;
-    bool vista_general_solicitada;
 
 	GLFWwindow* main_window;
 	GLint width, height;

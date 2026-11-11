@@ -18,13 +18,14 @@ public:
     {
         return "Planeta Naranja";
     }
+    float SueloPatrulla(float x, float z) const override;
     bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
-    bool CaminoAvatar(float tiempo, glm::vec3& posicion, glm::vec3& rumbo, float& estatura) const override;
     void Inicializar() override;
     void Actualizar(float dt, Window& ventana) override;
     void Dibujar(const ContextoRender& ctx) override;
     glm::mat4 ObtenerMatrizNave() const;
     glm::mat4 ObtenerMatrizNaveEspiral() const;
+    const glm::mat4& MarcoNaveCamara() const;
     glm::mat4 MarcoFaroRival(bool espiral) const;
     DirectionalLight* ObtenerLuzDireccional() override
     {
@@ -44,7 +45,7 @@ public:
     }
 
 private:
-    ModeloAnimado rocky_caminante, protos;
+    PlanetaAzul::ModeloAnimado rocky_caminante, protos;
     bool protos_cargado = false;
     Shader shader_rocky;
     bool caminante_cargado = false;
@@ -115,6 +116,7 @@ private:
     Skybox cielo_dia, cielo_noche;
     DirectionalLight luz_sol;
     PointLight luces_arquitectura[4];
+    bool luces_domos_encendidas = true;
     glm::vec3 posiciones_arquitectura[4];
     float tiempo_dia = 0.0f;
     bool es_noche = false;
@@ -123,7 +125,7 @@ private:
     glm::mat4 matriz_pista{1.0f}, matriz_nave{1.0f}, matriz_nave_espiral{1.0f};
     std::vector<glm::mat4> matrices_postes, apoyos_faroles_elevados, rocas_perifericas;
     std::vector<glm::vec3> posiciones_luces_postes;
-    glm::mat4 matrices_rivales[19];
+    std::vector<glm::mat4> matrices_rivales;
     std::vector<MontanaPeriferica> montanas_perifericas;
     std::vector<TrianguloPista> secciones_pista, secciones_espiral;
     std::array<glm::mat4, 3> matrices_asteroides;
