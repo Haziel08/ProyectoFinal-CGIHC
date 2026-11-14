@@ -1251,30 +1251,35 @@ void Vegetacion::Dibujar(const ContextoRender& ctx, DirectionalLight* luz, Point
 
 	glUseProgram(shader_main);
 }
-//>>>>>>>>>>>>>>>>>>>>>> PezAbisal >>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>> GhostLeviathan >>>>>>>>>>>>>>>>>>>>>>
 
 
-// Articulaciones respecto al centro del cuerpo (en metros, antes de escalar)
-static const glm::vec3 abisal_piv_aleta_izq(-0.38f, -0.36f, -0.16f);
-static const glm::vec3 abisal_piv_aleta_der( 0.48f, -0.30f, -0.11f);
-static const glm::vec3 piv_farol    ( 0.06f,  1.19f,  0.64f);
+// Ojos y cabeza en el primer cuadro de la animacion (modelo normalizado: mide 1 de alto)
+static const glm::vec3 ghost_cabeza  ( 0.052f, 0.429f, 2.243f);
+static const glm::vec3 ghost_ojo_izq ( 0.072f, 0.481f, 2.528f);
+static const glm::vec3 ghost_ojo_der (-0.049f, 0.449f, 2.503f);
 
 // Recorrido: elipse en lo hondo del lago, siempre un poco arriba del fondo
-static const float abisal_centro_x = -10.0f, abisal_centro_z = 65.0f;
-static const float abisal_radio_x = 38.0f, abisal_radio_z = 24.0f;
-static const float abisal_velocidad = 0.07f;       // radianes por segundo
-static const float sobre_fondo = 5.0f;      // metros arriba del fondo
-static const float abisal_escala = 2.4f;
+static const float ghost_centro_x = -10.0f, ghost_centro_z = 65.0f;
+static const float ghost_radio_x = 38.0f, ghost_radio_z = 24.0f;
+static const float ghost_velocidad = 0.07f;       // radianes por segundo
+static const float ghost_sobre_fondo = 7.0f;      // metros arriba del fondo
+static const float ghost_alto = 5.0f;             // alto del cuerpo; de largo mide unos 26 m
 
-void PezAbisal::Crear(const Terreno& t)
+void GhostLeviathan::Crear(const Terreno& t)
 {
 	terreno = &t;
-	cuerpo.LoadModel("assets/planeta_azul/modelos/pez_abisal_cuerpo.obj");
-	aleta_izq.LoadModel("assets/planeta_azul/modelos/pez_abisal_aleta_izq.obj");
-	aleta_der.LoadModel("assets/planeta_azul/modelos/pez_abisal_aleta_der.obj");
-	farol.LoadModel("assets/planeta_azul/modelos/pez_abisal_farol.obj");
+	// Solo trae la animacion de nadar hacia adelante (swimF)
+	cargado = modelo.Cargar("assets/planeta_azul/modelos/ghost_leviathan.glb",
+		"assets/planeta_azul/texturas/ghost_leviathan.jpg", true);
+	if (!cargado) return;
+	shader.CreateFromString(esqueleto_vert, shader.ReadFile("shaders/shader_light.frag").c_str());
 
-	// Halo del farol: un cuadrado que siempre mira a la camara
+	// Marco de la cabeza en el primer cuadro: sirve para que los ojos sigan a la cabeza
+	modelo.CalcularPose(0, 0.0f);
+	cabeza_inicial_inv = glm::inverse(modelo.MarcoHueso("head"));
+
+	// Halo de los ojos: un cuadrado que siempre mira a la camara
 	halo = Texture("assets/planeta_azul/texturas/halo_farol.png");
 	halo.LoadTextureA();
 	GLfloat vertices[] = { -.5f,-.5f,0, 0,0, 0,0,-1,   .5f,-.5f,0, 1,0, 0,0,-1,
@@ -1283,113 +1288,119 @@ void PezAbisal::Crear(const Terreno& t)
 	plano_halo.CreateMeshModel(vertices, indices, 32, 6);
 }
 
-void PezAbisal::Actualizar(float dt, Window& ventana)
+void GhostLeviathan::Actualizar(float dt, Window& ventana)
 {
 	tiempo += dt;
-	angulo += abisal_velocidad * dt;
+	angulo += ghost_velocidad * dt;
 
-	// Tecla P prender / apagar la linterna
+	// Tecla P prender / apagar la luz de los ojos
 	if (ventana.TeclaPresionada(GLFW_KEY_P))
 		linterna = !linterna;
 
 	// Posicion en la elipse, siguiendo el fondo del lago (sin salirse del agua)
-	posicion.x = abisal_centro_x + abisal_radio_x * cosf(angulo);
-	posicion.z = abisal_centro_z + abisal_radio_z * sinf(angulo);
-	posicion.y = glm::min(terreno->Altura(posicion.x, posicion.z) + sobre_fondo, -6.0f)
-		+ 0.4f * sinf(tiempo * 1.3f);
+	posicion.x = ghost_centro_x + ghost_radio_x * cosf(angulo);
+	posicion.z = ghost_centro_z + ghost_radio_z * sinf(angulo);
+	posicion.y = glm::min(terreno->Altura(posicion.x, posicion.z) + ghost_sobre_fondo, -8.0f)
+		+ 0.6f * sinf(tiempo * 0.9f);
 
 	// Rumbo = derivada de la elipse
-	giro = atan2f(-abisal_radio_x * sinf(angulo), abisal_radio_z * cosf(angulo));
+	giro = atan2f(-ghost_radio_x * sinf(angulo), ghost_radio_z * cosf(angulo));
 
-	// El reflector sale del farol hacia adelante y un poco hacia abajo
-	glm::mat4 m = MatrizCuerpo();
-	glm::vec3 origen = glm::vec3(m * glm::vec4(piv_farol, 1.0f));
-	glm::vec3 direccion = glm::normalize(glm::vec3(m * glm::vec4(0.0f, -0.6f, 1.0f, 0.0f)));
-	foco = SpotLight(0.65f, 0.95f, 1.0f,          // azul claro
-		0.0f, 4.0f,                              // ambiental, difusa
+	if (!cargado) return;
+	// Pose de la animacion de nado (se repite sola)
+	modelo.CalcularPose(0, tiempo);
+
+	// El reflector sale de entre los ojos hacia adelante y un poco hacia abajo
+	glm::mat4 m = MatrizCuerpo() * MovimientoCabeza();
+	glm::vec3 origen = glm::vec3(m * glm::vec4((ghost_ojo_izq + ghost_ojo_der) * 0.5f, 1.0f));
+	glm::vec3 direccion = glm::normalize(glm::vec3(m * glm::vec4(0.0f, -0.35f, 1.0f, 0.0f)));
+	foco = SpotLight(1.0f, 0.85f, 0.25f,          // amarillo
+		0.0f, 5.0f,                              // ambiental, difusa
 		origen.x, origen.y, origen.z,
 		direccion.x, direccion.y, direccion.z,
-		1.0f, 0.022f, 0.0019f,                   // atenuacion (alcance de unos 60 m)
-		28.0f);                                  // abertura del cono en grados
+		1.0f, 0.014f, 0.0007f,                   // atenuacion (alcance de unos 90 m)
+		25.0f);                                  // abertura del cono en grados
 }
 
-glm::mat4 PezAbisal::MatrizCuerpo() const
+glm::mat4 GhostLeviathan::MatrizCuerpo() const
 {
-	float balanceo = glm::radians(6.0f) * sinf(tiempo * 2.0f);   // nada moviendose de lado a lado
 	glm::mat4 model(1.0f);
 	model = glm::translate(model, posicion);
-	model = glm::rotate(model, giro + balanceo, glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(abisal_escala));
+	model = glm::rotate(model, giro, glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(ghost_alto)) * modelo.Normalizacion();
 	return model;
 }
 
-void PezAbisal::Dibujar(const ContextoRender& ctx)
+// Marco de la cabeza ahora * inversa del marco en el primer cuadro:
+// aplicado a los ojos del primer cuadro los deja donde esta la cabeza en este momento
+glm::mat4 GhostLeviathan::MovimientoCabeza() const
 {
-	glm::vec3 blanco(1.0f);
-	glUniform3fv(ctx.u_color, 1, glm::value_ptr(blanco));
-
-	float aleteo = glm::radians(25.0f) * sinf(tiempo * 4.0f);
-
-	// --- Cuerpo (padre) ---
-	glm::mat4 model = MatrizCuerpo();
-	glm::mat4 modelaux = model;
-	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
-	cuerpo.RenderModel();
-
-	// --- Aletas: suben y bajan en sentidos contrarios ---
-	model = modelaux;
-	model = glm::translate(model, abisal_piv_aleta_izq);
-	model = glm::rotate(model, aleteo, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
-	aleta_izq.RenderModel();
-
-	model = modelaux;
-	model = glm::translate(model, abisal_piv_aleta_der);
-	model = glm::rotate(model, -aleteo, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
-	aleta_der.RenderModel();
-
-	// --- Farol: si la linterna esta prendida se dibuja sin sombra (modo 2 = color plano) ---
-	GLint programa = 0;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &programa);
-	GLint modo = glGetUniformLocation(programa, "modo_efecto");
-	model = modelaux;
-	model = glm::translate(model, piv_farol);
-	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
-	if (linterna) glUniform1i(modo, 2);
-	farol.RenderModel();
-	glUniform1i(modo, 0);
+	return glm::inverse(modelo.Normalizacion()) * modelo.MarcoHueso("head") * cabeza_inicial_inv;
 }
 
-void PezAbisal::DibujarHalo(const ContextoRender& ctx)
+void GhostLeviathan::Dibujar(const ContextoRender& ctx, DirectionalLight* luz, PointLight* luces, unsigned int num_luces)
 {
-	if (!linterna) return;
+	if (!cargado) return;
+	GLint shader_main = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &shader_main);
+
+	// Mismos uniforms que main.cpp manda al shader de luz
+	shader.UseShader();
+	glUniformMatrix4fv(shader.GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(ctx.proyeccion));
+	glUniformMatrix4fv(shader.GetViewLocation(), 1, GL_FALSE, glm::value_ptr(ctx.vista));
+	glUniform3f(shader.GetEyePositionLocation(), ctx.pos_camara.x, ctx.pos_camara.y, ctx.pos_camara.z);
+	shader.SetDirectionalLight(luz);
+	shader.SetPointLights(luces, num_luces);
+	shader.SetSpotLights(nullptr, 0);
+	glUniform3f(shader.getColorLocation(), 1.0f, 1.0f, 1.0f);
+	glUniform1f(shader.GetSpecularIntensityLocation(), 0.5f);
+	glUniform1f(shader.GetShininessLocation(), 32.0f);
+
+	glm::mat4 model = MatrizCuerpo();
+	glUniformMatrix4fv(shader.GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	GLint programa = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &programa);
+	modelo.Dibujar((GLuint)programa);
+
+	glUseProgram(shader_main);
+}
+
+void GhostLeviathan::DibujarHalo(const ContextoRender& ctx)
+{
+	if (!linterna || !cargado) return;
 	GLint programa = 0;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &programa);
 	GLint modo = glGetUniformLocation(programa, "modo_efecto");
 	GLint opacidad = glGetUniformLocation(programa, "opacidad_particula");
 
-	// Cuadrado en el farol girado hacia la camara (inversa de la rotacion de la vista)
-	glm::vec3 p = glm::vec3(MatrizCuerpo() * glm::vec4(piv_farol, 1.0f));
-	glm::mat4 model = glm::transpose(glm::mat4(glm::mat3(ctx.vista)));
-	model[3] = glm::vec4(p, 1.0f);
-	model = glm::scale(model, glm::vec3(2.5f + 0.2f * sinf(tiempo * 5.0f)));   // late un poco
-
 	glUniform1i(modo, 4);
-	glUniform1f(opacidad, 0.9f);
-	glUniform3f(ctx.u_color, 0.6f, 0.95f, 1.0f);
+	glUniform1f(opacidad, 1.0f);
+	glUniform3f(ctx.u_color, 1.0f, 0.85f, 0.25f);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);          // se suma: brilla
 	glDepthMask(GL_FALSE);
 	halo.UseTexture();
-	glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
-	plano_halo.RenderMeshModel();
+
+	// Un cuadrado en cada ojo girado hacia la camara (inversa de la rotacion de la vista)
+	glm::mat4 m = MatrizCuerpo() * MovimientoCabeza();
+	const glm::vec3 ojos[2] = { ghost_ojo_izq, ghost_ojo_der };
+	for (int i = 0; i < 2; i++)
+	{
+		glm::vec3 p = glm::vec3(m * glm::vec4(ojos[i], 1.0f));
+		glm::mat4 model = glm::transpose(glm::mat4(glm::mat3(ctx.vista)));
+		model[3] = glm::vec4(p, 1.0f);
+		model = glm::scale(model, glm::vec3(2.6f + 0.3f * sinf(tiempo * 4.0f + i)));   // laten un poco
+		glUniformMatrix4fv(ctx.u_model, 1, GL_FALSE, glm::value_ptr(model));
+		plano_halo.RenderMeshModel();
+	}
+
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 	glUniform1i(modo, 0);
 	glUniform1f(opacidad, 1.0f);
 	glUniform3f(ctx.u_color, 1.0f, 1.0f, 1.0f);
 }
+
 
 //>>>>>>>>>>>>>>>>>>>>>> ArbolesLuminosos >>>>>>>>>>>>>>>>>>>>>>
 
@@ -2297,7 +2308,7 @@ void EscenaPlanetaAzul::Inicializar()
 
 	//Suelo y lago
 	terreno.Crear();
-    pez_abisal.Crear(terreno);
+    ghost.Crear(terreno);
     arboles_sumergidos.Crear(terreno);
 	glm::vec2 tamano_lago = terreno.radio_lago * 2.2f;   // un poco mas grande que el lago
 	agua.Crear(terreno.centro_lago, tamano_lago, nivel_agua, "assets/planeta_azul/texturas/agua.jpg");
@@ -2327,7 +2338,7 @@ void EscenaPlanetaAzul::Actualizar(float dt, Window& ventana)
 
 	// Aldea: fogata manual y antorchas que se prenden de noche
 	aldea.Actualizar(tiempo, ciclo.EsDeNoche(), ventana);
-    pez_abisal.Actualizar(dt, ventana);
+    ghost.Actualizar(dt, ventana);
     arboles_sumergidos.Actualizar(dt,ciclo.EsDeNoche(),ventana);
 
 	// Peces nadando
@@ -2349,7 +2360,6 @@ void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 	terreno.Dibujar(ctx);
 	aldea.Dibujar(ctx);
     arboles_sumergidos.Dibujar(ctx);
-    pez_abisal.Dibujar(ctx);
     DibujarLamparas(ctx);
 	peces.Dibujar(ctx);          // bajo el agua: se dibujan antes que el agua
 	stalker.Dibujar(ctx);
@@ -2357,11 +2367,11 @@ void EscenaPlanetaAzul::Dibujar(const ContextoRender& ctx)
 	pidgeys.Dibujar(ctx);
 
 
-    pez_abisal.DibujarHalo(ctx);
-
 	// 2) Plantas y rocas
 	vegetacion.Dibujar(ctx, &luz_sol, luces_visibles, num_luces_visibles);
 	necromorfos.Dibujar(ctx, &luz_sol, luces_visibles, num_luces_visibles);   // shader del esqueleto
+	ghost.Dibujar(ctx, &luz_sol, luces_visibles, num_luces_visibles);         // tambien con esqueleto
+	ghost.DibujarHalo(ctx);
 
 	// 3) El agua es transparente
 	agua.Dibujar(ctx,tiempo,ciclo.Luz(),

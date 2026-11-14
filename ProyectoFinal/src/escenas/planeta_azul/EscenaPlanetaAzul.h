@@ -270,20 +270,22 @@ private:
 	Model piedra;
 	Model alga;
 };
-// Pez abisal y luces del fondo del lago.
-class PezAbisal
+// Ghost Leviathan: nada por lo hondo del lago con su animacion esqueletal de nado.
+// Tecla P: prende / apaga el reflector amarillo que sale de sus ojos.
+class GhostLeviathan
 {
 public:
 	void Crear(const Terreno& terreno);
 	void Actualizar(float dt, Window& ventana);
-	void Dibujar(const ContextoRender& ctx);
-	void DibujarHalo(const ContextoRender& ctx);   // brillo del farol (transparente, va al final)
+	void Dibujar(const ContextoRender& ctx, DirectionalLight* luz, PointLight* luces, unsigned int num_luces);
+	void DibujarHalo(const ContextoRender& ctx);   // brillo de los ojos (transparente)
 
-	SpotLight foco;              // reflector que sale del farol
+	SpotLight foco;              // reflector que sale de los ojos
 	bool linterna = true;        // empieza prendida
 
 private:
 	glm::mat4 MatrizCuerpo() const;
+	glm::mat4 MovimientoCabeza() const;   // cuanto se movio la cabeza desde el primer cuadro
 
 	const Terreno* terreno = nullptr;
 	float tiempo = 0.0f;
@@ -291,13 +293,15 @@ private:
 	glm::vec3 posicion{ 0.0f };
 	float giro = 0.0f;
 
-	Model cuerpo;
-	Model aleta_izq;
-	Model aleta_der;
-	Model farol;
+	ModeloAnimado modelo;
+	Shader shader;               // shader del esqueleto + shader_light.frag
+	bool cargado = false;
+	glm::mat4 cabeza_inicial_inv{ 1.0f };
+
 	Texture halo;
 	MeshModel plano_halo;
 };
+
 
 class ArbolesLuminosos
 {
@@ -516,8 +520,8 @@ public:
     float SueloPatrulla(float x, float z) const override;
     PointLight LuzLocal() const override;
     void PrepararLuces(const glm::vec3& ojo) override;
-    SpotLight* ObtenerFocos() override { return &pez_abisal.foco; }
-    unsigned int NumFocos() override { return pez_abisal.linterna ? 1u : 0u; }
+    SpotLight* ObtenerFocos() override { return &ghost.foco; }
+    unsigned int NumFocos() override { return ghost.linterna ? 1u : 0u; }
     glm::vec2 CentroAldea() const { return aldea.centro; }
     bool ObjetivoCamara(int modo, glm::vec3& objetivo, glm::vec3& rumbo, float& distancia, float& altura) const override;
     void Inicializar() override;
@@ -540,7 +544,7 @@ private:
 	Skybox skybox_noche;
 
     ArbolesLuminosos arboles_sumergidos;
-    PezAbisal pez_abisal;
+    GhostLeviathan ghost;
     PointLight luces_visibles[max_point_lights];
     unsigned int num_luces_visibles = 0;
 	Terreno terreno;
