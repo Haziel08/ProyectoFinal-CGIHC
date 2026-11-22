@@ -1,0 +1,9 @@
+newmtl antuk
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0.52903223 0.52903223 0.52903223
+Ke 0 0 0
+Tf 0 0 0
+d 1
+illum 1
+map_Kd ../texturas/choza_antuk.png
+

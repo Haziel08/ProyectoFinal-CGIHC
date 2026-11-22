@@ -1,0 +1,5 @@
+newmtl asteroide_04
+Kd 1 1 1
+Ks 0.12 0.12 0.12
+Ns 20
+map_Kd ../texturas/asteroide_03.png

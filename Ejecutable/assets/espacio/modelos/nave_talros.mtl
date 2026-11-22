@@ -1,0 +1,33 @@
+# Talros Ship - BlendSwap 89362 - CC BY-NC 3.0 - Fan Art
+# https://www.blendswap.com/blends/view/89362
+newmtl casco_talros_0
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.7 0.7 0.7
+Ns 100
+illum 2
+map_Kd ../texturas/casco_talros.jpg
+
+newmtl casco_talros_3
+Ka 1 1 1
+Kd 1.000 1.000 1.000
+Ks 0.7 0.7 0.7
+Ns 100
+illum 2
+map_Kd ../texturas/casco_talros.jpg
+
+newmtl estructura_talros
+Ka 1 1 1
+Kd 0.300 0.350 0.400
+Ks 0.7 0.7 0.7
+Ns 100
+illum 2
+
+newmtl luces_talros
+Ka 1 1 1
+Kd 1.000 0.020 0.020
+Ks 0.7 0.7 0.7
+Ns 100
+illum 2
+Ke 1.100 0.022 0.022
+

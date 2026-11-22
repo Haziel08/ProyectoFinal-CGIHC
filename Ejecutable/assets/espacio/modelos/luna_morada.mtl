@@ -1,0 +1,7 @@
+newmtl luna_rocosa
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.04 0.04 0.04
+Ns 6
+illum 2
+map_Kd ../texturas/luna_morada.jpg

@@ -1,0 +1,55 @@
+newmtl _1_road_
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/base_radiotelescopio.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2
+
+newmtl _2_
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/carcasa_radiotelescopio.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2
+
+newmtl light_red
+Ka 1 1 1
+Kd 0.800 0.002 0.014
+Ks 0.180 0.180 0.180
+Ns 24
+Ke 0.300 0.300 0.300
+illum 2
+
+newmtl light_blu
+Ka 1 1 1
+Kd 0.800 0.526 0.015
+Ks 0.180 0.180 0.180
+Ns 24
+Ke 0.300 0.300 0.300
+illum 2
+
+newmtl _3_
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/equipo_radiotelescopio.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2
+
+newmtl _4__001
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/soporte_radiotelescopio.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2
+
+newmtl _5_
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../texturas/antena_radiotelescopio.png
+Ks 0.180 0.180 0.180
+Ns 24
+illum 2

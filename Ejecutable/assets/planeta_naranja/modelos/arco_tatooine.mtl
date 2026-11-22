@@ -1,0 +1,7 @@
+newmtl metal_rocky
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.700 0.700 0.700
+Ns 100
+map_Kd ../../espacio/texturas/metal_rocky_ranuras.png
+illum 2

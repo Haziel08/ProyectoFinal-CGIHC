@@ -1,0 +1,5 @@
+newmtl roca
+Kd 1 1 1
+Ks .07 .07 .07
+Ns 24
+map_Kd ../texturas/roca_rocky.png

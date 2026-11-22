@@ -1,0 +1,9 @@
+newmtl lambert10
+Kd 0.7 0.3 0.3
+Ks 0.3 0.3 0.3
+Ns 32
+
+newmtl lambert13
+Kd 1.0 1.0 0.92
+Ks 0.3 0.3 0.3
+Ns 32

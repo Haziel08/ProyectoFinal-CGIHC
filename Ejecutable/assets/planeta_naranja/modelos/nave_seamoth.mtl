@@ -1,0 +1,55 @@
+newmtl nave_seamoth_material_1
+Ka 1 1 1
+Kd 0.120 0.130 0.150
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_2
+Ka 1 1 1
+Kd 1.000 1.000 0.970
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_3
+Ka 1 1 1
+Kd 0.443 0.498 0.667
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_4
+Ka 1 1 1
+Kd 0.904 0.448 0.204
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_5
+Ka 1 1 1
+Kd 0.900 0.900 0.900
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_6
+Ka 1 1 1
+Kd 0.339 0.350 0.393
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_7
+Ka 1 1 1
+Kd 0.300 0.550 0.650
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_seamoth_material_8
+Ka 1 1 1
+Kd 0.450 0.900 1.000
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2

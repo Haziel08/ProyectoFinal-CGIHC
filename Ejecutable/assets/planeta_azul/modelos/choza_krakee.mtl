@@ -1,0 +1,9 @@
+newmtl Krakee
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0.56774193 0.56774193 0.56774193
+Ke 0 0 0
+Tf 0 0 0
+d 1
+illum 1
+map_Kd ../texturas/choza_krakee.png
+

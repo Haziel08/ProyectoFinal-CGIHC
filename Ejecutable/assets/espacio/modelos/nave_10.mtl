@@ -1,0 +1,49 @@
+newmtl nave_10_material_1
+Ka 1 1 1
+Kd 0.906 0.906 0.906
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+map_Kd ../texturas/casco_nave_10_1.png
+
+newmtl nave_10_material_2
+Ka 1 1 1
+Kd 0.029 0.060 0.227
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_10_material_3
+Ka 1 1 1
+Kd 0.020 0.062 0.240
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_10_material_4
+Ka 1 1 1
+Kd 0.029 0.060 0.221
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_10_material_5
+Ka 1 1 1
+Kd 0.029 0.060 0.221
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_10_material_6
+Ka 1 1 1
+Kd 0.029 0.060 0.221
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2
+
+newmtl nave_10_material_7
+Ka 1 1 1
+Kd 0.063 0.066 0.112
+Ks 0.500 0.500 0.500
+Ns 64
+illum 2

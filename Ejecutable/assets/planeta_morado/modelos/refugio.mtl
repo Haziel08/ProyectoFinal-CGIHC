@@ -1,0 +1,5 @@
+newmtl superficie
+Kd 1 1 1
+Ks .2 .2 .2
+Ns 24
+map_Kd ../texturas/refugio.png

@@ -1,0 +1,6 @@
+newmtl metal_negro
+Ka 1 1 1
+Kd 0.012 0.015 0.018
+Ks 0.350 0.350 0.350
+Ns 48
+illum 2
