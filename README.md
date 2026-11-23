@@ -1,67 +1,35 @@
+<div align="center">
+
 # Odisea espacial y sistemas planetarios
 
-Proyecto final — Computación Gráfica e IHC 2027-1 (Lab. grupo 13).
-OpenGL 4.3 · C++17 · GLFW · GLEW · GLM · Assimp · Visual Studio 2022 (x64).
+**Proyecto Final**
 
-## Abrir y ejecutar
+Universidad Nacional Autónoma de México<br>
+Facultad de Ingeniería<br>
+División de Ingeniería Eléctrica<br>
+Ingeniería en Computación
 
-1. Abrir `ProyectoFinal.sln` con Visual Studio 2022.
-2. Elegir **x64** y **Debug** o **Release**, y dar `F5`.
+**Computación Gráfica e Interacción Humano Computadora**
 
-No hay que configurar nada: las rutas son relativas y las librerías vienen en `ProyectoFinal/external/`.
-El `.exe` queda en `bin/Release/` (o `bin/Debug/`) junto con las DLLs, `shaders/` y `assets/`.
+Semestre 2027-1
 
-## Estructura
+</div>
 
-```
-ProyectoFinal.sln
-ProyectoFinal/
-├── src/
-│   ├── main.cpp                  ← solo elige la escena activa y la dibuja
-│   ├── motor/                    ← clases base de las prácticas (Window, Camera, Shader, Model, Skybox…)
-│   │   └── luces/
-│   └── escenas/
-│       ├── Escena.h/.cpp         ← clase base (skybox, cámara y luces de cada escena)
-│       ├── espacio/              ← Estación XQ6 Platform, Nave Aurora, satélites, lunas, asteroides
-│       ├── planeta_naranja/      ← Pista de carreras, Seamoth
-│       ├── planeta_morado/       ← Plataforma Neptuno y cohete, módulos, corales
-│       └── planeta_azul/         ← Criaturas y chozas tribales
-├── shaders/
-├── assets/
-│   ├── comun/texturas/plain.png  ← textura blanca por defecto de Model
-│   ├── espacio/         {modelos, texturas, skybox}
-│   ├── planeta_naranja/ {modelos, texturas, skybox}
-│   ├── planeta_morado/  {modelos, texturas, skybox}
-│   └── planeta_azul/    {modelos, texturas, skybox}
-└── external/  {include, glm, lib, bin}
-docs/  {bitacoras, manuales}
-```
+## Integrantes
 
-**Regla:** cada quien trabaja en `src/escenas/<su escena>/` y `assets/<su escena>/`. `main.cpp`, `motor/` y `shaders/` solo se tocan avisando al equipo.
+| Nombre | Número de cuenta | Grupo laboratorio | Grupo teoría |
+|---|---|---|---|
+| Ibares Sánchez Haziel | 320309203 | 13 | 06 |
+| Martínez García José Eduardo | 320304679 | 13 | 05 |
+| Ramírez del Prado Monte Rosa Evaristo | 313136120 | 02 | 05 |
+| Rueda De Oliveira Chun Shik | 320248153 | 13 | 05 |
 
-- El `.vcxproj` toma los archivos con comodines: agregar un `.cpp`/`.h` en tu carpeta no modifica el proyecto (si no aparece, clic derecho al proyecto → *Recargar*).
-- Las teclas de cada escena se leen dentro de su `Actualizar()` con `ventana.TeclaPresionada(GLFW_KEY_X)` (una vez por pulsación) o `ventana.TeclaSostenida(GLFW_KEY_X)` (mientras esté abajo). Ya no se agregan variables a `Window`.
+## Contenido
 
-## Skybox
-
-Cada escena carga el suyo desde `assets/<escena>/skybox/` con 6 imágenes `rt, lf, up, dn, bk, ft` (mismo orden que en clase). Por defecto `.jpg`; para otro formato: `CargarSkybox("assets/planeta_azul/skybox/", ".tga")`.
-Los actuales son **provisionales** (generados por código): se reemplazan sobrescribiendo los archivos.
-
-## Controles
-
-| Tecla | Acción |
+| Carpeta | Qué contiene |
 |---|---|
-| `F1` | Espacio |
-| `F2` | Planeta Naranja |
-| `F3` | Planeta Morado |
-| `F4` | Planeta Azul |
-| `W A S D` + ratón | Cámara libre (cada escena recuerda dónde dejaste su cámara) |
-| `ESC` | Salir |
+| `Ejecutable/` | Programa compilado en Release. Se abre con doble clic en `ProyectoFinal.exe`. |
+| `ProyectoFinal/` y `ProyectoFinal.sln` | Código fuente, shaders y modelos (Visual Studio 2022, x64). |
+| `docs/manuales/` | Manual técnico y manual de usuario, en español y en inglés. |
 
-## Git
-
-- `main`: versiones que compilan y corren · `develop`: integración.
-- Una rama por integrante: `nombre/tema` (ej. `haziel/planeta-azul`).
-- Trabajar en tu rama → `git pull origin develop` → comprobar que compila → *Pull Request* a `develop`.
-
-Restricciones: sin rutas absolutas, sin comprimidos, ningún archivo > 100 MB, modelos + texturas < 100 MB.
+C++17 · OpenGL 3.3 · GLFW · GLEW · GLM · Assimp · stb_image
